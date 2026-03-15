@@ -1,3 +1,35 @@
-# soc2-logging.txt
-# TODO: paste actual clause text here
-# Must include clause number e.g. HIPAA §164.312(e)(2)(ii)
+SOC 2 — System Monitoring (Logging)
+AICPA Trust Services Criteria — CC7.2
+
+CC7.2: The entity monitors system components and the operation of those components
+for anomalies that are indicative of malicious acts, natural disasters, and errors
+affecting the entity's ability to meet its objectives; anomalies are analyzed to
+determine whether they represent security events.
+
+Points of Focus:
+- Implements Detection Policies, Procedures, and Tools — Detection policies and
+  procedures are defined and tools are implemented on infrastructure and software
+  to identify anomalies in the operation or unusual activity on systems. Procedures
+  may include (1) a defined governance process for security event detection,
+  (2) use of intelligence sources to generate information on emerging threats, and
+  (3) monitoring of system components for anomalies.
+- Designs Detection Measures — Detection measures are designed to identify anomalies
+  that could result from actual or attempted (1) compromise of physical barriers;
+  (2) unauthorized actions of authorized personnel; (3) use of compromised
+  identification and authentication credentials; (4) unauthorized access from
+  outside the system boundaries; (5) compromise of authorized external information
+  systems; and (6) unauthorized data manipulation including interception,
+  modification, destruction, corruption, misuse, or malicious code.
+- Implements Filters to Analyze Anomalies — Management has implemented procedures
+  to filter, summarize, and analyze anomalies to identify security events.
+- Monitors Detection Tools for Effective Operation — Management has implemented
+  processes to monitor the effectiveness of detection tools.
+
+For AWS workloads:
+- CloudTrail logging must be enabled for API-level monitoring
+- S3 server access logging must be enabled for data access auditing
+- CloudWatch Logs and Alarms must be configured for anomaly detection
+- VPC Flow Logs must be enabled for network monitoring
+- GuardDuty should be enabled for automated threat detection
+- All monitoring data must be retained per the entity's retention policy
+- Regular review of monitoring data must be documented

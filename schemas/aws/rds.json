@@ -1,5 +1,138 @@
 {
   "provider": "aws",
   "service": "RDS",
-  "fields": []
+  "fields": [
+    {
+      "fieldId": "StorageEncrypted",
+      "label": "Encryption at rest",
+      "type": "boolean",
+      "options": null,
+      "required": true,
+      "securityRelevance": "critical",
+      "costRelevance": "none",
+      "complianceRelevance": ["HIPAA", "PCI-DSS", "SOC2"],
+      "aiExplainable": true
+    },
+    {
+      "fieldId": "KmsKeyId",
+      "label": "KMS key for encryption",
+      "type": "select",
+      "options": ["AWS managed key", "Customer managed key (CMK)"],
+      "required": false,
+      "securityRelevance": "high",
+      "costRelevance": "medium",
+      "complianceRelevance": ["HIPAA", "PCI-DSS"],
+      "aiExplainable": true
+    },
+    {
+      "fieldId": "PubliclyAccessible",
+      "label": "Publicly accessible",
+      "type": "boolean",
+      "options": null,
+      "required": true,
+      "securityRelevance": "critical",
+      "costRelevance": "none",
+      "complianceRelevance": ["HIPAA", "PCI-DSS", "SOC2"],
+      "aiExplainable": true
+    },
+    {
+      "fieldId": "MultiAZ",
+      "label": "Multi-AZ deployment",
+      "type": "boolean",
+      "options": null,
+      "required": false,
+      "securityRelevance": "medium",
+      "costRelevance": "high",
+      "complianceRelevance": ["SOC2"],
+      "aiExplainable": true
+    },
+    {
+      "fieldId": "DeletionProtection",
+      "label": "Deletion protection",
+      "type": "boolean",
+      "options": null,
+      "required": false,
+      "securityRelevance": "high",
+      "costRelevance": "none",
+      "complianceRelevance": ["HIPAA", "SOC2"],
+      "aiExplainable": true
+    },
+    {
+      "fieldId": "BackupRetentionPeriod",
+      "label": "Backup retention (days)",
+      "type": "integer",
+      "options": null,
+      "required": false,
+      "securityRelevance": "medium",
+      "costRelevance": "medium",
+      "complianceRelevance": ["HIPAA", "PCI-DSS", "SOC2"],
+      "aiExplainable": true
+    },
+    {
+      "fieldId": "AutoMinorVersionUpgrade",
+      "label": "Auto minor version upgrade",
+      "type": "boolean",
+      "options": null,
+      "required": false,
+      "securityRelevance": "high",
+      "costRelevance": "none",
+      "complianceRelevance": ["PCI-DSS"],
+      "aiExplainable": true
+    },
+    {
+      "fieldId": "EnablePerformanceInsights",
+      "label": "Performance Insights",
+      "type": "boolean",
+      "options": null,
+      "required": false,
+      "securityRelevance": "low",
+      "costRelevance": "medium",
+      "complianceRelevance": [],
+      "aiExplainable": true
+    },
+    {
+      "fieldId": "EnableCloudwatchLogsExports",
+      "label": "CloudWatch log exports",
+      "type": "boolean",
+      "options": null,
+      "required": false,
+      "securityRelevance": "medium",
+      "costRelevance": "low",
+      "complianceRelevance": ["HIPAA", "PCI-DSS", "SOC2"],
+      "aiExplainable": true
+    },
+    {
+      "fieldId": "IAMDatabaseAuthentication",
+      "label": "IAM database authentication",
+      "type": "boolean",
+      "options": null,
+      "required": false,
+      "securityRelevance": "high",
+      "costRelevance": "none",
+      "complianceRelevance": ["HIPAA", "PCI-DSS", "SOC2"],
+      "aiExplainable": true
+    },
+    {
+      "fieldId": "CopyTagsToSnapshot",
+      "label": "Copy tags to snapshots",
+      "type": "boolean",
+      "options": null,
+      "required": false,
+      "securityRelevance": "low",
+      "costRelevance": "none",
+      "complianceRelevance": ["SOC2"],
+      "aiExplainable": false
+    },
+    {
+      "fieldId": "DBInstanceClass",
+      "label": "Instance class",
+      "type": "select",
+      "options": ["db.t3.micro", "db.t3.small", "db.t3.medium", "db.r5.large", "db.r5.xlarge"],
+      "required": true,
+      "securityRelevance": "none",
+      "costRelevance": "high",
+      "complianceRelevance": [],
+      "aiExplainable": true
+    }
+  ]
 }

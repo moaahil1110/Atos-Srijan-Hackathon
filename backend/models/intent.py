@@ -1,3 +1,13 @@
-# Pydantic models for /intent
-# IntentRequest  — { description: str }
-# IntentResponse — { sessionId, intent, weights }
+"""Pydantic models for /intent endpoint."""
+from pydantic import BaseModel
+from typing import Optional
+
+
+class IntentRequest(BaseModel):
+    description: str
+
+
+class IntentResponse(BaseModel):
+    sessionId: str
+    intent: dict
+    weights: dict
