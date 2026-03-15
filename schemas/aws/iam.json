@@ -1,5 +1,138 @@
 {
   "provider": "aws",
   "service": "IAM",
-  "fields": []
+  "fields": [
+    {
+      "fieldId": "MaxPasswordAge",
+      "label": "Maximum password age (days)",
+      "type": "integer",
+      "options": null,
+      "required": false,
+      "securityRelevance": "high",
+      "costRelevance": "none",
+      "complianceRelevance": ["HIPAA", "PCI-DSS", "SOC2"],
+      "aiExplainable": true
+    },
+    {
+      "fieldId": "MinimumPasswordLength",
+      "label": "Minimum password length",
+      "type": "integer",
+      "options": null,
+      "required": true,
+      "securityRelevance": "high",
+      "costRelevance": "none",
+      "complianceRelevance": ["HIPAA", "PCI-DSS", "SOC2"],
+      "aiExplainable": true
+    },
+    {
+      "fieldId": "RequireSymbols",
+      "label": "Require symbols in password",
+      "type": "boolean",
+      "options": null,
+      "required": false,
+      "securityRelevance": "medium",
+      "costRelevance": "none",
+      "complianceRelevance": ["PCI-DSS"],
+      "aiExplainable": true
+    },
+    {
+      "fieldId": "RequireNumbers",
+      "label": "Require numbers in password",
+      "type": "boolean",
+      "options": null,
+      "required": false,
+      "securityRelevance": "medium",
+      "costRelevance": "none",
+      "complianceRelevance": ["PCI-DSS"],
+      "aiExplainable": true
+    },
+    {
+      "fieldId": "RequireUppercaseCharacters",
+      "label": "Require uppercase characters",
+      "type": "boolean",
+      "options": null,
+      "required": false,
+      "securityRelevance": "medium",
+      "costRelevance": "none",
+      "complianceRelevance": ["PCI-DSS"],
+      "aiExplainable": true
+    },
+    {
+      "fieldId": "RequireLowercaseCharacters",
+      "label": "Require lowercase characters",
+      "type": "boolean",
+      "options": null,
+      "required": false,
+      "securityRelevance": "medium",
+      "costRelevance": "none",
+      "complianceRelevance": ["PCI-DSS"],
+      "aiExplainable": true
+    },
+    {
+      "fieldId": "PasswordReusePrevention",
+      "label": "Password reuse prevention (count)",
+      "type": "integer",
+      "options": null,
+      "required": false,
+      "securityRelevance": "high",
+      "costRelevance": "none",
+      "complianceRelevance": ["HIPAA", "PCI-DSS", "SOC2"],
+      "aiExplainable": true
+    },
+    {
+      "fieldId": "RootAccountMFA",
+      "label": "Root account MFA",
+      "type": "boolean",
+      "options": null,
+      "required": true,
+      "securityRelevance": "critical",
+      "costRelevance": "none",
+      "complianceRelevance": ["HIPAA", "PCI-DSS", "SOC2"],
+      "aiExplainable": true
+    },
+    {
+      "fieldId": "AllUsersMFA",
+      "label": "MFA for all IAM users",
+      "type": "boolean",
+      "options": null,
+      "required": false,
+      "securityRelevance": "critical",
+      "costRelevance": "none",
+      "complianceRelevance": ["HIPAA", "PCI-DSS", "SOC2"],
+      "aiExplainable": true
+    },
+    {
+      "fieldId": "AccessKeyRotation",
+      "label": "Access key rotation (days)",
+      "type": "integer",
+      "options": null,
+      "required": false,
+      "securityRelevance": "high",
+      "costRelevance": "none",
+      "complianceRelevance": ["HIPAA", "PCI-DSS", "SOC2"],
+      "aiExplainable": true
+    },
+    {
+      "fieldId": "AllowUsersToChangePassword",
+      "label": "Allow users to change password",
+      "type": "boolean",
+      "options": null,
+      "required": false,
+      "securityRelevance": "low",
+      "costRelevance": "none",
+      "complianceRelevance": [],
+      "aiExplainable": false
+    },
+    {
+      "fieldId": "HardExpiry",
+      "label": "Hard expiry (block expired passwords)",
+      "type": "boolean",
+      "options": null,
+      "required": false,
+      "securityRelevance": "medium",
+      "costRelevance": "none",
+      "complianceRelevance": ["PCI-DSS"],
+      "aiExplainable": true
+    }
+  ]
 }

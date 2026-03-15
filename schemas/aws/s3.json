@@ -1,5 +1,149 @@
 {
   "provider": "aws",
   "service": "S3",
-  "fields": []
+  "fields": [
+    {
+      "fieldId": "BlockPublicAcls",
+      "label": "Block public ACLs",
+      "type": "boolean",
+      "options": null,
+      "required": true,
+      "securityRelevance": "critical",
+      "costRelevance": "none",
+      "complianceRelevance": ["HIPAA", "PCI-DSS", "SOC2"],
+      "aiExplainable": true
+    },
+    {
+      "fieldId": "BlockPublicPolicy",
+      "label": "Block public bucket policies",
+      "type": "boolean",
+      "options": null,
+      "required": true,
+      "securityRelevance": "critical",
+      "costRelevance": "none",
+      "complianceRelevance": ["HIPAA", "PCI-DSS", "SOC2"],
+      "aiExplainable": true
+    },
+    {
+      "fieldId": "IgnorePublicAcls",
+      "label": "Ignore public ACLs",
+      "type": "boolean",
+      "options": null,
+      "required": true,
+      "securityRelevance": "critical",
+      "costRelevance": "none",
+      "complianceRelevance": ["HIPAA", "PCI-DSS", "SOC2"],
+      "aiExplainable": true
+    },
+    {
+      "fieldId": "RestrictPublicBuckets",
+      "label": "Restrict public buckets",
+      "type": "boolean",
+      "options": null,
+      "required": true,
+      "securityRelevance": "critical",
+      "costRelevance": "none",
+      "complianceRelevance": ["HIPAA", "PCI-DSS", "SOC2"],
+      "aiExplainable": true
+    },
+    {
+      "fieldId": "ServerSideEncryptionConfiguration",
+      "label": "Server-side encryption",
+      "type": "select",
+      "options": ["None", "SSE-S3 (AES-256)", "SSE-KMS"],
+      "required": true,
+      "securityRelevance": "critical",
+      "costRelevance": "medium",
+      "complianceRelevance": ["HIPAA", "PCI-DSS"],
+      "aiExplainable": true
+    },
+    {
+      "fieldId": "BucketKeyEnabled",
+      "label": "S3 Bucket Key for SSE-KMS",
+      "type": "boolean",
+      "options": null,
+      "required": false,
+      "securityRelevance": "low",
+      "costRelevance": "high",
+      "complianceRelevance": [],
+      "aiExplainable": true
+    },
+    {
+      "fieldId": "VersioningConfiguration",
+      "label": "Versioning",
+      "type": "select",
+      "options": ["Enabled", "Suspended"],
+      "required": false,
+      "securityRelevance": "high",
+      "costRelevance": "medium",
+      "complianceRelevance": ["SOC2"],
+      "aiExplainable": true
+    },
+    {
+      "fieldId": "MFADelete",
+      "label": "MFA delete protection",
+      "type": "boolean",
+      "options": null,
+      "required": false,
+      "securityRelevance": "critical",
+      "costRelevance": "none",
+      "complianceRelevance": ["HIPAA", "PCI-DSS", "SOC2"],
+      "aiExplainable": true
+    },
+    {
+      "fieldId": "LoggingConfiguration",
+      "label": "Server access logging",
+      "type": "boolean",
+      "options": null,
+      "required": false,
+      "securityRelevance": "medium",
+      "costRelevance": "low",
+      "complianceRelevance": ["HIPAA", "SOC2"],
+      "aiExplainable": true
+    },
+    {
+      "fieldId": "LifecycleConfiguration",
+      "label": "Lifecycle rules",
+      "type": "boolean",
+      "options": null,
+      "required": false,
+      "securityRelevance": "none",
+      "costRelevance": "high",
+      "complianceRelevance": [],
+      "aiExplainable": true
+    },
+    {
+      "fieldId": "ReplicationConfiguration",
+      "label": "Cross-region replication",
+      "type": "boolean",
+      "options": null,
+      "required": false,
+      "securityRelevance": "medium",
+      "costRelevance": "high",
+      "complianceRelevance": ["SOC2"],
+      "aiExplainable": true
+    },
+    {
+      "fieldId": "ObjectLockEnabled",
+      "label": "Object Lock (WORM)",
+      "type": "boolean",
+      "options": null,
+      "required": false,
+      "securityRelevance": "high",
+      "costRelevance": "low",
+      "complianceRelevance": ["HIPAA", "PCI-DSS", "SOC2"],
+      "aiExplainable": true
+    },
+    {
+      "fieldId": "IntelligentTieringConfiguration",
+      "label": "Intelligent-Tiering",
+      "type": "boolean",
+      "options": null,
+      "required": false,
+      "securityRelevance": "none",
+      "costRelevance": "high",
+      "complianceRelevance": [],
+      "aiExplainable": true
+    }
+  ]
 }
