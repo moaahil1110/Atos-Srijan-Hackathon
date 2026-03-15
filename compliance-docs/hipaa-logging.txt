@@ -1,3 +1,3 @@
-HIPAA Security Rule — Audit Controls | 45 CFR §164.312(b)
-
-Covered entities must implement hardware, software, and procedural mechanisms that record and examine activity in information systems that contain or use ePHI. Unlike most HIPAA Security Rule standards, audit controls are a required implementation specification — there is no option to document a reason for non-implementation. Every access, modification, and deletion event involving ePHI must be logged. Logs must be retained for a minimum of six years under the HIPAA documentation retention requirement (45 CFR §164.530(j)). For cloud storage services such as Amazon S3, server access logging must be enabled and log files must be stored in a separate bucket with restricted access to prevent tampering. Disabling logging on any system containing ePHI is a direct violation of §164.312(b) and eliminates the organisation's ability to detect unauthorised access or demonstrate compliance during an audit. HHS audits routinely cite missing or incomplete audit logs as a primary finding.
+# hipaa-logging.txt
+# TODO: paste actual clause text here
+# Must include clause number e.g. HIPAA §164.312(e)(2)(ii)

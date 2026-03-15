@@ -1,3 +1,3 @@
-SOC 2 — Common Criteria: Monitoring and Logging | CC7.1, CC7.2, CC7.3
-
-SOC 2 Common Criteria CC7.1 requires that the entity uses detection and monitoring procedures to identify changes to configurations or the environment that could have a negative impact on its ability to meet its objectives. CC7.2 requires that the entity monitors system components and the operation of those controls to detect anomalies that are indicative of malicious acts, natural disasters, and errors affecting the entity's ability to meet its objectives. CC7.3 requires that the entity evaluates security events to determine whether they could or have resulted in a failure of the entity to meet its objectives. For cloud storage, server access logging must be enabled on all buckets that store customer or sensitive data — logs must capture who accessed what, when, and from where. Log data must be retained long enough to support incident investigation and audit evidence collection; 12 months is the commonly accepted minimum. A SOC 2 auditor will test for the existence and completeness of logs as part of the CC7 criteria — missing logs for any period during the audit window will result in an exception finding that must be disclosed in the audit report.
+# soc2-logging.txt
+# TODO: paste actual clause text here
+# Must include clause number e.g. HIPAA §164.312(e)(2)(ii)

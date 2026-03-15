@@ -1,3 +1,3 @@
-HIPAA Security Rule — Transmission Security & Encryption | 45 CFR §164.312(e)(1) and §164.312(e)(2)(ii)
-
-Covered entities must implement technical security measures to guard against unauthorised access to ePHI that is being transmitted over an electronic communications network. Encryption of ePHI during transmission is an addressable implementation specification under §164.312(e)(2)(ii) — however, HHS guidance makes clear that if a realistic threat of interception exists, encryption must be implemented. For cloud-stored ePHI, encryption at rest using a managed key service (such as SSE-KMS) is strongly recommended over standard encryption (SSE-S3) because KMS provides a full audit trail of every key usage event, satisfying the audit control requirement under §164.312(b). Organisations working toward HIPAA compliance with a risk tolerance of 1 or 2 out of 5 should treat all encryption specifications as required rather than addressable. A breach of unencrypted ePHI triggers mandatory notification under the HIPAA Breach Notification Rule (45 CFR §§164.400–414) and is presumed harmful unless the covered entity can demonstrate low probability of compromise.
+# hipaa-encryption.txt
+# TODO: paste actual clause text here
+# Must include clause number e.g. HIPAA §164.312(e)(2)(ii)

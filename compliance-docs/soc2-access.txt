@@ -1,3 +1,3 @@
-SOC 2 — Common Criteria: Logical and Physical Access Controls | CC6.1, CC6.2, CC6.3
-
-SOC 2 Common Criteria CC6.1 requires that the entity implements logical access security measures to protect against threats from sources outside its system boundaries. CC6.2 requires that prior to issuing system credentials and granting system access, the entity registers and authorises new internal and external users. CC6.3 requires that the entity authorises, modifies, or removes access to data, software, functions, and other protected information assets based on approved and documented access requests. For cloud infrastructure, this means all storage resources must have public access blocked by default, access must be granted through documented IAM policies with least-privilege principles, and access reviews must be conducted periodically. During a SOC 2 Type II audit, an auditor will test whether controls were operating effectively over the audit period — a single misconfigured public bucket containing customer data discovered during the audit period is sufficient to result in a qualified (adverse) opinion. Organisations pursuing SOC 2 certification should treat all CC6 criteria as non-negotiable from day one of their compliance programme.
+# soc2-access.txt
+# TODO: paste actual clause text here
+# Must include clause number e.g. HIPAA §164.312(e)(2)(ii)

@@ -1,0 +1,5 @@
+{
+  "provider": "aws",
+  "service": "S3",
+  "fields": []
+}

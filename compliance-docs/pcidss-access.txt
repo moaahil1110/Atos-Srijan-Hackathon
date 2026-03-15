@@ -1,3 +1,3 @@
-PCI DSS v4.0 — Access Control | Requirements 7 and 8
-
-PCI DSS Requirement 7 mandates that access to system components and cardholder data is restricted to only those individuals whose job requires such access — this is the principle of least privilege applied to payment card data environments. Requirement 8 requires that all users are assigned a unique ID before allowing them to access system components or cardholder data, so every action can be traced to a known individual. Shared or generic credentials are explicitly prohibited. Multi-factor authentication is required for all access into the cardholder data environment (CDE) under Requirement 8.4. For cloud storage containing cardholder data, public access must be blocked at the bucket and account level — any misconfiguration that exposes cardholder data to the public internet is an automatic critical finding in a PCI DSS audit. Organisations that suffer a cardholder data breach due to an access control failure face card brand fines typically ranging from $5,000 to $100,000 per month until compliance is restored, in addition to potential loss of the right to process card payments.
+# pcidss-access.txt
+# TODO: paste actual clause text here
+# Must include clause number e.g. HIPAA §164.312(e)(2)(ii)

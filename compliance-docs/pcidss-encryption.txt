@@ -1,3 +1,3 @@
-PCI DSS v4.0 — Encryption of Cardholder Data | Requirements 3 and 4
-
-PCI DSS Requirement 3 requires that stored cardholder data is protected using strong cryptography. Primary Account Numbers (PANs) must be rendered unreadable anywhere they are stored — acceptable methods include one-way hashes, truncation, index tokens, or strong cryptography with associated key management processes. Requirement 4 requires that cardholder data transmitted over open, public networks is protected with strong cryptography during transmission. For cloud storage services, server-side encryption is mandatory for any bucket that stores cardholder data; SSE-KMS is preferred over SSE-S3 because it provides centralised key management and a complete CloudTrail audit log of every encryption and decryption operation, satisfying both the encryption and logging requirements simultaneously. Storing PANs in plaintext in any cloud storage service is an automatic critical finding and grounds for immediate suspension of payment processing privileges by card brands. Key management procedures must be documented and keys must be rotated on a defined schedule under Requirement 3.7.
+# pcidss-encryption.txt
+# TODO: paste actual clause text here
+# Must include clause number e.g. HIPAA §164.312(e)(2)(ii)
