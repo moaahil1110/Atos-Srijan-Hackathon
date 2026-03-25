@@ -1,0 +1,72 @@
+{
+  "provider": "gcp",
+  "service": "Cloud Storage",
+  "fields": [
+    {
+      "fieldId": "publicAccessPrevention",
+      "label": "Public access prevention",
+      "type": "select",
+      "options": ["inherited", "enforced"],
+      "required": false,
+      "securityRelevance": "critical",
+      "costRelevance": "none",
+      "complianceRelevance": ["HIPAA", "PCI-DSS", "SOC2"],
+      "aiExplainable": true
+    },
+    {
+      "fieldId": "uniformBucketLevelAccess",
+      "label": "Uniform bucket-level access",
+      "type": "boolean",
+      "options": null,
+      "required": false,
+      "securityRelevance": "critical",
+      "costRelevance": "none",
+      "complianceRelevance": ["HIPAA", "SOC2"],
+      "aiExplainable": true
+    },
+    {
+      "fieldId": "encryption.defaultKmsKeyName",
+      "label": "Default CMEK",
+      "type": "string",
+      "options": null,
+      "required": false,
+      "securityRelevance": "high",
+      "costRelevance": "medium",
+      "complianceRelevance": ["HIPAA", "PCI-DSS"],
+      "aiExplainable": true
+    },
+    {
+      "fieldId": "versioning.enabled",
+      "label": "Object versioning",
+      "type": "boolean",
+      "options": null,
+      "required": false,
+      "securityRelevance": "medium",
+      "costRelevance": "medium",
+      "complianceRelevance": ["SOC2"],
+      "aiExplainable": true
+    },
+    {
+      "fieldId": "retentionPolicy.isLocked",
+      "label": "Retention policy lock",
+      "type": "boolean",
+      "options": null,
+      "required": false,
+      "securityRelevance": "medium",
+      "costRelevance": "medium",
+      "complianceRelevance": ["HIPAA", "GDPR"],
+      "aiExplainable": true
+    },
+    {
+      "fieldId": "logging.enabled",
+      "label": "Access logging",
+      "type": "boolean",
+      "options": null,
+      "required": false,
+      "securityRelevance": "medium",
+      "costRelevance": "low",
+      "complianceRelevance": ["SOC2"],
+      "aiExplainable": true
+    }
+  ]
+}

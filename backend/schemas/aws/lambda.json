@@ -1,0 +1,94 @@
+{
+  "provider": "aws",
+  "service": "Lambda",
+  "fields": [
+    {
+      "fieldId": "VpcConfig",
+      "label": "VPC configuration",
+      "type": "string",
+      "options": null,
+      "required": false,
+      "securityRelevance": "high",
+      "costRelevance": "medium",
+      "complianceRelevance": ["HIPAA", "SOC2"],
+      "aiExplainable": true
+    },
+    {
+      "fieldId": "ReservedConcurrency",
+      "label": "Reserved concurrency",
+      "type": "integer",
+      "options": null,
+      "required": false,
+      "securityRelevance": "medium",
+      "costRelevance": "high",
+      "complianceRelevance": [],
+      "aiExplainable": true
+    },
+    {
+      "fieldId": "Environment.Variables",
+      "label": "Environment variables",
+      "type": "string",
+      "options": null,
+      "required": false,
+      "securityRelevance": "critical",
+      "costRelevance": "none",
+      "complianceRelevance": ["HIPAA", "PCI-DSS"],
+      "aiExplainable": true
+    },
+    {
+      "fieldId": "Timeout",
+      "label": "Function timeout",
+      "type": "integer",
+      "options": null,
+      "required": false,
+      "securityRelevance": "medium",
+      "costRelevance": "medium",
+      "complianceRelevance": [],
+      "aiExplainable": true
+    },
+    {
+      "fieldId": "MemorySize",
+      "label": "Memory size",
+      "type": "integer",
+      "options": null,
+      "required": false,
+      "securityRelevance": "low",
+      "costRelevance": "high",
+      "complianceRelevance": [],
+      "aiExplainable": false
+    },
+    {
+      "fieldId": "TracingConfig.Mode",
+      "label": "X-Ray tracing",
+      "type": "select",
+      "options": ["PassThrough", "Active"],
+      "required": false,
+      "securityRelevance": "medium",
+      "costRelevance": "low",
+      "complianceRelevance": ["SOC2"],
+      "aiExplainable": true
+    },
+    {
+      "fieldId": "KmsKeyArn",
+      "label": "KMS key",
+      "type": "string",
+      "options": null,
+      "required": false,
+      "securityRelevance": "high",
+      "costRelevance": "medium",
+      "complianceRelevance": ["HIPAA", "PCI-DSS"],
+      "aiExplainable": true
+    },
+    {
+      "fieldId": "DeadLetterConfig",
+      "label": "Dead-letter queue",
+      "type": "boolean",
+      "options": null,
+      "required": false,
+      "securityRelevance": "medium",
+      "costRelevance": "low",
+      "complianceRelevance": ["SOC2"],
+      "aiExplainable": true
+    }
+  ]
+}

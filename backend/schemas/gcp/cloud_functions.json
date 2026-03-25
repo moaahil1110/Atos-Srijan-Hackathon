@@ -1,0 +1,72 @@
+{
+  "provider": "gcp",
+  "service": "Cloud Functions",
+  "fields": [
+    {
+      "fieldId": "serviceConfig.ingressSettings",
+      "label": "Ingress settings",
+      "type": "select",
+      "options": ["ALLOW_ALL", "ALLOW_INTERNAL_ONLY", "ALLOW_INTERNAL_AND_GCLB"],
+      "required": false,
+      "securityRelevance": "critical",
+      "costRelevance": "none",
+      "complianceRelevance": ["HIPAA", "SOC2"],
+      "aiExplainable": true
+    },
+    {
+      "fieldId": "serviceConfig.vpcConnector",
+      "label": "VPC connector",
+      "type": "string",
+      "options": null,
+      "required": false,
+      "securityRelevance": "high",
+      "costRelevance": "medium",
+      "complianceRelevance": ["HIPAA", "SOC2"],
+      "aiExplainable": true
+    },
+    {
+      "fieldId": "serviceConfig.environmentVariables",
+      "label": "Environment variables",
+      "type": "string",
+      "options": null,
+      "required": false,
+      "securityRelevance": "critical",
+      "costRelevance": "none",
+      "complianceRelevance": ["HIPAA", "PCI-DSS"],
+      "aiExplainable": true
+    },
+    {
+      "fieldId": "serviceConfig.timeoutSeconds",
+      "label": "Timeout seconds",
+      "type": "integer",
+      "options": null,
+      "required": false,
+      "securityRelevance": "medium",
+      "costRelevance": "medium",
+      "complianceRelevance": [],
+      "aiExplainable": true
+    },
+    {
+      "fieldId": "serviceConfig.availableMemory",
+      "label": "Available memory",
+      "type": "select",
+      "options": ["256M", "512M", "1024M"],
+      "required": false,
+      "securityRelevance": "low",
+      "costRelevance": "high",
+      "complianceRelevance": [],
+      "aiExplainable": false
+    },
+    {
+      "fieldId": "serviceConfig.maxInstanceCount",
+      "label": "Max instance count",
+      "type": "integer",
+      "options": null,
+      "required": false,
+      "securityRelevance": "medium",
+      "costRelevance": "high",
+      "complianceRelevance": [],
+      "aiExplainable": true
+    }
+  ]
+}

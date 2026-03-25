@@ -1,0 +1,94 @@
+{
+  "provider": "aws",
+  "service": "IAM",
+  "fields": [
+    {
+      "fieldId": "RequireMFA",
+      "label": "Require MFA",
+      "type": "boolean",
+      "options": null,
+      "required": true,
+      "securityRelevance": "critical",
+      "costRelevance": "none",
+      "complianceRelevance": ["HIPAA", "PCI-DSS", "SOC2"],
+      "aiExplainable": true
+    },
+    {
+      "fieldId": "MinimumPasswordLength",
+      "label": "Minimum password length",
+      "type": "integer",
+      "options": null,
+      "required": false,
+      "securityRelevance": "high",
+      "costRelevance": "none",
+      "complianceRelevance": ["PCI-DSS", "SOC2"],
+      "aiExplainable": true
+    },
+    {
+      "fieldId": "PasswordReusePrevention",
+      "label": "Password reuse prevention",
+      "type": "integer",
+      "options": null,
+      "required": false,
+      "securityRelevance": "high",
+      "costRelevance": "none",
+      "complianceRelevance": ["PCI-DSS", "SOC2"],
+      "aiExplainable": true
+    },
+    {
+      "fieldId": "AllowProgrammaticAccess",
+      "label": "Allow long-lived access keys",
+      "type": "boolean",
+      "options": null,
+      "required": false,
+      "securityRelevance": "critical",
+      "costRelevance": "none",
+      "complianceRelevance": ["HIPAA", "PCI-DSS"],
+      "aiExplainable": true
+    },
+    {
+      "fieldId": "RotateAccessKeys",
+      "label": "Access key rotation",
+      "type": "boolean",
+      "options": null,
+      "required": false,
+      "securityRelevance": "high",
+      "costRelevance": "low",
+      "complianceRelevance": ["SOC2"],
+      "aiExplainable": true
+    },
+    {
+      "fieldId": "PermissionsBoundary",
+      "label": "Permissions boundary",
+      "type": "boolean",
+      "options": null,
+      "required": false,
+      "securityRelevance": "high",
+      "costRelevance": "none",
+      "complianceRelevance": ["SOC2"],
+      "aiExplainable": true
+    },
+    {
+      "fieldId": "CloudTrailLogging",
+      "label": "CloudTrail logging",
+      "type": "boolean",
+      "options": null,
+      "required": false,
+      "securityRelevance": "medium",
+      "costRelevance": "low",
+      "complianceRelevance": ["SOC2"],
+      "aiExplainable": true
+    },
+    {
+      "fieldId": "CrossAccountAccess",
+      "label": "Cross-account access",
+      "type": "select",
+      "options": ["Disabled", "Scoped", "Open"],
+      "required": false,
+      "securityRelevance": "high",
+      "costRelevance": "none",
+      "complianceRelevance": ["SOC2"],
+      "aiExplainable": true
+    }
+  ]
+}

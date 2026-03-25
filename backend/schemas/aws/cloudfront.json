@@ -1,0 +1,61 @@
+{
+  "provider": "aws",
+  "service": "CloudFront",
+  "fields": [
+    {
+      "fieldId": "ViewerProtocolPolicy",
+      "label": "Viewer protocol policy",
+      "type": "select",
+      "options": ["allow-all", "redirect-to-https", "https-only"],
+      "required": true,
+      "securityRelevance": "critical",
+      "costRelevance": "none",
+      "complianceRelevance": ["HIPAA", "PCI-DSS", "SOC2"],
+      "aiExplainable": true
+    },
+    {
+      "fieldId": "OriginProtocolPolicy",
+      "label": "Origin protocol policy",
+      "type": "select",
+      "options": ["http-only", "match-viewer", "https-only"],
+      "required": false,
+      "securityRelevance": "high",
+      "costRelevance": "none",
+      "complianceRelevance": ["HIPAA", "PCI-DSS"],
+      "aiExplainable": true
+    },
+    {
+      "fieldId": "MinimumProtocolVersion",
+      "label": "Minimum TLS protocol version",
+      "type": "select",
+      "options": ["TLSv1", "TLSv1.1_2016", "TLSv1.2_2021"],
+      "required": false,
+      "securityRelevance": "high",
+      "costRelevance": "none",
+      "complianceRelevance": ["PCI-DSS", "SOC2"],
+      "aiExplainable": true
+    },
+    {
+      "fieldId": "LoggingEnabled",
+      "label": "Access logging",
+      "type": "boolean",
+      "options": null,
+      "required": false,
+      "securityRelevance": "medium",
+      "costRelevance": "low",
+      "complianceRelevance": ["SOC2"],
+      "aiExplainable": true
+    },
+    {
+      "fieldId": "WafEnabled",
+      "label": "WAF protection",
+      "type": "boolean",
+      "options": null,
+      "required": false,
+      "securityRelevance": "high",
+      "costRelevance": "medium",
+      "complianceRelevance": ["SOC2"],
+      "aiExplainable": true
+    }
+  ]
+}

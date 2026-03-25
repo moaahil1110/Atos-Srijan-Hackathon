@@ -1,0 +1,105 @@
+{
+  "provider": "aws",
+  "service": "EC2",
+  "fields": [
+    {
+      "fieldId": "MetadataOptions.HttpTokens",
+      "label": "IMDSv2 token requirement",
+      "type": "select",
+      "options": ["optional", "required"],
+      "required": true,
+      "securityRelevance": "critical",
+      "costRelevance": "none",
+      "complianceRelevance": ["HIPAA", "PCI-DSS"],
+      "aiExplainable": true
+    },
+    {
+      "fieldId": "NetworkInterfaces.AssociatePublicIpAddress",
+      "label": "Associate public IP address",
+      "type": "boolean",
+      "options": null,
+      "required": false,
+      "securityRelevance": "critical",
+      "costRelevance": "none",
+      "complianceRelevance": ["HIPAA", "PCI-DSS", "SOC2"],
+      "aiExplainable": true
+    },
+    {
+      "fieldId": "BlockDeviceMappings.Ebs.Encrypted",
+      "label": "Encrypt root volume",
+      "type": "boolean",
+      "options": null,
+      "required": true,
+      "securityRelevance": "critical",
+      "costRelevance": "low",
+      "complianceRelevance": ["HIPAA", "PCI-DSS"],
+      "aiExplainable": true
+    },
+    {
+      "fieldId": "IamInstanceProfile",
+      "label": "IAM instance profile",
+      "type": "string",
+      "options": null,
+      "required": false,
+      "securityRelevance": "high",
+      "costRelevance": "none",
+      "complianceRelevance": ["SOC2"],
+      "aiExplainable": true
+    },
+    {
+      "fieldId": "SecurityGroupIds",
+      "label": "Security groups",
+      "type": "string",
+      "options": null,
+      "required": true,
+      "securityRelevance": "critical",
+      "costRelevance": "none",
+      "complianceRelevance": ["HIPAA", "PCI-DSS", "SOC2"],
+      "aiExplainable": true
+    },
+    {
+      "fieldId": "MonitoringEnabled",
+      "label": "Detailed monitoring",
+      "type": "boolean",
+      "options": null,
+      "required": false,
+      "securityRelevance": "medium",
+      "costRelevance": "medium",
+      "complianceRelevance": ["SOC2"],
+      "aiExplainable": true
+    },
+    {
+      "fieldId": "DisableApiTermination",
+      "label": "Disable API termination",
+      "type": "boolean",
+      "options": null,
+      "required": false,
+      "securityRelevance": "high",
+      "costRelevance": "none",
+      "complianceRelevance": ["SOC2"],
+      "aiExplainable": true
+    },
+    {
+      "fieldId": "MetadataOptions.HttpEndpoint",
+      "label": "Metadata endpoint enabled",
+      "type": "select",
+      "options": ["disabled", "enabled"],
+      "required": true,
+      "securityRelevance": "critical",
+      "costRelevance": "none",
+      "complianceRelevance": ["HIPAA", "PCI-DSS"],
+      "aiExplainable": true
+    },
+    {
+      "fieldId": "InstanceType",
+      "label": "Instance type",
+      "type": "select",
+      "options": ["t3.medium", "m6i.large", "c7g.large"],
+      "required": false,
+      "securityRelevance": "low",
+      "costRelevance": "high",
+      "complianceRelevance": [],
+      "aiExplainable": false
+    }
+  ]
+}

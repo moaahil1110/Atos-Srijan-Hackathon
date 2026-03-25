@@ -1,0 +1,72 @@
+{
+  "provider": "azure",
+  "service": "Virtual Machines",
+  "fields": [
+    {
+      "fieldId": "securityType",
+      "label": "Security type",
+      "type": "select",
+      "options": ["Standard", "TrustedLaunch", "ConfidentialVM"],
+      "required": false,
+      "securityRelevance": "critical",
+      "costRelevance": "medium",
+      "complianceRelevance": ["HIPAA", "PCI-DSS", "SOC2"],
+      "aiExplainable": true
+    },
+    {
+      "fieldId": "secureBootEnabled",
+      "label": "Secure boot",
+      "type": "boolean",
+      "options": null,
+      "required": false,
+      "securityRelevance": "critical",
+      "costRelevance": "none",
+      "complianceRelevance": ["HIPAA", "PCI-DSS"],
+      "aiExplainable": true
+    },
+    {
+      "fieldId": "vTpmEnabled",
+      "label": "vTPM",
+      "type": "boolean",
+      "options": null,
+      "required": false,
+      "securityRelevance": "critical",
+      "costRelevance": "none",
+      "complianceRelevance": ["HIPAA", "PCI-DSS"],
+      "aiExplainable": true
+    },
+    {
+      "fieldId": "publicIpAddressEnabled",
+      "label": "Public IP address",
+      "type": "boolean",
+      "options": null,
+      "required": false,
+      "securityRelevance": "critical",
+      "costRelevance": "none",
+      "complianceRelevance": ["HIPAA", "PCI-DSS", "SOC2"],
+      "aiExplainable": true
+    },
+    {
+      "fieldId": "diskEncryptionSetEnabled",
+      "label": "Disk encryption set",
+      "type": "boolean",
+      "options": null,
+      "required": false,
+      "securityRelevance": "high",
+      "costRelevance": "low",
+      "complianceRelevance": ["HIPAA", "PCI-DSS"],
+      "aiExplainable": true
+    },
+    {
+      "fieldId": "bootDiagnosticsEnabled",
+      "label": "Boot diagnostics",
+      "type": "boolean",
+      "options": null,
+      "required": false,
+      "securityRelevance": "medium",
+      "costRelevance": "low",
+      "complianceRelevance": ["SOC2"],
+      "aiExplainable": true
+    }
+  ]
+}

@@ -1,0 +1,72 @@
+{
+  "provider": "azure",
+  "service": "Azure Active Directory",
+  "fields": [
+    {
+      "fieldId": "conditionalAccessEnabled",
+      "label": "Conditional access",
+      "type": "boolean",
+      "options": null,
+      "required": true,
+      "securityRelevance": "critical",
+      "costRelevance": "none",
+      "complianceRelevance": ["HIPAA", "PCI-DSS", "SOC2"],
+      "aiExplainable": true
+    },
+    {
+      "fieldId": "securityDefaultsEnabled",
+      "label": "Security defaults",
+      "type": "boolean",
+      "options": null,
+      "required": false,
+      "securityRelevance": "critical",
+      "costRelevance": "none",
+      "complianceRelevance": ["SOC2"],
+      "aiExplainable": true
+    },
+    {
+      "fieldId": "passwordProtectionEnabled",
+      "label": "Password protection",
+      "type": "boolean",
+      "options": null,
+      "required": false,
+      "securityRelevance": "high",
+      "costRelevance": "none",
+      "complianceRelevance": ["SOC2"],
+      "aiExplainable": true
+    },
+    {
+      "fieldId": "privilegedIdentityManagementEnabled",
+      "label": "Privileged identity management",
+      "type": "boolean",
+      "options": null,
+      "required": false,
+      "securityRelevance": "high",
+      "costRelevance": "medium",
+      "complianceRelevance": ["HIPAA", "PCI-DSS", "SOC2"],
+      "aiExplainable": true
+    },
+    {
+      "fieldId": "legacyAuthenticationEnabled",
+      "label": "Legacy authentication",
+      "type": "boolean",
+      "options": null,
+      "required": false,
+      "securityRelevance": "high",
+      "costRelevance": "none",
+      "complianceRelevance": ["PCI-DSS", "SOC2"],
+      "aiExplainable": true
+    },
+    {
+      "fieldId": "auditLoggingEnabled",
+      "label": "Audit logging",
+      "type": "boolean",
+      "options": null,
+      "required": false,
+      "securityRelevance": "medium",
+      "costRelevance": "low",
+      "complianceRelevance": ["HIPAA", "SOC2"],
+      "aiExplainable": true
+    }
+  ]
+}

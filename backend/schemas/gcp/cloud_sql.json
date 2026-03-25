@@ -1,0 +1,72 @@
+{
+  "provider": "gcp",
+  "service": "Cloud SQL",
+  "fields": [
+    {
+      "fieldId": "settings.ipConfiguration.requireSsl",
+      "label": "Require SSL",
+      "type": "boolean",
+      "options": null,
+      "required": false,
+      "securityRelevance": "critical",
+      "costRelevance": "none",
+      "complianceRelevance": ["HIPAA", "PCI-DSS", "SOC2"],
+      "aiExplainable": true
+    },
+    {
+      "fieldId": "settings.ipConfiguration.ipv4Enabled",
+      "label": "Public IPv4",
+      "type": "boolean",
+      "options": null,
+      "required": false,
+      "securityRelevance": "critical",
+      "costRelevance": "none",
+      "complianceRelevance": ["HIPAA", "PCI-DSS"],
+      "aiExplainable": true
+    },
+    {
+      "fieldId": "settings.backupConfiguration.enabled",
+      "label": "Automated backups",
+      "type": "boolean",
+      "options": null,
+      "required": false,
+      "securityRelevance": "medium",
+      "costRelevance": "medium",
+      "complianceRelevance": ["SOC2"],
+      "aiExplainable": true
+    },
+    {
+      "fieldId": "settings.availabilityType",
+      "label": "Availability type",
+      "type": "select",
+      "options": ["ZONAL", "REGIONAL"],
+      "required": false,
+      "securityRelevance": "medium",
+      "costRelevance": "high",
+      "complianceRelevance": ["SOC2"],
+      "aiExplainable": true
+    },
+    {
+      "fieldId": "deletionProtectionEnabled",
+      "label": "Deletion protection",
+      "type": "boolean",
+      "options": null,
+      "required": false,
+      "securityRelevance": "high",
+      "costRelevance": "none",
+      "complianceRelevance": ["HIPAA", "SOC2"],
+      "aiExplainable": true
+    },
+    {
+      "fieldId": "settings.insightsConfig.queryInsightsEnabled",
+      "label": "Query insights",
+      "type": "boolean",
+      "options": null,
+      "required": false,
+      "securityRelevance": "medium",
+      "costRelevance": "low",
+      "complianceRelevance": ["SOC2"],
+      "aiExplainable": true
+    }
+  ]
+}

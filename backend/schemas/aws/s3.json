@@ -1,0 +1,116 @@
+{
+  "provider": "aws",
+  "service": "S3",
+  "fields": [
+    {
+      "fieldId": "BlockPublicAcls",
+      "label": "Block public ACLs",
+      "type": "boolean",
+      "options": null,
+      "required": true,
+      "securityRelevance": "critical",
+      "costRelevance": "none",
+      "complianceRelevance": ["HIPAA", "PCI-DSS", "SOC2"],
+      "aiExplainable": true
+    },
+    {
+      "fieldId": "IgnorePublicAcls",
+      "label": "Ignore public ACLs",
+      "type": "boolean",
+      "options": null,
+      "required": true,
+      "securityRelevance": "critical",
+      "costRelevance": "none",
+      "complianceRelevance": ["HIPAA", "PCI-DSS", "SOC2"],
+      "aiExplainable": true
+    },
+    {
+      "fieldId": "BlockPublicPolicy",
+      "label": "Block public bucket policies",
+      "type": "boolean",
+      "options": null,
+      "required": true,
+      "securityRelevance": "critical",
+      "costRelevance": "none",
+      "complianceRelevance": ["HIPAA", "PCI-DSS", "SOC2"],
+      "aiExplainable": true
+    },
+    {
+      "fieldId": "RestrictPublicBuckets",
+      "label": "Restrict public buckets",
+      "type": "boolean",
+      "options": null,
+      "required": true,
+      "securityRelevance": "critical",
+      "costRelevance": "none",
+      "complianceRelevance": ["HIPAA", "PCI-DSS", "SOC2"],
+      "aiExplainable": true
+    },
+    {
+      "fieldId": "ServerSideEncryptionConfiguration",
+      "label": "Server-side encryption",
+      "type": "select",
+      "options": ["None", "SSE-S3", "SSE-KMS"],
+      "required": true,
+      "securityRelevance": "critical",
+      "costRelevance": "low",
+      "complianceRelevance": ["HIPAA", "PCI-DSS"],
+      "aiExplainable": true
+    },
+    {
+      "fieldId": "BucketKeyEnabled",
+      "label": "Bucket key enabled",
+      "type": "boolean",
+      "options": null,
+      "required": false,
+      "securityRelevance": "medium",
+      "costRelevance": "medium",
+      "complianceRelevance": ["HIPAA"],
+      "aiExplainable": true
+    },
+    {
+      "fieldId": "VersioningConfiguration",
+      "label": "Versioning",
+      "type": "select",
+      "options": ["Suspended", "Enabled"],
+      "required": false,
+      "securityRelevance": "high",
+      "costRelevance": "medium",
+      "complianceRelevance": ["SOC2"],
+      "aiExplainable": true
+    },
+    {
+      "fieldId": "LoggingEnabled",
+      "label": "Access logging",
+      "type": "boolean",
+      "options": null,
+      "required": false,
+      "securityRelevance": "medium",
+      "costRelevance": "low",
+      "complianceRelevance": ["SOC2"],
+      "aiExplainable": true
+    },
+    {
+      "fieldId": "ObjectLockEnabled",
+      "label": "Object lock",
+      "type": "boolean",
+      "options": null,
+      "required": false,
+      "securityRelevance": "high",
+      "costRelevance": "low",
+      "complianceRelevance": ["HIPAA", "SOC2"],
+      "aiExplainable": true
+    },
+    {
+      "fieldId": "LifecycleConfiguration",
+      "label": "Lifecycle rules",
+      "type": "string",
+      "options": null,
+      "required": false,
+      "securityRelevance": "low",
+      "costRelevance": "high",
+      "complianceRelevance": [],
+      "aiExplainable": false
+    }
+  ]
+}

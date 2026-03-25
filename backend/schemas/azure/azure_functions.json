@@ -1,0 +1,72 @@
+{
+  "provider": "azure",
+  "service": "Azure Functions",
+  "fields": [
+    {
+      "fieldId": "httpsOnly",
+      "label": "HTTPS only",
+      "type": "boolean",
+      "options": null,
+      "required": true,
+      "securityRelevance": "critical",
+      "costRelevance": "none",
+      "complianceRelevance": ["HIPAA", "PCI-DSS", "SOC2"],
+      "aiExplainable": true
+    },
+    {
+      "fieldId": "publicNetworkAccess",
+      "label": "Public network access",
+      "type": "select",
+      "options": ["Enabled", "Disabled"],
+      "required": false,
+      "securityRelevance": "high",
+      "costRelevance": "none",
+      "complianceRelevance": ["HIPAA", "SOC2"],
+      "aiExplainable": true
+    },
+    {
+      "fieldId": "clientCertMode",
+      "label": "Client certificate mode",
+      "type": "select",
+      "options": ["Optional", "Required"],
+      "required": false,
+      "securityRelevance": "high",
+      "costRelevance": "none",
+      "complianceRelevance": ["SOC2"],
+      "aiExplainable": true
+    },
+    {
+      "fieldId": "vnetRouteAllEnabled",
+      "label": "Route all traffic through VNet",
+      "type": "boolean",
+      "options": null,
+      "required": false,
+      "securityRelevance": "high",
+      "costRelevance": "medium",
+      "complianceRelevance": ["HIPAA", "SOC2"],
+      "aiExplainable": true
+    },
+    {
+      "fieldId": "ftpsState",
+      "label": "FTPS state",
+      "type": "select",
+      "options": ["AllAllowed", "FtpsOnly", "Disabled"],
+      "required": false,
+      "securityRelevance": "medium",
+      "costRelevance": "none",
+      "complianceRelevance": ["SOC2"],
+      "aiExplainable": true
+    },
+    {
+      "fieldId": "applicationInsightsEnabled",
+      "label": "Application Insights",
+      "type": "boolean",
+      "options": null,
+      "required": false,
+      "securityRelevance": "medium",
+      "costRelevance": "low",
+      "complianceRelevance": ["SOC2"],
+      "aiExplainable": true
+    }
+  ]
+}

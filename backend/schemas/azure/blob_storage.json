@@ -1,0 +1,83 @@
+{
+  "provider": "azure",
+  "service": "Blob Storage",
+  "fields": [
+    {
+      "fieldId": "allowBlobPublicAccess",
+      "label": "Allow public blob access",
+      "type": "boolean",
+      "options": null,
+      "required": false,
+      "securityRelevance": "critical",
+      "costRelevance": "none",
+      "complianceRelevance": ["HIPAA", "PCI-DSS", "SOC2"],
+      "aiExplainable": true
+    },
+    {
+      "fieldId": "supportsHttpsTrafficOnly",
+      "label": "HTTPS traffic only",
+      "type": "boolean",
+      "options": null,
+      "required": true,
+      "securityRelevance": "critical",
+      "costRelevance": "none",
+      "complianceRelevance": ["HIPAA", "PCI-DSS", "SOC2", "GDPR"],
+      "aiExplainable": true
+    },
+    {
+      "fieldId": "minimumTlsVersion",
+      "label": "Minimum TLS version",
+      "type": "select",
+      "options": ["TLS1_0", "TLS1_1", "TLS1_2"],
+      "required": true,
+      "securityRelevance": "high",
+      "costRelevance": "none",
+      "complianceRelevance": ["HIPAA", "PCI-DSS", "SOC2"],
+      "aiExplainable": true
+    },
+    {
+      "fieldId": "allowSharedKeyAccess",
+      "label": "Allow shared key access",
+      "type": "boolean",
+      "options": null,
+      "required": false,
+      "securityRelevance": "high",
+      "costRelevance": "none",
+      "complianceRelevance": ["SOC2"],
+      "aiExplainable": true
+    },
+    {
+      "fieldId": "defaultToOAuthAuthentication",
+      "label": "Default to OAuth authentication",
+      "type": "boolean",
+      "options": null,
+      "required": false,
+      "securityRelevance": "high",
+      "costRelevance": "none",
+      "complianceRelevance": ["HIPAA", "SOC2"],
+      "aiExplainable": true
+    },
+    {
+      "fieldId": "publicNetworkAccess",
+      "label": "Public network access",
+      "type": "select",
+      "options": ["Enabled", "Disabled"],
+      "required": false,
+      "securityRelevance": "high",
+      "costRelevance": "none",
+      "complianceRelevance": ["HIPAA", "PCI-DSS", "SOC2"],
+      "aiExplainable": true
+    },
+    {
+      "fieldId": "infrastructureEncryption",
+      "label": "Infrastructure encryption",
+      "type": "boolean",
+      "options": null,
+      "required": false,
+      "securityRelevance": "medium",
+      "costRelevance": "low",
+      "complianceRelevance": ["HIPAA", "GDPR"],
+      "aiExplainable": true
+    }
+  ]
+}

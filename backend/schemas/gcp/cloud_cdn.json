@@ -1,0 +1,61 @@
+{
+  "provider": "gcp",
+  "service": "Cloud CDN",
+  "fields": [
+    {
+      "fieldId": "httpsRedirectEnabled",
+      "label": "HTTPS redirect",
+      "type": "boolean",
+      "options": null,
+      "required": false,
+      "securityRelevance": "critical",
+      "costRelevance": "none",
+      "complianceRelevance": ["HIPAA", "PCI-DSS", "SOC2"],
+      "aiExplainable": true
+    },
+    {
+      "fieldId": "minimumTlsVersion",
+      "label": "Minimum TLS version",
+      "type": "select",
+      "options": ["TLS_1_0", "TLS_1_1", "TLS_1_2"],
+      "required": false,
+      "securityRelevance": "high",
+      "costRelevance": "none",
+      "complianceRelevance": ["PCI-DSS", "SOC2"],
+      "aiExplainable": true
+    },
+    {
+      "fieldId": "signedUrlCacheMaxAgeSec",
+      "label": "Signed URL cache max age",
+      "type": "integer",
+      "options": null,
+      "required": false,
+      "securityRelevance": "medium",
+      "costRelevance": "medium",
+      "complianceRelevance": [],
+      "aiExplainable": true
+    },
+    {
+      "fieldId": "loggingEnabled",
+      "label": "Access logging",
+      "type": "boolean",
+      "options": null,
+      "required": false,
+      "securityRelevance": "medium",
+      "costRelevance": "low",
+      "complianceRelevance": ["SOC2"],
+      "aiExplainable": true
+    },
+    {
+      "fieldId": "armorPolicyEnabled",
+      "label": "Cloud Armor policy",
+      "type": "boolean",
+      "options": null,
+      "required": false,
+      "securityRelevance": "high",
+      "costRelevance": "medium",
+      "complianceRelevance": ["SOC2"],
+      "aiExplainable": true
+    }
+  ]
+}

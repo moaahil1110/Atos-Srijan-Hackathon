@@ -1,0 +1,72 @@
+{
+  "provider": "azure",
+  "service": "Azure Database for PostgreSQL",
+  "fields": [
+    {
+      "fieldId": "sslEnforcementEnabled",
+      "label": "SSL enforcement",
+      "type": "boolean",
+      "options": null,
+      "required": true,
+      "securityRelevance": "critical",
+      "costRelevance": "none",
+      "complianceRelevance": ["HIPAA", "PCI-DSS", "SOC2"],
+      "aiExplainable": true
+    },
+    {
+      "fieldId": "publicNetworkAccess",
+      "label": "Public network access",
+      "type": "select",
+      "options": ["Enabled", "Disabled"],
+      "required": true,
+      "securityRelevance": "critical",
+      "costRelevance": "none",
+      "complianceRelevance": ["HIPAA", "PCI-DSS", "SOC2"],
+      "aiExplainable": true
+    },
+    {
+      "fieldId": "infrastructureEncryptionEnabled",
+      "label": "Infrastructure encryption",
+      "type": "boolean",
+      "options": null,
+      "required": false,
+      "securityRelevance": "high",
+      "costRelevance": "low",
+      "complianceRelevance": ["HIPAA", "GDPR"],
+      "aiExplainable": true
+    },
+    {
+      "fieldId": "geoRedundantBackupEnabled",
+      "label": "Geo-redundant backup",
+      "type": "boolean",
+      "options": null,
+      "required": false,
+      "securityRelevance": "medium",
+      "costRelevance": "high",
+      "complianceRelevance": ["SOC2"],
+      "aiExplainable": true
+    },
+    {
+      "fieldId": "backupRetentionDays",
+      "label": "Backup retention days",
+      "type": "integer",
+      "options": null,
+      "required": false,
+      "securityRelevance": "medium",
+      "costRelevance": "medium",
+      "complianceRelevance": ["SOC2"],
+      "aiExplainable": true
+    },
+    {
+      "fieldId": "advancedThreatProtectionEnabled",
+      "label": "Advanced threat protection",
+      "type": "boolean",
+      "options": null,
+      "required": false,
+      "securityRelevance": "high",
+      "costRelevance": "medium",
+      "complianceRelevance": ["HIPAA", "SOC2"],
+      "aiExplainable": true
+    }
+  ]
+}
