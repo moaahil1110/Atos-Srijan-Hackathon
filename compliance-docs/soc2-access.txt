@@ -1,0 +1,39 @@
+SOC 2 — Logical and Physical Access Controls
+AICPA Trust Services Criteria — CC6.1
+
+CC6.1: The entity implements logical access security software, infrastructure, and
+architectures over protected information assets to protect them from security events
+to meet the entity's objectives.
+
+Points of Focus:
+- Identifies and Manages the Inventory of Information Assets — The entity identifies,
+  inventories, classifies, and manages information assets.
+- Restricts Logical Access — Logical access to information assets, including hardware,
+  data (at-rest, during processing, or in transmission), software, administrative
+  authorities, mobile devices, output, and offline system components, is restricted
+  through the use of access control software and rule sets.
+- Identifies and Authenticates Users — Persons, infrastructure, and software are
+  identified and authenticated prior to accessing information assets, whether locally
+  or remotely.
+- Considers Network Segmentation — Network segmentation permits unrelated portions
+  of the entity's information system to be isolated from each other.
+- Manages Points of Access — Points of access by outside entities and the types of
+  data that flow through the points of access are identified, inventoried, and managed.
+  The types of individuals and systems using each point of access are identified,
+  documented, and managed.
+- Restricts Access to Information Assets — Combinations of data classification,
+  separate data structures, port restrictions, access protocol restrictions, user
+  identification, and digital certificates are used to establish access control rules
+  for information assets.
+- Manages Identification and Authentication — Identification and authentication
+  requirements are established, documented, and managed for individuals and systems
+  accessing entity information, infrastructure, and software.
+
+For AWS workloads:
+- IAM policies must enforce least privilege access
+- S3 bucket public access must be blocked unless explicitly justified
+- Security groups must follow deny-by-default principles
+- MFA must be enabled on all privileged accounts
+- Access reviews must be conducted periodically
+- Version control must be enabled on data stores to support recovery from
+  unauthorized modifications

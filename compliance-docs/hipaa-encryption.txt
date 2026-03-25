@@ -1,0 +1,28 @@
+HIPAA Security Rule — Encryption (Transmission Security)
+45 CFR §164.312(e)(2)(ii)
+
+Standard: Transmission Security
+A covered entity or business associate must implement technical security measures to
+guard against unauthorized access to ePHI that is being transmitted over an electronic
+communications network.
+
+Implementation Specification:
+§164.312(e)(2)(ii) Encryption (Addressable) — Implement a mechanism to encrypt
+electronic protected health information whenever deemed appropriate.
+
+Guidance from HHS Office for Civil Rights:
+While encryption is listed as "addressable" rather than "required," a covered entity
+must assess whether encryption is a reasonable and appropriate safeguard in its
+environment. If the entity decides that encryption is not reasonable and appropriate,
+the entity must document that determination and implement an equivalent alternative
+measure. In practice, encryption of ePHI at rest and in transit is considered the
+de facto standard for HIPAA compliance. The vast majority of risk assessments conclude
+that encryption is reasonable and appropriate given the current threat landscape.
+
+For AWS workloads containing ePHI:
+- S3 buckets must use server-side encryption (SSE-KMS recommended for audit trail)
+- RDS instances must enable encryption at rest and enforce SSL/TLS for connections
+- EBS volumes must be encrypted
+- Data in transit must use TLS 1.2 or higher
+- SSE-KMS is preferred over SSE-S3 because KMS provides CloudTrail audit logs of
+  every key usage event, which is critical evidence for HIPAA compliance audits.

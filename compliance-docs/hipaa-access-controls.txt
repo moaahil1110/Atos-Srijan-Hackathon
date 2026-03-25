@@ -1,0 +1,26 @@
+HIPAA Security Rule — Access Controls
+45 CFR §164.312(a)(1)
+
+Standard: Access Control
+A covered entity or business associate must implement technical policies and procedures
+for electronic information systems that maintain electronic protected health information
+(ePHI) to allow access only to those persons or software programs that have been granted
+access rights as specified in §164.308(a)(4).
+
+Implementation Specifications:
+(i) Unique User Identification (Required) — Assign a unique name and/or number for
+    identifying and tracking user identity.
+(ii) Emergency Access Procedure (Required) — Establish (and implement as needed)
+     procedures for obtaining necessary ePHI during an emergency.
+(iii) Automatic Logoff (Addressable) — Implement electronic procedures that terminate
+      an electronic session after a predetermined time of inactivity.
+(iv) Encryption and Decryption (Addressable) — Implement a mechanism to encrypt and
+     decrypt ePHI.
+
+Enforcement Guidance:
+Access to ePHI must follow the principle of least privilege. Every user accessing systems
+containing ePHI must be uniquely identifiable, and access must be logged and auditable.
+Public access to any resource containing ePHI is a direct violation of this standard.
+AWS resources storing ePHI must have public access completely blocked, IAM policies must
+enforce least privilege, and multi-factor authentication must be enabled for all
+administrative access.
