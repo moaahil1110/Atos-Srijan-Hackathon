@@ -4,7 +4,7 @@ import logging
 from fastapi import HTTPException
 
 from utils.bedrock_client import invoke_bedrock
-from utils.dynamo_client import get_all_service_configs, get_service_config, get_session
+from utils.dynamo_client import get_all_service_configs, get_service_config, get_service_provider, get_service_providers, get_session
 from utils.service_mapper import (
     get_provider_label,
     get_provider_service_name,
@@ -134,10 +134,13 @@ def _render_service_block(service: str, provider: str, values: dict, reasons: di
     return blocks
 
 
-def _fallback_hcl(provider: str, industry: str, frameworks: str, security_weight, configs: dict[str, tuple[dict, dict]]) -> str:
+def _fallback_hcl(industry: str, frameworks: str, security_weight, configs: dict[str, tuple[str, dict, dict]]) -> str:
     lines = _header(industry, frameworks, security_weight)
-    lines.extend(_provider_block(provider))
-    for service, (values, reasons) in configs.items():
+    rendered_provider_blocks = set()
+    for service, (provider, values, reasons) in configs.items():
+        if provider not in rendered_provider_blocks:
+            lines.extend(_provider_block(provider))
+            rendered_provider_blocks.add(provider)
         lines.extend(_render_service_block(service, provider, values, reasons))
     return "\n".join(lines).strip()
 
@@ -166,10 +169,12 @@ async def generate_terraform(session_id, service=None, provider="aws") -> str:
                 detail=f"No config found for {canonical_service}. Generate config first.",
             )
         raw_configs = {canonical_service: raw_config}
+        service_provider_map = {canonical_service: get_service_provider(session_id, canonical_service) or provider}
     else:
         raw_configs = get_all_service_configs(session_id)
         if not raw_configs:
             raise HTTPException(status_code=400, detail="No configured services found. Generate config first.")
+        service_provider_map = get_service_providers(session_id) or {}
 
     normalized_configs = {}
     for current_service, raw_service_config in raw_configs.items():
@@ -178,7 +183,11 @@ async def generate_terraform(session_id, service=None, provider="aws") -> str:
             raise ValueError(
                 f"Generated config for {current_service} has no field values. Regenerate the config before exporting Terraform."
             )
-        normalized_configs[current_service] = (values, reasons)
+        normalized_configs[current_service] = (
+            service_provider_map.get(current_service, provider),
+            values,
+            reasons,
+        )
 
     profile = session.get("companyProfile", {})
     industry = profile.get("industry", "other")
@@ -186,18 +195,18 @@ async def generate_terraform(session_id, service=None, provider="aws") -> str:
     security_weight = session.get("computedWeights", {}).get("security", 0)
 
     if len(normalized_configs) == 1:
-        current_service, (config_values, config_reasons) = next(iter(normalized_configs.items()))
+        current_service, (service_provider, config_values, config_reasons) = next(iter(normalized_configs.items()))
         prompt = TERRAFORM_PROMPT
         replacements = {
-            "{provider}": get_provider_label(provider),
+            "{provider}": get_provider_label(service_provider),
             "{service}": current_service,
             "{industry}": industry,
             "{frameworks}": frameworks,
             "{security_weight}": str(security_weight),
             "{config_values_json}": json.dumps(config_values, indent=2),
             "{config_reasons_json}": json.dumps(config_reasons, indent=2),
-            "{resource_mappings}": _resource_mappings(current_service, provider),
-            "{provider_block}": "\n".join(_provider_block(provider)).strip(),
+            "{resource_mappings}": _resource_mappings(current_service, service_provider),
+            "{provider_block}": "\n".join(_provider_block(service_provider)).strip(),
         }
         for key, value in replacements.items():
             prompt = prompt.replace(key, value)
@@ -205,32 +214,36 @@ async def generate_terraform(session_id, service=None, provider="aws") -> str:
             content = invoke_bedrock(prompt)
         except Exception as exc:
             logger.warning("Terraform generation fell back to deterministic HCL for %s: %s", current_service, exc)
-            content = _fallback_hcl(provider, industry, frameworks, security_weight, normalized_configs)
+            content = _fallback_hcl(industry, frameworks, security_weight, normalized_configs)
         cleaned = _strip_markdown_fences(content)
         if "resource" not in cleaned:
-            cleaned = _fallback_hcl(provider, industry, frameworks, security_weight, normalized_configs)
+            cleaned = _fallback_hcl(industry, frameworks, security_weight, normalized_configs)
         return cleaned
 
     try:
         combined_prompt = TERRAFORM_PROMPT
         replacements = {
-            "{provider}": get_provider_label(provider),
+            "{provider}": "multi-cloud",
             "{service}": "multiple services",
             "{industry}": industry,
             "{frameworks}": frameworks,
             "{security_weight}": str(security_weight),
             "{config_values_json}": json.dumps(
-                {service_name: values for service_name, (values, _) in normalized_configs.items()},
+                {service_name: values for service_name, (_, values, _) in normalized_configs.items()},
                 indent=2,
             ),
             "{config_reasons_json}": json.dumps(
-                {service_name: reasons for service_name, (_, reasons) in normalized_configs.items()},
+                {service_name: reasons for service_name, (_, _, reasons) in normalized_configs.items()},
                 indent=2,
             ),
             "{resource_mappings}": "\n".join(
-                _resource_mappings(service_name, provider) for service_name in normalized_configs
+                _resource_mappings(service_name, current_provider)
+                for service_name, (current_provider, _, _) in normalized_configs.items()
             ),
-            "{provider_block}": "\n".join(_provider_block(provider)).strip(),
+            "{provider_block}": "\n\n".join(
+                "\n".join(_provider_block(current_provider)).strip()
+                for current_provider in list(dict.fromkeys(provider_name for provider_name, _, _ in normalized_configs.values()))
+            ),
         }
         for key, value in replacements.items():
             combined_prompt = combined_prompt.replace(key, value)
@@ -241,4 +254,4 @@ async def generate_terraform(session_id, service=None, provider="aws") -> str:
     except Exception as exc:
         logger.warning("Combined Terraform generation fell back to deterministic HCL: %s", exc)
 
-    return _fallback_hcl(provider, industry, frameworks, security_weight, normalized_configs)
+    return _fallback_hcl(industry, frameworks, security_weight, normalized_configs)

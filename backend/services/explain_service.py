@@ -4,7 +4,7 @@ import logging
 from fastapi import HTTPException
 
 from utils.bedrock_client import invoke_bedrock
-from utils.dynamo_client import get_session, update_session
+from utils.dynamo_client import get_service_provider, get_session, update_session
 from utils.kb_client import get_compliance_context
 from utils.service_mapper import get_provider_label
 
@@ -99,7 +99,7 @@ async def explain_field(
     profile = session.get("companyProfile", {})
     weights = session.get("computedWeights", {})
     frameworks = profile.get("complianceFrameworks", [])
-    provider = session.get("provider", "aws")
+    provider = get_service_provider(session_id, service) or session.get("provider", "aws")
     query = (
         f"{get_provider_label(provider)} {field_id} {field_label} compliance requirement "
         f"explanation why {current_value} may be wrong"

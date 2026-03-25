@@ -1,17 +1,17 @@
 :root {
-  --bg-base: #0e0c09;
-  --surface-main: rgba(18, 15, 12, 0.72);
-  --surface-panel: rgba(255, 255, 255, 0.03);
-  --surface-soft: rgba(255, 255, 255, 0.02);
-  --surface-strong: rgba(255, 193, 7, 0.1);
-  --border: rgba(255, 255, 255, 0.08);
-  --border-strong: rgba(255, 193, 7, 0.24);
-  --text-primary: #f7f1e8;
-  --text-muted: #b7aea2;
-  --text-faint: #8c8174;
-  --accent: #ffc107;
-  --accent-hover: #ffd54f;
-  --accent-deep: #f59e0b;
+  --bg-base: #eaf7ff;
+  --surface-main: rgba(255, 255, 255, 0.72);
+  --surface-panel: rgba(255, 255, 255, 0.7);
+  --surface-soft: rgba(255, 255, 255, 0.55);
+  --surface-strong: rgba(96, 186, 255, 0.12);
+  --border: rgba(64, 128, 170, 0.14);
+  --border-strong: rgba(96, 186, 255, 0.28);
+  --text-primary: #16364d;
+  --text-muted: #47657c;
+  --text-faint: #617f96;
+  --accent: #58b7ff;
+  --accent-hover: #7dcaff;
+  --accent-deep: #2792df;
   --success: #10b981;
   --danger: #fb7185;
 }
@@ -31,7 +31,10 @@ body,
 body {
   overflow-x: hidden;
   overflow-y: auto;
-  background: var(--bg-base);
+  background:
+    radial-gradient(circle at top left, rgba(135, 206, 250, 0.45), transparent 34%),
+    radial-gradient(circle at top right, rgba(186, 230, 253, 0.65), transparent 32%),
+    linear-gradient(180deg, #f4fbff 0%, #eef9ff 45%, #e8f4ff 100%);
   color: var(--text-primary);
   font-family: 'Inter', system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
@@ -48,6 +51,29 @@ select {
   font-family: 'Inter', system-ui, sans-serif;
 }
 
+.font-brand {
+  font-family: 'Avenir Next', 'Segoe UI Variable Display', 'Trebuchet MS', sans-serif;
+}
+
+.brand-wordmark {
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid rgba(96, 186, 255, 0.22);
+  border-radius: 999px;
+  padding: 0.42rem 1rem 0.5rem;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(233, 246, 255, 0.9));
+  color: #10324a;
+  font-size: clamp(1.45rem, 2vw, 2rem);
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  line-height: 1;
+  text-transform: uppercase;
+  box-shadow:
+    0 10px 24px rgba(88, 183, 255, 0.12),
+    inset 0 1px 0 rgba(255, 255, 255, 0.7);
+}
+
 .mono {
   font-family: 'JetBrains Mono', monospace;
 }
@@ -58,7 +84,7 @@ select {
 
 .btn-primary {
   background: linear-gradient(135deg, var(--accent), var(--accent-deep));
-  color: #111111;
+  color: #08304d;
   transition:
     transform 0.2s ease,
     box-shadow 0.2s ease,
@@ -67,7 +93,7 @@ select {
 
 .btn-primary:hover {
   filter: brightness(1.04);
-  box-shadow: 0 10px 24px rgba(245, 158, 11, 0.22);
+  box-shadow: 0 12px 28px rgba(88, 183, 255, 0.24);
   transform: translateY(-1px);
 }
 
@@ -80,14 +106,14 @@ select {
 
 .message-bubble-user {
   border: 1px solid var(--border);
-  background: rgba(255, 255, 255, 0.05);
+  background: rgba(255, 255, 255, 0.88);
   color: var(--text-primary);
 }
 
 .message-bubble-assistant {
-  border: 1px solid rgba(255, 193, 7, 0.16);
+  border: 1px solid rgba(96, 186, 255, 0.22);
   background:
-    linear-gradient(180deg, rgba(255, 193, 7, 0.14), rgba(255, 255, 255, 0.04));
+    linear-gradient(180deg, rgba(96, 186, 255, 0.18), rgba(255, 255, 255, 0.88));
   color: var(--text-primary);
 }
 
@@ -110,7 +136,7 @@ select {
 
 .loader {
   display: inline-block;
-  border: 4px solid rgba(255, 193, 7, 0.18);
+  border: 4px solid rgba(96, 186, 255, 0.18);
   border-top-color: var(--accent);
   border-radius: 999px;
   animation: spin 1s linear infinite;
@@ -138,7 +164,7 @@ select {
 }
 
 .focus\:ring-primary:focus {
-  box-shadow: 0 0 0 2px rgba(255, 193, 7, 0.22) !important;
+  box-shadow: 0 0 0 2px rgba(88, 183, 255, 0.24) !important;
 }
 
 .focus-visible\:outline-primary:focus-visible {
@@ -156,7 +182,7 @@ select {
 
 ::-webkit-scrollbar-thumb {
   border-radius: 999px;
-  background: rgba(255, 255, 255, 0.16);
+  background: rgba(77, 139, 182, 0.22);
 }
 
 @keyframes spin {

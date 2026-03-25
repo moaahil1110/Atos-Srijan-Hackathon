@@ -154,7 +154,7 @@ export default function ResetPassword() {
       >
         <div className="py-12 text-center">
           <div className="mx-auto mb-4 h-12 w-12 rounded-full border-b-2 border-primary animate-spin" />
-          <p className="text-sm text-gray-400">Verifying reset link...</p>
+          <p className="text-sm text-[#6a8aa1]">Verifying reset link...</p>
         </div>
       </AuthShell>
     );
@@ -168,24 +168,24 @@ export default function ResetPassword() {
       >
         <div className="text-center">
           <div className="mb-6">
-            <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-full border-2 border-green-600 bg-green-900/30">
+            <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-full border-2 border-emerald-300 bg-emerald-50">
               <svg className="h-10 w-10 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
               </svg>
             </div>
           </div>
 
-          <p className="mb-6 text-base text-gray-400">
+          <p className="mb-6 text-base text-[#6a8aa1]">
             Your password has been successfully updated. You can now sign in with your new password.
           </p>
 
-          <div className="mb-6 rounded-lg border border-green-800 bg-green-900/30 p-3 text-sm text-green-200">
+          <div className="mb-6 rounded-lg border border-emerald-300 bg-emerald-50 p-3 text-sm text-emerald-700">
             Redirecting to sign in page in 3 seconds...
           </div>
 
           <Link
             to="/signin"
-            className="inline-flex items-center justify-center rounded-xl bg-primary px-[28px] py-[14px] text-base font-bold text-black transition-all duration-200 hover:bg-yellow-400"
+            className="inline-flex items-center justify-center rounded-xl bg-primary px-[28px] py-[14px] text-base font-bold text-[#08304d] transition-all duration-200 hover:bg-[#7dcaff]"
           >
             Sign In Now
           </Link>
@@ -206,20 +206,20 @@ export default function ResetPassword() {
       heroCopy="Nimbus keeps the same visual language and auth flow across sign-in, email actions, and the main workspace."
     >
       {error ? (
-        <div className="mb-4 rounded-lg border border-red-800 bg-red-900/30 p-3 text-sm text-red-200">
+        <div className="mb-4 rounded-lg border border-red-300 bg-red-50 p-3 text-sm text-red-700">
           {error}
         </div>
       ) : null}
 
       {!validCode ? (
         <div className="mb-6">
-          <div className="mb-4 rounded-lg border border-red-800 bg-red-900/30 p-4 text-sm text-red-200">
+          <div className="mb-4 rounded-lg border border-red-300 bg-red-50 p-4 text-sm text-red-700">
             <p className="mb-2 font-semibold">Password reset link is invalid or expired.</p>
             <p>Please request a new password reset link.</p>
           </div>
           <Link
             to="/forgot-password"
-            className="flex h-12 w-full items-center justify-center rounded-xl bg-primary px-[28px] py-[14px] text-base font-bold text-black transition-all duration-200 hover:bg-yellow-400"
+            className="flex h-12 w-full items-center justify-center rounded-xl bg-primary px-[28px] py-[14px] text-base font-bold text-[#08304d] transition-all duration-200 hover:bg-[#7dcaff]"
           >
             Request New Link
           </Link>
@@ -229,7 +229,7 @@ export default function ResetPassword() {
       {validCode ? (
         <form className="space-y-6" onSubmit={handleSubmit}>
           <div>
-            <label htmlFor="password" className="mb-1.5 block text-sm font-semibold text-gray-300">
+            <label htmlFor="password" className="mb-1.5 block text-sm font-semibold text-[#3d5d74]">
               New password
             </label>
             <input
@@ -243,13 +243,13 @@ export default function ResetPassword() {
                 setError('');
               }}
               onFocus={() => setShowPasswordRules(true)}
-              className="block h-12 w-full rounded-xl border-0 bg-gray-900/50 px-4 py-3.5 text-sm text-white ring-1 ring-inset ring-gray-800 backdrop-blur-sm transition-all duration-200 placeholder:text-gray-500 focus:bg-gray-900/70 focus:ring-2 focus:ring-primary"
+              className="block h-12 w-full rounded-xl border-0 bg-white/82 px-4 py-3.5 text-sm text-[#14324a] ring-1 ring-inset ring-[#b9d8ea] backdrop-blur-sm transition-all duration-200 placeholder:text-[#6f8ea3] focus:bg-white focus:ring-2 focus:ring-primary"
               placeholder="  Enter new password"
             />
           </div>
 
           <div>
-            <label htmlFor="confirmPassword" className="mb-1.5 block text-sm font-semibold text-gray-300">
+            <label htmlFor="confirmPassword" className="mb-1.5 block text-sm font-semibold text-[#3d5d74]">
               Confirm password
             </label>
             <input
@@ -262,7 +262,7 @@ export default function ResetPassword() {
                 setConfirmPassword(event.target.value);
                 setError('');
               }}
-              className="block h-12 w-full rounded-xl border-0 bg-gray-900/50 px-4 py-3.5 text-sm text-white ring-1 ring-inset ring-gray-800 backdrop-blur-sm transition-all duration-200 placeholder:text-gray-500 focus:bg-gray-900/70 focus:ring-2 focus:ring-primary"
+              className="block h-12 w-full rounded-xl border-0 bg-white/82 px-4 py-3.5 text-sm text-[#14324a] ring-1 ring-inset ring-[#b9d8ea] backdrop-blur-sm transition-all duration-200 placeholder:text-[#6f8ea3] focus:bg-white focus:ring-2 focus:ring-primary"
               placeholder="  Confirm new password"
             />
           </div>
@@ -271,18 +271,18 @@ export default function ResetPassword() {
             <button
               type="button"
               onClick={() => setShowPasswordRules((current) => !current)}
-              className="flex w-full cursor-pointer items-center justify-between rounded-xl border border-gray-800 bg-gray-900/50 px-4 py-3 text-left transition-all duration-200 hover:border-primary/30 hover:bg-gray-900/70 focus:outline-none focus:ring-2 focus:ring-primary/50"
+              className="flex w-full cursor-pointer items-center justify-between rounded-xl border border-[#c9e0ef] bg-white/82 px-4 py-3 text-left transition-all duration-200 hover:border-primary/30 hover:bg-white focus:outline-none focus:ring-2 focus:ring-primary/50"
             >
               <div className="flex items-center gap-2.5">
                 <svg className="h-4 w-4 flex-shrink-0 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
-                <span className="text-sm font-medium text-gray-300">Password requirements</span>
+                <span className="text-sm font-medium text-[#3d5d74]">Password requirements</span>
               </div>
               <div className="flex items-center gap-2">
-                <span className="text-xs text-gray-500">{showPasswordRules ? 'Hide' : 'Show'}</span>
+                  <span className="text-xs text-[#6f8ea3]">{showPasswordRules ? 'Hide' : 'Show'}</span>
                 <svg
-                  className={`h-4 w-4 flex-shrink-0 text-gray-400 transition-transform duration-200 ${
+                  className={`h-4 w-4 flex-shrink-0 text-[#6f8ea3] transition-transform duration-200 ${
                     showPasswordRules ? 'rotate-180' : ''
                   }`}
                   fill="none"
@@ -295,8 +295,8 @@ export default function ResetPassword() {
             </button>
 
             {showPasswordRules ? (
-              <div className="absolute z-10 mt-2 w-full rounded-xl border border-gray-800 bg-gray-900 p-4 shadow-2xl">
-                <p className="mb-3 text-sm font-medium text-gray-300">Your password must include:</p>
+              <div className="absolute z-10 mt-2 w-full rounded-xl border border-[#c9e0ef] bg-white p-4 shadow-2xl">
+                <p className="mb-3 text-sm font-medium text-[#3d5d74]">Your password must include:</p>
                 <ul className="space-y-2">
                   {[
                     ['Minimum 8 characters in length', passwordValidation.minLength],
@@ -308,11 +308,11 @@ export default function ResetPassword() {
                     <li
                       key={label}
                       className={`flex items-center gap-2.5 text-xs transition-colors ${
-                        passed ? 'text-green-400' : 'text-gray-400'
+                        passed ? 'text-emerald-600' : 'text-[#7b98ad]'
                       }`}
                     >
                       <svg
-                        className={`h-4 w-4 flex-shrink-0 ${passed ? 'text-green-500' : 'text-gray-600'}`}
+                        className={`h-4 w-4 flex-shrink-0 ${passed ? 'text-emerald-600' : 'text-[#a2bacb]'}`}
                         fill="currentColor"
                         viewBox="0 0 20 20"
                       >
@@ -334,7 +334,7 @@ export default function ResetPassword() {
             <button
               type="submit"
               disabled={loading}
-              className="group flex h-12 w-full items-center justify-center rounded-xl bg-primary px-[28px] py-[14px] text-base font-bold text-black transition-all duration-200 hover:bg-yellow-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:cursor-not-allowed disabled:opacity-50"
+               className="group flex h-12 w-full items-center justify-center rounded-xl bg-primary px-[28px] py-[14px] text-base font-bold text-[#08304d] transition-all duration-200 hover:bg-[#7dcaff] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:cursor-not-allowed disabled:opacity-50"
             >
               {loading ? 'Resetting Password...' : 'Reset Password'}
               {!loading ? (
@@ -352,11 +352,11 @@ export default function ResetPassword() {
         </form>
       ) : null}
 
-      <p className="mt-8 text-center text-sm text-gray-400">
+      <p className="mt-8 text-center text-sm text-[#6a8aa1]">
         Remember your password?{' '}
         <Link
           to="/signin"
-          className="font-semibold text-primary underline-offset-4 transition-colors hover:text-yellow-400 hover:underline"
+          className="font-semibold text-primary underline-offset-4 transition-colors hover:text-[#0d75be] hover:underline"
         >
           Sign in
         </Link>

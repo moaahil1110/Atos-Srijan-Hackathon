@@ -148,19 +148,19 @@ export default function SignUp() {
       heroCopy="Nimbus keeps onboarding simple so teams can get straight to refining infrastructure intent, security guardrails, and deployment-ready output."
     >
       {error ? (
-        <div className="mb-3 rounded-lg border border-red-800 bg-red-900/30 p-2.5 text-xs text-red-200">
+        <div className="mb-3 rounded-lg border border-red-300 bg-red-50 p-2.5 text-xs text-red-700">
           {error}
         </div>
       ) : null}
       {success ? (
-        <div className="mb-3 rounded-lg border border-green-800 bg-green-900/30 p-2.5 text-xs text-green-200">
+        <div className="mb-3 rounded-lg border border-emerald-300 bg-emerald-50 p-2.5 text-xs text-emerald-700">
           {success}
         </div>
       ) : null}
 
       <form className="space-y-3" onSubmit={handleSubmit}>
         <div>
-          <label htmlFor="fullName" className="mb-1 block text-xs font-semibold text-gray-300">
+          <label htmlFor="fullName" className="mb-1 block text-xs font-semibold text-[#3d5d74]">
             Full name
           </label>
           <input
@@ -170,14 +170,14 @@ export default function SignUp() {
             required
             value={formData.fullName}
             onChange={handleInputChange}
-            className="block h-10 w-full rounded-lg border-0 bg-gray-900/50 px-3.5 py-2.5 text-sm text-white ring-1 ring-inset ring-gray-800 backdrop-blur-sm transition-all duration-200 placeholder:text-gray-500 focus:bg-gray-900/70 focus:ring-2 focus:ring-primary"
+            className="block h-10 w-full rounded-lg border-0 bg-white/82 px-3.5 py-2.5 text-sm text-[#14324a] ring-1 ring-inset ring-[#b9d8ea] backdrop-blur-sm transition-all duration-200 placeholder:text-[#6f8ea3] focus:bg-white focus:ring-2 focus:ring-primary"
             placeholder="  Your name"
             aria-label="full name"
           />
         </div>
 
         <div>
-          <label htmlFor="email" className="mb-1 block text-xs font-semibold text-gray-300">
+          <label htmlFor="email" className="mb-1 block text-xs font-semibold text-[#3d5d74]">
             Email address
           </label>
           <input
@@ -187,14 +187,14 @@ export default function SignUp() {
             required
             value={formData.email}
             onChange={handleInputChange}
-            className="block h-10 w-full rounded-lg border-0 bg-gray-900/50 px-3.5 py-2.5 text-sm text-white ring-1 ring-inset ring-gray-800 backdrop-blur-sm transition-all duration-200 placeholder:text-gray-500 focus:bg-gray-900/70 focus:ring-2 focus:ring-primary"
+            className="block h-10 w-full rounded-lg border-0 bg-white/82 px-3.5 py-2.5 text-sm text-[#14324a] ring-1 ring-inset ring-[#b9d8ea] backdrop-blur-sm transition-all duration-200 placeholder:text-[#6f8ea3] focus:bg-white focus:ring-2 focus:ring-primary"
             placeholder="  you@example.com"
             aria-label="email"
           />
         </div>
 
         <div>
-          <label htmlFor="password" className="mb-1 block text-xs font-semibold text-gray-300">
+          <label htmlFor="password" className="mb-1 block text-xs font-semibold text-[#3d5d74]">
             Password
           </label>
           <div className="relative">
@@ -205,14 +205,14 @@ export default function SignUp() {
               required
               value={formData.password}
               onChange={handleInputChange}
-              className="block h-10 w-full rounded-lg border-0 bg-gray-900/50 px-3.5 py-2.5 pr-10 text-sm text-white ring-1 ring-inset ring-gray-800 backdrop-blur-sm transition-all duration-200 placeholder:text-gray-500 focus:bg-gray-900/70 focus:ring-2 focus:ring-primary"
+              className="block h-10 w-full rounded-lg border-0 bg-white/82 px-3.5 py-2.5 pr-10 text-sm text-[#14324a] ring-1 ring-inset ring-[#b9d8ea] backdrop-blur-sm transition-all duration-200 placeholder:text-[#6f8ea3] focus:bg-white focus:ring-2 focus:ring-primary"
               placeholder="  Min 8 chars"
               aria-label="password"
             />
             <button
               type="button"
               onClick={() => setPasswordVisible((current) => !current)}
-              className="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-400 transition-colors hover:text-gray-200"
+              className="absolute inset-y-0 right-0 flex items-center pr-3 text-[#7a97ab] transition-colors hover:text-[#2a84c9]"
               aria-label={passwordVisible ? 'Hide password' : 'Show password'}
             >
               <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -237,7 +237,7 @@ export default function SignUp() {
         </div>
 
         <div>
-          <label htmlFor="confirmPassword" className="mb-1 block text-xs font-semibold text-gray-300">
+          <label htmlFor="confirmPassword" className="mb-1 block text-xs font-semibold text-[#3d5d74]">
             Confirm password
           </label>
           <div className="relative">
@@ -248,14 +248,14 @@ export default function SignUp() {
               required
               value={formData.confirmPassword}
               onChange={handleInputChange}
-              className="block h-10 w-full rounded-lg border-0 bg-gray-900/50 px-3.5 py-2.5 pr-10 text-sm text-white ring-1 ring-inset ring-gray-800 backdrop-blur-sm transition-all duration-200 placeholder:text-gray-500 focus:bg-gray-900/70 focus:ring-2 focus:ring-primary"
+              className="block h-10 w-full rounded-lg border-0 bg-white/82 px-3.5 py-2.5 pr-10 text-sm text-[#14324a] ring-1 ring-inset ring-[#b9d8ea] backdrop-blur-sm transition-all duration-200 placeholder:text-[#6f8ea3] focus:bg-white focus:ring-2 focus:ring-primary"
               placeholder="  Confirm password"
               aria-label="confirm password"
             />
             <button
               type="button"
               onClick={() => setConfirmPasswordVisible((current) => !current)}
-              className="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-400 transition-colors hover:text-gray-200"
+              className="absolute inset-y-0 right-0 flex items-center pr-3 text-[#7a97ab] transition-colors hover:text-[#2a84c9]"
               aria-label={confirmPasswordVisible ? 'Hide password' : 'Show password'}
             >
               <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -283,7 +283,7 @@ export default function SignUp() {
           <button
             type="submit"
             disabled={loading}
-            className="group flex h-10 w-full items-center justify-center rounded-lg bg-primary px-6 py-2.5 text-sm font-bold text-black transition-all duration-200 hover:bg-yellow-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:cursor-not-allowed disabled:opacity-50"
+            className="group flex h-10 w-full items-center justify-center rounded-lg bg-primary px-6 py-2.5 text-sm font-bold text-[#08304d] transition-all duration-200 hover:bg-[#7dcaff] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:cursor-not-allowed disabled:opacity-50"
           >
             {loading ? 'Creating Account...' : 'Sign Up'}
             {!loading ? (
@@ -301,46 +301,46 @@ export default function SignUp() {
       </form>
 
       <div className="my-4 flex items-center justify-center">
-        <div className="flex-grow border-t border-gray-800" />
-        <span className="mx-4 text-[10px] font-medium uppercase tracking-wider text-gray-500">
+        <div className="flex-grow border-t border-[#c5deee]" />
+        <span className="mx-4 text-[10px] font-medium uppercase tracking-wider text-[#6f8ea3]">
           Or continue with
         </span>
-        <div className="flex-grow border-t border-gray-800" />
+        <div className="flex-grow border-t border-[#c5deee]" />
       </div>
 
       <div className="space-y-2.5">
         <button
           onClick={handleGoogleSignUp}
           disabled={loading}
-          className="group flex h-10 w-full items-center justify-center gap-3 rounded-lg bg-gray-900/50 px-5 py-2.5 text-xs font-semibold text-gray-200 ring-1 ring-inset ring-gray-800 backdrop-blur-sm transition-all duration-200 hover:bg-gray-900/70 hover:ring-gray-700 disabled:cursor-not-allowed disabled:opacity-50"
+          className="group flex h-10 w-full items-center justify-center gap-3 rounded-lg bg-white/80 px-5 py-2.5 text-xs font-semibold text-[#35556d] ring-1 ring-inset ring-[#c3dced] backdrop-blur-sm transition-all duration-200 hover:bg-white hover:ring-[#9ac9e7] disabled:cursor-not-allowed disabled:opacity-50"
         >
           <img
             src="https://www.svgrepo.com/show/475656/google-color.svg"
             alt="Google"
             className="h-4 w-4"
           />
-          <span className="transition-colors group-hover:text-white">Continue with Google</span>
+          <span className="transition-colors group-hover:text-[#16364d]">Continue with Google</span>
         </button>
 
         <button
           onClick={handleGitHubSignUp}
           disabled={loading}
-          className="group flex h-10 w-full items-center justify-center gap-3 rounded-lg bg-gray-900/50 px-5 py-2.5 text-xs font-semibold text-gray-200 ring-1 ring-inset ring-gray-800 backdrop-blur-sm transition-all duration-200 hover:bg-gray-900/70 hover:ring-gray-700 disabled:cursor-not-allowed disabled:opacity-50"
+          className="group flex h-10 w-full items-center justify-center gap-3 rounded-lg bg-white/80 px-5 py-2.5 text-xs font-semibold text-[#35556d] ring-1 ring-inset ring-[#c3dced] backdrop-blur-sm transition-all duration-200 hover:bg-white hover:ring-[#9ac9e7] disabled:cursor-not-allowed disabled:opacity-50"
         >
           <img
             src="https://www.svgrepo.com/show/512317/github-142.svg"
             alt="GitHub"
             className="h-4 w-4 invert"
           />
-          <span className="transition-colors group-hover:text-white">Continue with GitHub</span>
+          <span className="transition-colors group-hover:text-[#16364d]">Continue with GitHub</span>
         </button>
       </div>
 
-      <p className="mt-5 text-center text-xs text-gray-400">
+      <p className="mt-5 text-center text-xs text-[#6a8aa1]">
         Already have an account?{' '}
         <Link
           to="/signin"
-          className="font-semibold text-primary underline-offset-4 transition-colors hover:text-yellow-400 hover:underline"
+          className="font-semibold text-primary underline-offset-4 transition-colors hover:text-[#0d75be] hover:underline"
         >
           Sign in
         </Link>

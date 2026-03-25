@@ -69,7 +69,7 @@ export default function IntakePanel({
   return (
     <div className="space-y-5">
       <section className="rounded-3xl border border-white/10 bg-white/[0.03] p-6">
-        <p className="text-[11px] font-semibold uppercase tracking-[0.28em] text-[#D4A43C]">
+        <p className="text-[11px] font-semibold uppercase tracking-[0.28em] text-[#2792df]">
           Provider
         </p>
         <div className="mt-4 grid grid-cols-3 gap-3">
@@ -84,8 +84,8 @@ export default function IntakePanel({
               onClick={() => onProviderChange(value)}
               className={`rounded-2xl border px-4 py-3 text-sm transition-colors ${
                 provider === value
-                  ? 'border-[#D4A43C]/40 bg-[#D4A43C]/12 text-[#F6E3B4]'
-                  : 'border-white/10 bg-transparent text-[#C9C1B8] hover:bg-white/[0.04]'
+                  ? 'border-[#a9d8f4] bg-[#eef8ff] text-[#2792df]'
+                  : 'border-[#d7e9f4] bg-transparent text-[#55748b] hover:bg-white'
               }`}
             >
               {label}
@@ -95,20 +95,20 @@ export default function IntakePanel({
       </section>
 
       <section className="rounded-3xl border border-white/10 bg-white/[0.03] p-6">
-        <p className="text-[11px] font-semibold uppercase tracking-[0.28em] text-[#D4A43C]">
+        <p className="text-[11px] font-semibold uppercase tracking-[0.28em] text-[#2792df]">
           Describe The Company
         </p>
         <textarea
           value={description}
           onChange={(event) => setDescription(event.target.value)}
-          className="mt-4 h-56 w-full rounded-2xl border border-white/10 bg-[#12100d] p-4 text-sm leading-7 text-white placeholder:text-[#7D7368] focus:border-[#D4A43C]/35 focus:outline-none"
+          className="mt-4 h-56 w-full rounded-2xl border border-[#c9e0ef] bg-white/84 p-4 text-sm leading-7 text-[#14324a] placeholder:text-[#88a6bb] focus:border-[#58b7ff] focus:outline-none"
           placeholder="What does the company do, what data is sensitive, and which compliance or cost constraints matter?"
         />
         <button
           type="button"
           onClick={() => onAnalyze(description, provider)}
           disabled={isAnalyzing || !description.trim()}
-          className="mt-4 w-full rounded-2xl bg-[#D4A43C] px-4 py-3 text-sm font-semibold text-black transition-colors hover:bg-[#E0B458] disabled:cursor-not-allowed disabled:opacity-50"
+          className="mt-4 w-full rounded-2xl bg-[#58b7ff] px-4 py-3 text-sm font-semibold text-[#08304d] transition-colors hover:bg-[#7dcaff] disabled:cursor-not-allowed disabled:opacity-50"
         >
           {isAnalyzing ? 'Analyzing...' : 'Analyze Context'}
         </button>
@@ -118,7 +118,7 @@ export default function IntakePanel({
         <section className="rounded-3xl border border-white/10 bg-white/[0.03] p-6">
           <div className="flex items-start justify-between gap-4">
             <div>
-              <p className="text-[11px] font-semibold uppercase tracking-[0.28em] text-[#D4A43C]">
+              <p className="text-[11px] font-semibold uppercase tracking-[0.28em] text-[#2792df]">
                 Suggested Services
               </p>
               <p className="mt-2 text-sm leading-6 text-[#9F978E]">
@@ -176,7 +176,7 @@ export default function IntakePanel({
               type="text"
               value={customService}
               onChange={(event) => setCustomService(event.target.value)}
-              className="h-11 flex-1 rounded-2xl border border-white/10 bg-[#12100d] px-4 text-sm text-white placeholder:text-[#7D7368] focus:border-[#D4A43C]/35 focus:outline-none"
+              className="h-11 flex-1 rounded-2xl border border-[#c9e0ef] bg-white/84 px-4 text-sm text-[#14324a] placeholder:text-[#88a6bb] focus:border-[#58b7ff] focus:outline-none"
               placeholder="Add a custom service"
             />
             <button

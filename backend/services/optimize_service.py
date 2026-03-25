@@ -6,7 +6,7 @@ from fastapi import HTTPException
 
 from services.schema_service import get_schema
 from utils.bedrock_client import invoke_bedrock_json
-from utils.dynamo_client import get_service_config, get_session
+from utils.dynamo_client import get_service_config, get_service_provider, get_session
 from utils.kb_client import get_compliance_context
 from utils.service_mapper import (
     get_provider_label,
@@ -117,7 +117,7 @@ async def optimize_config(session_id: str, service: str, existing_config: dict) 
     except KeyError:
         raise HTTPException(status_code=404, detail="Session not found. Start a new session.")
 
-    provider = session.get("provider", "aws")
+    provider = get_service_provider(session_id, service) or session.get("provider", "aws")
     canonical_service = get_provider_service_name(service, provider)
     recommended_config = get_service_config(session_id, canonical_service)
     if not recommended_config:

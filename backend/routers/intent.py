@@ -13,7 +13,7 @@ router = APIRouter()
 @router.post("/chat", response_model=ChatResponse)
 async def chat_endpoint(req: ChatRequest):
     try:
-        return await process_chat(req.sessionId, req.message)
+        return await process_chat(req.sessionId, req.message, req.objective)
     except Exception as exc:
         logger.error("Error in /chat: %s", exc)
         raise HTTPException(status_code=500, detail=str(exc))

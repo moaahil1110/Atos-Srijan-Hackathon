@@ -269,7 +269,7 @@ async def generate_config(session_id: str, service: str, provider: str = "aws") 
         logger.warning("Config generation fell back to deterministic defaults for %s: %s", canonical_service, exc)
         config = _fallback_config(canonical_service, schema_fields, intent.get("complianceFrameworks", []))
 
-    save_service_config(session_id, canonical_service, config)
+    save_service_config(session_id, canonical_service, config, provider=provider)
     return {
         "config": config,
         "service": canonical_service,

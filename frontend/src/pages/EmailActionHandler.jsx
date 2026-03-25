@@ -146,7 +146,7 @@ export default function EmailActionHandler() {
       >
         <div className="py-12 text-center">
           <div className="mx-auto mb-4 h-12 w-12 rounded-full border-b-2 border-primary animate-spin" />
-          <p className="text-sm text-gray-400">
+          <p className="text-sm text-[#6a8aa1]">
             {state.mode === EMAIL_ACTION_MODES.VERIFY_EMAIL
               ? 'Verifying your email...'
               : 'Processing your request...'}
@@ -164,30 +164,30 @@ export default function EmailActionHandler() {
       >
         <div className="text-center">
           <div className="mb-6">
-            <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-full border-2 border-green-600 bg-green-900/30">
+            <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-full border-2 border-emerald-300 bg-emerald-50">
               <svg className="h-10 w-10 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
               </svg>
             </div>
           </div>
 
-          <p className="mb-6 text-base text-gray-400">
+          <p className="mb-6 text-base text-[#6a8aa1]">
             Your email address has been verified. You can now access all Nimbus features.
           </p>
 
           {state.email ? (
-            <p className="mb-6 text-sm text-gray-500">
+            <p className="mb-6 text-sm text-[#7b98ad]">
               Verified: <span className="text-primary">{state.email}</span>
             </p>
           ) : null}
 
-          <div className="mb-6 rounded-lg border border-green-800 bg-green-900/30 p-3 text-sm text-green-200">
+          <div className="mb-6 rounded-lg border border-emerald-300 bg-emerald-50 p-3 text-sm text-emerald-700">
             Redirecting to your workspace in 4 seconds...
           </div>
 
           <button
             onClick={() => navigate('/', { replace: true })}
-            className="inline-flex items-center justify-center rounded-xl bg-primary px-[28px] py-[14px] text-base font-bold text-black transition-all duration-200 hover:bg-yellow-400"
+            className="inline-flex items-center justify-center rounded-xl bg-primary px-[28px] py-[14px] text-base font-bold text-[#08304d] transition-all duration-200 hover:bg-[#7dcaff]"
           >
             Go to Workspace Now
           </button>
@@ -203,14 +203,14 @@ export default function EmailActionHandler() {
     >
       <div className="text-center">
         <div className="mb-6">
-          <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-full border-2 border-red-600 bg-red-900/30">
+            <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-full border-2 border-red-300 bg-red-50">
             <svg className="h-10 w-10 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
             </svg>
           </div>
         </div>
 
-        <div className="mb-6 rounded-lg border border-red-800 bg-red-900/30 p-4 text-sm text-red-200">
+          <div className="mb-6 rounded-lg border border-red-300 bg-red-50 p-4 text-sm text-red-700">
           <p className="mb-2 font-semibold">Error</p>
           <p>{state.error || 'An unexpected error occurred.'}</p>
         </div>
@@ -218,14 +218,14 @@ export default function EmailActionHandler() {
         <div className="space-y-3">
           <button
             onClick={() => navigate('/forgot-password')}
-            className="flex h-12 w-full items-center justify-center rounded-xl bg-primary px-[28px] py-[14px] text-base font-bold text-black transition-all duration-200 hover:bg-yellow-400"
+            className="flex h-12 w-full items-center justify-center rounded-xl bg-primary px-[28px] py-[14px] text-base font-bold text-[#08304d] transition-all duration-200 hover:bg-[#7dcaff]"
           >
             Request Password Reset Link
           </button>
 
           <button
             onClick={() => navigate('/signin')}
-            className="flex h-12 w-full items-center justify-center rounded-xl bg-gray-800 px-[28px] py-[14px] text-base font-medium text-gray-300 transition-all duration-200 hover:bg-gray-700"
+            className="flex h-12 w-full items-center justify-center rounded-xl border border-[#c9e0ef] bg-white/80 px-[28px] py-[14px] text-base font-medium text-[#4f6f86] transition-all duration-200 hover:bg-white"
           >
             Back to Sign In
           </button>

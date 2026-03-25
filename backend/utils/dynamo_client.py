@@ -127,51 +127,60 @@ def update_session(session_id: str, key: str, value) -> None:
         raise
 
 
-def save_service_config(session_id, service, config):
+def save_service_config(session_id, service, config, provider=None):
     session = get_session(session_id)
     generated_config = session.get("generatedConfig", {})
     generated_config[service] = config
     configured_services = session.get("configuredServices", [])
+    service_providers = session.get("serviceProviders", {})
     if service not in configured_services:
         configured_services.append(service)
+    if provider:
+        service_providers[service] = provider
 
     if _use_local_store:
         session["generatedConfig"] = generated_config
         session["configuredServices"] = configured_services
+        session["serviceProviders"] = service_providers
         return
 
     try:
         _get_table().update_item(
             Key={"sessionId": session_id},
-            UpdateExpression="SET #generatedConfig.#service = :config, #configuredServices = :services",
+            UpdateExpression="SET #generatedConfig.#service = :config, #configuredServices = :services, #serviceProviders = :serviceProviders",
             ExpressionAttributeNames={
                 "#generatedConfig": "generatedConfig",
                 "#service": service,
                 "#configuredServices": "configuredServices",
+                "#serviceProviders": "serviceProviders",
             },
             ExpressionAttributeValues={
                 ":config": _convert_floats(config),
                 ":services": configured_services,
+                ":serviceProviders": service_providers,
             },
         )
     except ClientError as exc:
         if exc.response.get("Error", {}).get("Code") == "ValidationException":
             _get_table().update_item(
                 Key={"sessionId": session_id},
-                UpdateExpression="SET #generatedConfig = :generatedConfig, #configuredServices = :services",
+                UpdateExpression="SET #generatedConfig = :generatedConfig, #configuredServices = :services, #serviceProviders = :serviceProviders",
                 ExpressionAttributeNames={
                     "#generatedConfig": "generatedConfig",
                     "#configuredServices": "configuredServices",
+                    "#serviceProviders": "serviceProviders",
                 },
                 ExpressionAttributeValues={
                     ":generatedConfig": _convert_floats(generated_config),
                     ":services": configured_services,
+                    ":serviceProviders": service_providers,
                 },
             )
         elif _should_fallback_to_local(exc):
             _enable_local_store(exc)
             session["generatedConfig"] = generated_config
             session["configuredServices"] = configured_services
+            session["serviceProviders"] = service_providers
         else:
             raise
     except Exception as exc:
@@ -179,6 +188,7 @@ def save_service_config(session_id, service, config):
             _enable_local_store(exc)
             session["generatedConfig"] = generated_config
             session["configuredServices"] = configured_services
+            session["serviceProviders"] = service_providers
         else:
             raise
 
@@ -193,3 +203,11 @@ def get_all_service_configs(session_id) -> dict:
 
 def get_configured_services(session_id) -> list:
     return get_session(session_id).get("configuredServices", [])
+
+
+def get_service_provider(session_id, service) -> str | None:
+    return get_session(session_id).get("serviceProviders", {}).get(service)
+
+
+def get_service_providers(session_id) -> dict:
+    return get_session(session_id).get("serviceProviders", {})

@@ -53,19 +53,19 @@ export default function ForgotPassword() {
       heroCopy="Nimbus keeps sign-in, reset, verification, and OAuth under one consistent experience so access never feels bolted on."
     >
       {error ? (
-        <div className="mb-4 rounded-lg border border-red-800 bg-red-900/30 p-3 text-sm text-red-200">
+        <div className="mb-4 rounded-lg border border-red-300 bg-red-50 p-3 text-sm text-red-700">
           {error}
         </div>
       ) : null}
       {success ? (
-        <div className="mb-4 rounded-lg border border-green-800 bg-green-900/30 p-3 text-sm text-green-200">
+        <div className="mb-4 rounded-lg border border-emerald-300 bg-emerald-50 p-3 text-sm text-emerald-700">
           {success}
         </div>
       ) : null}
 
       <form className="space-y-6" onSubmit={handleSubmit}>
         <div>
-          <label htmlFor="email" className="mb-1.5 block text-sm font-semibold text-gray-300">
+          <label htmlFor="email" className="mb-1.5 block text-sm font-semibold text-[#3d5d74]">
             Email address
           </label>
           <input
@@ -78,7 +78,7 @@ export default function ForgotPassword() {
               setEmail(event.target.value);
               setError('');
             }}
-            className="block h-12 w-full rounded-xl border-0 bg-gray-900/50 px-4 py-3.5 text-sm text-white ring-1 ring-inset ring-gray-800 backdrop-blur-sm transition-all duration-200 placeholder:text-gray-500 focus:bg-gray-900/70 focus:ring-2 focus:ring-primary"
+            className="block h-12 w-full rounded-xl border-0 bg-white/82 px-4 py-3.5 text-sm text-[#14324a] ring-1 ring-inset ring-[#b9d8ea] backdrop-blur-sm transition-all duration-200 placeholder:text-[#6f8ea3] focus:bg-white focus:ring-2 focus:ring-primary"
             placeholder="  you@example.com"
             aria-label="email"
           />
@@ -88,7 +88,7 @@ export default function ForgotPassword() {
           <button
             type="submit"
             disabled={loading}
-            className="group flex h-12 w-full items-center justify-center rounded-xl bg-primary px-[28px] py-[14px] text-base font-bold text-black transition-all duration-200 hover:bg-yellow-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:cursor-not-allowed disabled:opacity-50"
+            className="group flex h-12 w-full items-center justify-center rounded-xl bg-primary px-[28px] py-[14px] text-base font-bold text-[#08304d] transition-all duration-200 hover:bg-[#7dcaff] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:cursor-not-allowed disabled:opacity-50"
           >
             {loading ? 'Sending...' : 'Send Reset Link'}
             {!loading ? (
@@ -110,11 +110,11 @@ export default function ForgotPassword() {
         </div>
       </form>
 
-      <p className="mt-8 text-center text-sm text-gray-400">
+      <p className="mt-8 text-center text-sm text-[#6a8aa1]">
         Remembered your password?{' '}
         <Link
           to="/signin"
-          className="font-semibold text-primary underline-offset-4 transition-colors hover:text-yellow-400 hover:underline"
+          className="font-semibold text-primary underline-offset-4 transition-colors hover:text-[#0d75be] hover:underline"
         >
           Sign in
         </Link>

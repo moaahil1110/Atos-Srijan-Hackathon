@@ -8,7 +8,7 @@ import {
   signInWithGooglePopup,
 } from '../firebase/authService';
 
-const SIGN_IN_WORDS = ['Secure.', 'Design.', 'Deploy.', 'With', 'Nimbus.'];
+const SIGN_IN_WORDS = ['Secure.', 'Design.', 'Deploy.'];
 
 export default function SignIn() {
   const navigate = useNavigate();
@@ -161,11 +161,11 @@ export default function SignIn() {
   };
 
   return (
-    <div className="flex min-h-screen font-display bg-[#0E0C09] text-gray-300">
-      <div className="flex w-full items-center justify-center bg-[#0E0C09] p-7 md:p-9 lg:w-1/2 lg:p-14">
+    <div className="flex min-h-screen font-display bg-transparent text-[#49697f]">
+      <div className="flex w-full items-center justify-center bg-[linear-gradient(180deg,rgba(255,255,255,0.74),rgba(241,250,255,0.96))] p-7 md:p-9 lg:w-1/2 lg:p-14">
         <div className="w-full max-w-md lg:max-w-lg">
           <div className="mb-6">
-            <h2 className="min-h-[3.5rem] text-2xl font-bold leading-tight text-white sm:min-h-[4rem] sm:text-3xl lg:text-4xl">
+            <h2 className="min-h-[3.5rem] text-2xl font-bold leading-tight text-[#14324a] sm:min-h-[4rem] sm:text-3xl lg:text-4xl">
               <div className="inline-flex flex-wrap items-center gap-x-4">
                 {SIGN_IN_WORDS.map((word, wordIndex) => {
                   const visible = wordIndex < displayedWords.length;
@@ -196,19 +196,19 @@ export default function SignIn() {
           </div>
 
           {error ? (
-            <div className="mb-4 rounded-lg border border-red-800 bg-red-900/30 p-3 text-sm text-red-200">
+            <div className="mb-4 rounded-lg border border-red-300 bg-red-50 p-3 text-sm text-red-700">
               {error}
             </div>
           ) : null}
           {success ? (
-            <div className="mb-4 rounded-lg border border-green-800 bg-green-900/30 p-3 text-sm text-green-200">
+            <div className="mb-4 rounded-lg border border-emerald-300 bg-emerald-50 p-3 text-sm text-emerald-700">
               {success}
             </div>
           ) : null}
 
           <form className="space-y-2" onSubmit={handleSubmit}>
             <div>
-              <label htmlFor="email" className="block text-sm font-semibold text-gray-300 mb-1.5">
+              <label htmlFor="email" className="mb-1.5 block text-sm font-semibold text-[#3d5d74]">
                 Email address
               </label>
               <input
@@ -218,14 +218,14 @@ export default function SignIn() {
                 required
                 value={formData.email}
                 onChange={handleInputChange}
-                className="block w-full rounded-xl border-0 py-3.5 px-4 bg-gray-900/50 text-white ring-1 ring-inset ring-gray-800 placeholder:text-gray-500 focus:ring-2 focus:ring-primary focus:bg-gray-900/70 text-sm transition-all duration-200 h-12 backdrop-blur-sm"
+                className="block h-12 w-full rounded-xl border-0 bg-white/82 px-4 py-3.5 text-sm text-[#14324a] ring-1 ring-inset ring-[#b9d8ea] placeholder:text-[#6f8ea3] backdrop-blur-sm transition-all duration-200 focus:bg-white focus:ring-2 focus:ring-primary"
                 placeholder="  your@email.com"
                 aria-label="email"
               />
             </div>
 
             <div>
-              <label htmlFor="password" className="block text-sm font-semibold text-gray-300 mb-1.5">
+              <label htmlFor="password" className="mb-1.5 block text-sm font-semibold text-[#3d5d74]">
                 Password
               </label>
               <div className="relative">
@@ -236,14 +236,14 @@ export default function SignIn() {
                   required
                   value={formData.password}
                   onChange={handleInputChange}
-                  className="block w-full rounded-xl border-0 py-3.5 px-4 pr-12 bg-gray-900/50 text-white ring-1 ring-inset ring-gray-800 placeholder:text-gray-500 focus:ring-2 focus:ring-primary focus:bg-gray-900/70 text-sm transition-all duration-200 h-12 backdrop-blur-sm"
+                  className="block h-12 w-full rounded-xl border-0 bg-white/82 px-4 py-3.5 pr-12 text-sm text-[#14324a] ring-1 ring-inset ring-[#b9d8ea] placeholder:text-[#6f8ea3] backdrop-blur-sm transition-all duration-200 focus:bg-white focus:ring-2 focus:ring-primary"
                   placeholder="  Enter password"
                   aria-label="password"
                 />
                 <button
                   type="button"
                   onClick={() => setPasswordVisible((current) => !current)}
-                  className="absolute inset-y-0 right-0 flex items-center pr-4 text-gray-400 hover:text-gray-200 transition-colors"
+                  className="absolute inset-y-0 right-0 flex items-center pr-4 text-[#7a97ab] transition-colors hover:text-[#2a84c9]"
                   aria-label={passwordVisible ? 'Hide password' : 'Show password'}
                 >
                   <svg
@@ -275,7 +275,7 @@ export default function SignIn() {
             <div className="flex items-center justify-end">
               <Link
                 to="/forgot-password"
-                className="text-sm font-semibold text-primary hover:text-yellow-400 transition-colors"
+                className="text-sm font-semibold text-primary transition-colors hover:text-[#0d75be]"
               >
                 Forgot password?
               </Link>
@@ -285,7 +285,7 @@ export default function SignIn() {
               <button
                 type="submit"
                 disabled={loading}
-                className="group flex w-full justify-center items-center rounded-xl bg-primary px-[28px] py-[14px] text-base font-bold text-black hover:bg-yellow-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary transition-all duration-200 h-12 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="group flex h-12 w-full items-center justify-center rounded-xl bg-primary px-[28px] py-[14px] text-base font-bold text-[#08304d] transition-all duration-200 hover:bg-[#7dcaff] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:cursor-not-allowed disabled:opacity-50"
               >
                 {loading ? 'Signing In...' : 'Sign In'}
                 {!loading ? (
@@ -303,46 +303,44 @@ export default function SignIn() {
           </form>
 
           <div className="my-6 flex items-center justify-center">
-            <div className="flex-grow border-t border-gray-800"></div>
-            <span className="mx-5 text-xs font-medium text-gray-500 uppercase tracking-wider">
+            <div className="flex-grow border-t border-[#c5deee]"></div>
+            <span className="mx-5 text-xs font-medium uppercase tracking-wider text-[#6f8ea3]">
               Or continue with
             </span>
-            <div className="flex-grow border-t border-gray-800"></div>
+            <div className="flex-grow border-t border-[#c5deee]"></div>
           </div>
 
           <div className="space-y-3">
             <button
               onClick={handleGoogleSignIn}
               disabled={loading}
-              className="group flex w-full items-center justify-center gap-[18px] rounded-xl bg-gray-900/50 backdrop-blur-sm px-[28px] py-[14px] text-sm font-semibold text-gray-200 ring-1 ring-inset ring-gray-800 hover:bg-gray-900/70 hover:ring-gray-700 transition-all duration-200 h-12 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="group flex h-12 w-full items-center justify-center gap-[18px] rounded-xl bg-white/80 px-[28px] py-[14px] text-sm font-semibold text-[#35556d] ring-1 ring-inset ring-[#c3dced] backdrop-blur-sm transition-all duration-200 hover:bg-white hover:ring-[#9ac9e7] disabled:cursor-not-allowed disabled:opacity-50"
             >
               <img
                 src="https://www.svgrepo.com/show/475656/google-color.svg"
                 alt="Google"
                 className="h-5 w-5"
               />
-              <span className="group-hover:text-white transition-colors">Continue with Google</span>
+              <span className="transition-colors group-hover:text-[#16364d]">Continue with Google</span>
             </button>
 
             <button
               onClick={handleGitHubSignIn}
               disabled={loading}
-              className="group flex w-full items-center justify-center gap-[18px] rounded-xl bg-gray-900/50 backdrop-blur-sm px-[28px] py-[14px] text-sm font-semibold text-gray-200 ring-1 ring-inset ring-gray-800 hover:bg-gray-900/70 hover:ring-gray-700 transition-all duration-200 h-12 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="group flex h-12 w-full items-center justify-center gap-[18px] rounded-xl bg-white/80 px-[28px] py-[14px] text-sm font-semibold text-[#35556d] ring-1 ring-inset ring-[#c3dced] backdrop-blur-sm transition-all duration-200 hover:bg-white hover:ring-[#9ac9e7] disabled:cursor-not-allowed disabled:opacity-50"
             >
-              <img
-                src="https://www.svgrepo.com/show/512317/github-142.svg"
-                alt="GitHub"
-                className="h-5 w-5 invert"
-              />
-              <span className="group-hover:text-white transition-colors">Continue with GitHub</span>
+              <svg viewBox="0 0 24 24" className="h-5 w-5" fill="currentColor" aria-hidden="true">
+                <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z" />
+              </svg>
+              <span className="transition-colors group-hover:text-[#16364d]">Continue with GitHub</span>
             </button>
           </div>
 
-          <p className="mt-6 text-center text-sm text-gray-400">
+          <p className="mt-6 text-center text-sm text-[#6a8aa1]">
             New to Nimbus?{' '}
             <Link
               to="/signup"
-              className="font-semibold text-primary hover:text-yellow-400 transition-colors underline-offset-4 hover:underline"
+              className="font-semibold text-primary transition-colors hover:text-[#0d75be] underline-offset-4 hover:underline"
             >
               Create an account
             </Link>
@@ -358,13 +356,14 @@ export default function SignIn() {
           playsInline
           className="absolute inset-0 h-full w-full object-cover"
         >
-          <source src="/hero.mp4" type="video/mp4" />
+          <source src="/nimbus.mp4" type="video/mp4" />
           Your browser does not support the video tag.
         </video>
-        <div className="absolute inset-0 bg-gradient-to-br from-[#0E0C09]/90 via-black/40 to-transparent"></div>
-        <div className="absolute top-8 right-8 w-20 h-20 rounded-full bg-yellow-400/10 blur-2xl"></div>
-        <div className="absolute bottom-12 left-12 w-32 h-32 rounded-full bg-primary/5 blur-3xl"></div>
+        <div className="absolute inset-0 bg-[linear-gradient(135deg,rgba(244,251,255,0.18),rgba(20,50,74,0.24),rgba(244,251,255,0.12))]"></div>
+        <div className="absolute inset-x-0 bottom-0 h-64 bg-[linear-gradient(180deg,transparent,rgba(7,41,70,0.55))]"></div>
+        <div className="absolute top-8 right-8 h-24 w-24 rounded-full bg-sky-200/30 blur-2xl"></div>
+        <div className="absolute bottom-12 left-12 h-36 w-36 rounded-full bg-white/20 blur-3xl"></div>
       </div>
     </div>
   );
-}
+} 
