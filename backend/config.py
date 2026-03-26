@@ -22,6 +22,9 @@ class Settings:
     AWS_SECRET_ACCESS_KEY: str | None = os.getenv("AWS_SECRET_ACCESS_KEY")
     AWS_SESSION_TOKEN: str | None = os.getenv("AWS_SESSION_TOKEN")
 
+    BEDROCK_AWS_ACCESS_KEY_ID: str | None = os.getenv("BEDROCK_AWS_ACCESS_KEY_ID")
+    BEDROCK_AWS_SECRET_ACCESS_KEY: str | None = os.getenv("BEDROCK_AWS_SECRET_ACCESS_KEY")
+
     AZURE_MCP_COMMAND: str = os.getenv("AZURE_MCP_COMMAND", "uvx")
     AZURE_MCP_ARGS: str = os.getenv("AZURE_MCP_ARGS", "azure-mcp@latest")
     AZURE_MCP_URL: str = os.getenv("AZURE_MCP_URL", "")
