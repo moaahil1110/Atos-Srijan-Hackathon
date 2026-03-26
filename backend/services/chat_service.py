@@ -48,10 +48,12 @@ def _normalize_objective(objective: str | None) -> str:
     return value if value in OBJECTIVE_META else "recommendation"
 
 
-def _initial_session(session_id: str, objective: str = "recommendation") -> dict:
+def _initial_session(session_id: str, objective: str = "recommendation", user_id: str = "") -> dict:
     normalized_objective = _normalize_objective(objective)
     return {
         "sessionId": session_id,
+        "userId": user_id,
+        "sessionTitle": "",
         "companyProfile": {},
         "computedWeights": {},
         "generatedConfig": {},
@@ -63,7 +65,7 @@ def _initial_session(session_id: str, objective: str = "recommendation") -> dict
         "advisoryConversation": [],
         "advisoryContext": {},
         "advisorRecommendations": [],
-        "advisorReasoningMode": "fallback",
+        "advisorReasoningMode": "bedrock-model",
         "advisoryObjective": normalized_objective,
         "createdAt": datetime.now(timezone.utc).isoformat(),
     }
@@ -103,72 +105,6 @@ def _coverage(context: dict) -> dict[str, bool]:
         "security": bool(context.get("compliance") or context.get("security_level")),
         "cost": bool(context.get("budget")),
     }
-
-
-def _fallback_extract_context(message: str, existing: dict) -> dict:
-    text = _normalize_text(message)
-    inferred = {}
-
-    if any(token in text for token in ["healthcare", "patient", "clinic", "hospital", "medical"]):
-        inferred["industry"] = "healthcare"
-    elif any(token in text for token in ["fintech", "bank", "payment", "finance"]):
-        inferred["industry"] = "fintech"
-    elif any(token in text for token in ["ecommerce", "retail", "store", "marketplace"]):
-        inferred["industry"] = "ecommerce"
-    elif any(token in text for token in ["saas", "software", "platform", "b2b"]):
-        inferred["industry"] = "saas"
-
-    if any(token in text for token in ["api", "backend", "microservice"]):
-        inferred["workload_type"] = "api backend"
-    elif any(token in text for token in ["analytics", "warehouse", "bigquery", "etl", "data platform"]):
-        inferred["workload_type"] = "data platform"
-    elif any(token in text for token in ["ai", "ml", "genai", "llm", "inference"]):
-        inferred["workload_type"] = "ml platform"
-    elif any(token in text for token in ["web app", "portal", "website", "frontend"]):
-        inferred["workload_type"] = "web application"
-
-    if any(token in text for token in ["hipaa", "pci", "soc2", "gdpr", "iso27001"]):
-        frameworks = []
-        for framework in ["HIPAA", "PCI-DSS", "SOC2", "GDPR", "ISO27001"]:
-            if framework.lower().replace("-", "") in text.replace("-", ""):
-                frameworks.append(framework)
-        maturity = ""
-        if "in progress" in text or "in-progress" in text:
-            maturity = " (in-progress)"
-        elif "certified" in text:
-            maturity = " (certified)"
-        elif "not started" in text or "not-started" in text:
-            maturity = " (not-started)"
-        inferred["compliance"] = ", ".join(frameworks) + maturity
-
-    if any(token in text for token in ["non-negotiable", "zero trust", "strict security", "sensitive", "regulated"]):
-        inferred["security_level"] = "high"
-    if any(token in text for token in ["cost sensitive", "tight budget", "budget conscious", "startup budget"]):
-        inferred["budget"] = "cost sensitive"
-
-    scale_match = re.search(r"\b\d+[kKmM]?\s+(?:users?|rps|requests?)\b|\b\d+\s*(?:gb|tb|pb)\b", text)
-    if scale_match:
-        inferred["scale"] = scale_match.group(0)
-
-    stack_hits = [token for token in ["microsoft", "entra", "active directory", "office 365", "windows", "bigquery", "bedrock"] if token in text]
-    if stack_hits:
-        inferred["current_stack"] = ", ".join(stack_hits)
-
-    return _clean_context(inferred, existing)
-
-
-def _next_question(context: dict) -> str:
-    coverage = _coverage(context)
-    prompts = {
-        "business": "What are you building, and which industry or customer domain does it serve?",
-        "scale": "What scale should I design for, such as users, traffic, or data volume?",
-        "security": "Which security or compliance requirements are non-negotiable for this workload?",
-        "cost": "What budget or cost sensitivity should I optimize for?",
-    }
-    for key in ("business", "scale", "security", "cost"):
-        if not coverage[key]:
-            return prompts[key]
-    return "I have enough to recommend an architecture now. Do you want the strongest fit or a couple of alternatives too?"
 
 
 def _parse_frameworks(compliance: str | None) -> list[str]:
@@ -331,42 +267,42 @@ def _normalize_options(raw_options: list[dict], context: dict, citations: list[s
         )
     return sorted(normalized, key=lambda item: item["fitScore"], reverse=True)[:3]
 
-
 def _model_extract_context(conversation: list[dict], existing_context: dict, objective: str) -> tuple[dict, dict[str, bool], bool, str, str]:
     objective_meta = OBJECTIVE_META[_normalize_objective(objective)]
-    prompt = f"""
-You are Nimbus, a senior multi-cloud architecture advisor conducting discovery.
+    prompt = f"""<|begin_of_text|><|start_header_id|>system<|end_header_id|>
+You are Nimbus, a senior multi-cloud security architect. Your only job is to extract context from the conversation transcript and return a JSON object. Do NOT recommend cloud providers or services. Do NOT answer the user's questions. ONLY extract and return JSON.
+<|eot_id|><|start_header_id|>user<|end_header_id|>
 
-Current advisory objective:
-- {objective_meta['label']}
-- {objective_meta['prompt']}
-- {objective_meta['follow_up']}
+Advisory objective: {objective_meta['label']} — {objective_meta['prompt']}
 
-Review the transcript and merge it with the existing context. Return ONLY valid JSON:
-{{
-  "industry": "string or empty",
-  "workload_type": "string or empty",
-  "scale": "string or empty",
-  "budget": "string or empty",
-  "compliance": "string or empty",
-  "security_level": "string or empty",
-  "current_stack": "string or empty",
-  "context_coverage": {{"business": true, "scale": false, "security": true, "cost": false}},
-  "sufficient_context": false,
-  "prepared_summary": "one or two sentence summary",
-  "follow_up_question": "one natural follow-up question if more context is needed, else empty string"
-}}
-
-Rules:
-- Only include information grounded in the conversation.
-- sufficient_context can be true only when business, scale, security, and cost are all known.
-- Do not recommend providers or services yet.
-
-Existing context:
+Existing captured context (preserve all values, only update if transcript changes them):
 {existing_context}
 
-Transcript:
+Conversation transcript:
 {_conversation_text(conversation)}
+
+Extract or update the fields from the transcript. Include ONLY information explicitly stated by the user.
+
+Return ONLY this JSON object — no markdown, no explanation, no extra text:
+{{
+  "industry": "e.g. healthcare, fintech, ecommerce, saas — or empty string",
+  "workload_type": "e.g. api backend, web app, data platform, ml platform — or empty string",
+  "scale": "e.g. 50k users, 1M requests/day, 10 TB data — or empty string",
+  "budget": "e.g. cost sensitive, startup budget, enterprise, flexible — or empty string",
+  "compliance": "e.g. HIPAA, PCI-DSS, SOC2, GDPR, ISO27001 — or empty string",
+  "security_level": "e.g. high, medium, standard — or empty string",
+  "current_stack": "e.g. AWS, Microsoft 365, on-premise Oracle — or empty string",
+  "context_coverage": {{
+    "business": true if industry or workload_type is known else false,
+    "scale": true if scale is known else false,
+    "security": true if compliance or security_level is known else false,
+    "cost": true if budget is known else false
+  }},
+  "sufficient_context": true only if ALL four context_coverage values are true,
+  "prepared_summary": "1-2 factual sentences summarising what is known, grounded only in the conversation",
+  "follow_up_question": "one specific question to fill the first missing coverage area — empty string if sufficient_context is true"
+}}
+<|eot_id|><|start_header_id|>assistant<|end_header_id|>
 """.strip()
     result = invoke_bedrock_json(prompt)
     context = _clean_context(result, existing_context)
@@ -399,60 +335,65 @@ def _model_build_options(context: dict, objective: str) -> list[dict]:
         "azure": get_provider_services("azure"),
         "gcp": get_provider_services("gcp"),
     }
-    prompt = f"""
-You are Nimbus, an expert multi-cloud architecture advisor.
+    requirement_trace = _matched_requirements(context)
+    prompt = f"""<|begin_of_text|><|start_header_id|>system<|end_header_id|>
+You are Nimbus, an expert multi-cloud security architect. You are generating a ranked list of cloud architecture recommendations.
+Return ONLY a valid JSON array. No explanation, no markdown, no text before or after the JSON.
+<|eot_id|><|start_header_id|>user<|end_header_id|>
 
-Recommend the best cloud architecture fit for this user. You may return a single-cloud or hybrid option.
+Advisory objective: {objective_meta['label']} — {objective_meta['prompt']}
 
-Current advisory objective:
-- {objective_meta['label']}
-- {objective_meta['prompt']}
+User requirements captured during discovery:
+{chr(10).join(f'  - {r}' for r in requirement_trace)}
 
-User requirement trace:
-{_matched_requirements(context)}
+Compliance documentation (use this to justify recommendations, never invent clause numbers):
+{compliance_text[:2000]}
 
-Compliance documentation:
-{compliance_text}
+Allowed cloud services catalog (ONLY use services from this list):
+  AWS: {', '.join(allowed_catalog['aws'])}
+  Azure: {', '.join(allowed_catalog['azure'])}
+  GCP: {', '.join(allowed_catalog['gcp'])}
 
-Allowed provider/service catalog:
-{allowed_catalog}
+Generate up to 3 ranked architecture options. The first must be the STRONGEST fit — not the most popular choice.
+You may mix providers in a single option if it genuinely fits best (hybrid).
 
-Return ONLY valid JSON as an array with up to 3 options:
+Rules:
+- Every provider and service reason MUST reference the user's specific requirements above.
+- Never invent compliance clause numbers — only cite what is in the compliance documentation.
+- fitScore must be between 60 and 99.
+- Use only service names from the allowed catalog.
+- If objective is Optimise: frame options as the ideal target state for comparison against an existing setup.
+- If objective is Terraform: prefer services with clean Terraform provider support and mention deploy-readiness.
+
+Return ONLY this JSON array:
 [
   {{
-    "optionId": "short-id",
-    "title": "short title",
+    "optionId": "unique-short-id",
+    "title": "Short descriptive title",
     "fitScore": 91,
-    "summary": "provider-level summary",
-    "detailedExplanation": "detailed plain-English explanation tied to user requirements and compliance evidence",
-    "tradeoffs": "tradeoff summary",
-    "matchedRequirements": ["requirement statements"],
+    "summary": "2–3 sentence summary tying the option to the user's requirements",
+    "detailedExplanation": "Detailed explanation referencing industry, scale, compliance, and budget signals",
+    "tradeoffs": "What the user gives up or must consider with this option",
+    "matchedRequirements": ["list of matched requirement strings"],
     "providers": [
       {{
         "provider": "aws|azure|gcp",
-        "role": "provider role",
-        "reason": "why this provider fits",
-        "detailedReason": "detailed provider explanation",
+        "role": "e.g. Primary cloud, Identity & compliance layer",
+        "reason": "Why this provider fits — tie to user requirements",
+        "detailedReason": "Expanded explanation with compliance and workload justification",
         "services": [
           {{
-            "service": "provider-specific service name from the allowed catalog",
-            "reason": "why this service fits",
-            "detailedReason": "detailed service explanation",
-            "requirementMatches": ["requirement statements"]
+            "service": "exact service name from the allowed catalog",
+            "reason": "Why this service — tie to a specific user requirement",
+            "detailedReason": "Expanded service justification with compliance linkage",
+            "requirementMatches": ["specific requirement this service addresses"]
           }}
         ]
       }}
     ]
   }}
 ]
-
-Rules:
-- The top option must be the strongest fit, not the most common cloud.
-- You can mix providers if that genuinely matches the requirements best.
-- Every provider and service reason must explicitly refer back to the user's requirements.
-- Use the compliance documentation to strengthen the explanation. Never invent clause numbers.
-- If the objective is Optimise, frame the option as the strongest target state to compare against an existing setup.
-- If the objective is Terraform, prefer service combinations that translate cleanly into deployable Terraform and mention implementation readiness in the explanation.
+<|eot_id|><|start_header_id|>assistant<|end_header_id|>
 """.strip()
     raw_options = invoke_bedrock_json(prompt)
     if isinstance(raw_options, dict):
@@ -463,111 +404,39 @@ Rules:
     return normalized
 
 
-def _fallback_options(context: dict) -> list[dict]:
-    frameworks = _parse_frameworks(context.get("compliance"))
-    compliance_text = get_compliance_context("cloud architecture compliance guidance", frameworks, num_results=4)
-    citations = _extract_citations(compliance_text)
-    evidence = _extract_evidence(compliance_text)
-    providers = ["aws", "azure", "gcp"]
-    scores = {"aws": 7, "azure": 7, "gcp": 7}
-    text = _normalize_text(" ".join(str(value) for value in context.values()))
-    if any(token in text for token in ["microsoft", "entra", "active directory", "office 365", "windows"]):
-        scores["azure"] += 4
-    if any(token in text for token in ["analytics", "warehouse", "bigquery", "data platform", "ml", "ai"]):
-        scores["gcp"] += 4
-    if any(token in text for token in ["api", "backend", "serverless", "bedrock", "identity"]):
-        scores["aws"] += 4
-    ranked = sorted(providers, key=lambda provider: scores[provider], reverse=True)
-    concepts = ["identity", "object_storage", "relational_db", "serverless"]
-
-    options = []
-    for position, provider in enumerate(ranked[:2], start=1):
-        services = []
-        for concept in concepts[:3]:
-            service_name = get_provider_service_name(concept, provider)
-            services.append(
-                {
-                    "service": service_name,
-                    "reason": f"{service_name} fits the workload and control requirements discovered in the conversation.",
-                    "detailedReason": f"{service_name} supports the stated workload while keeping the architecture aligned with the user's security, compliance, and cost signals.",
-                    "requirementMatches": _matched_requirements(context)[:4],
-                    "userRequirementTrace": _matched_requirements(context)[:4],
-                    "complianceEvidence": evidence[:2],
-                    "citations": citations,
-                }
-            )
-        options.append(
-            {
-                "optionId": f"{provider}-fallback-{position}",
-                "title": f"Best single-cloud fit: {get_provider_label(provider)}",
-                "mode": "single-cloud",
-                "fitScore": 90 - (position * 6),
-                "summary": f"{get_provider_label(provider)} is a strong fallback recommendation based on the discovered workload, security, and stack signals.",
-                "detailedExplanation": f"Nimbus selected {get_provider_label(provider)} from the fallback engine because it best matches the user's stated requirements and the retrieved compliance guidance available during reasoning.",
-                "tradeoffs": "This fallback option is reliable, but it is less nuanced than the Bedrock-generated architecture analysis.",
-                "matchedRequirements": _matched_requirements(context),
-                "providers": [
-                    {
-                        "provider": provider,
-                        "role": "Primary cloud",
-                        "reason": f"{get_provider_label(provider)} aligns well with the user's current requirements.",
-                        "detailedReason": f"The fallback engine matched {get_provider_label(provider)} to the workload pattern, stack signals, and operating constraints described by the user.",
-                        "complianceEvidence": evidence[:2],
-                        "userRequirementTrace": _matched_requirements(context),
-                        "services": services,
-                    }
-                ],
-                "explainability": {
-                    "noveltyNote": "Nimbus keeps the architecture explainable by tying every recommendation back to user requirements and compliance evidence, even in fallback mode.",
-                    "userRequirementTrace": _matched_requirements(context),
-                    "complianceEvidence": evidence,
-                    "citations": citations,
-                },
-            }
-        )
-    return options
-
-
 def _model_ready_reply(context: dict, best_option: dict, objective: str) -> str:
     objective_meta = OBJECTIVE_META[_normalize_objective(objective)]
-    prompt = f"""
-You are Nimbus, a cloud architecture advisor.
+    industry = context.get('industry', 'your domain')
+    frameworks = ', '.join(_parse_frameworks(context.get('compliance')))
+    top_provider = best_option.get('providers', [{}])[0].get('provider', 'cloud').upper()
+    fit_score = best_option.get('fitScore', '')
+    prompt = f"""<|begin_of_text|><|start_header_id|>system<|end_header_id|>
+You are Nimbus, a cloud architecture advisor. Write a concise, confident reply to the user. Plain text only — no markdown, no bullet points, no headers.
+<|eot_id|><|start_header_id|>user<|end_header_id|>
 
-Write a concise reply for the user after discovery is complete.
-- Tell them you now have enough context for the selected objective.
-- Name the strongest recommendation.
-- Mention that the providers and services below are explained against their requirements and compliance evidence.
-- Mention the current advisory objective: {objective_meta['label']}.
-- Keep it to 3 or 4 sentences.
+The discovery interview is complete. Write a 3–4 sentence reply that:
+1. Confirms you have captured enough context for the objective: {objective_meta['label']}.
+2. Names the strongest recommendation ({top_provider}, fit score {fit_score}) and why it fits {industry} with {frameworks} compliance requirements.
+3. Tells the user the architecture options are shown below with full requirement tracing and compliance evidence.
+4. Invites them to load a recommendation into the Configuration Lab or ask follow-up questions.
 
-Context:
-{context}
-
-Best option:
-{best_option}
+Do NOT use bullet points or headers. Write as flowing sentences. Maximum 4 sentences.
+<|eot_id|><|start_header_id|>assistant<|end_header_id|>
 """.strip()
-    return invoke_bedrock(prompt, temperature=0.2, max_tokens=240).strip()
+    return invoke_bedrock(prompt, temperature=0.3, max_tokens=300).strip()
 
 
-def _reasoning_mode(context_mode: str, option_mode: str | None) -> str:
-    if context_mode == "bedrock-model" and option_mode == "bedrock-model":
-        return "bedrock-model"
-    if context_mode == "fallback" and (option_mode is None or option_mode == "fallback"):
-        return "fallback"
-    return "hybrid"
-
-
-async def process_chat(session_id: str | None, user_message: str, objective: str = "recommendation") -> dict:
+async def process_chat(session_id: str | None, user_message: str, objective: str = "recommendation", user_id: str = "") -> dict:
     current_objective = _normalize_objective(objective)
     if not session_id:
         session_id = str(uuid.uuid4())
-        session_item = _initial_session(session_id, current_objective)
+        session_item = _initial_session(session_id, current_objective, user_id)
         save_session(session_item)
     else:
         try:
             session_item = get_session(session_id)
         except KeyError:
-            session_item = _initial_session(session_id, current_objective)
+            session_item = _initial_session(session_id, current_objective, user_id)
             save_session(session_item)
         else:
             current_objective = _normalize_objective(objective or session_item.get("advisoryObjective"))
@@ -576,35 +445,18 @@ async def process_chat(session_id: str | None, user_message: str, objective: str
     advisory_context = session_item.get("advisoryContext", {})
     advisory_conversation.append({"role": "user", "content": user_message})
 
-    try:
-        updated_context, coverage, sufficient_context, prepared_summary, follow_up_question = _model_extract_context(
-            advisory_conversation, advisory_context, current_objective
-        )
-        context_mode = "bedrock-model"
-    except Exception as exc:
-        logger.warning("Model-based advisory extraction unavailable, using fallback extraction: %s", exc)
-        updated_context = _fallback_extract_context(user_message, advisory_context)
-        coverage = _coverage(updated_context)
-        sufficient_context = all(coverage.values())
-        prepared_summary = ", ".join(_matched_requirements(updated_context)[:4])
-        follow_up_question = _next_question(updated_context)
-        context_mode = "fallback"
+    updated_context, coverage, sufficient_context, prepared_summary, follow_up_question = _model_extract_context(
+        advisory_conversation, advisory_context, current_objective
+    )
 
     architecture_options = []
     flattened_services = []
     suggested_services = []
-    option_mode = None
 
     if sufficient_context:
         profile = _context_to_profile(updated_context)
         weights = compute_weights(profile)
-        try:
-            architecture_options = _model_build_options(updated_context, current_objective)
-            option_mode = "bedrock-model"
-        except Exception as exc:
-            logger.warning("Model-based architecture recommendation unavailable, using fallback reasoning: %s", exc)
-            architecture_options = _fallback_options(updated_context)
-            option_mode = "fallback"
+        architecture_options = _model_build_options(updated_context, current_objective)
 
         seen_services = set()
         for block in architecture_options[0]["providers"]:
@@ -614,13 +466,7 @@ async def process_chat(session_id: str | None, user_message: str, objective: str
                     suggested_services.append(service_info["service"])
                     seen_services.add(service_info["service"])
 
-        try:
-            reply = _model_ready_reply(updated_context, architecture_options[0], current_objective)
-        except Exception:
-            reply = (
-                f"{OBJECTIVE_META[current_objective]['ready']} The strongest fit is {architecture_options[0]['title']}, and I have traced "
-                "each provider and service back to your requirements and the compliance evidence used during reasoning."
-            )
+        reply = _model_ready_reply(updated_context, architecture_options[0], current_objective)
 
         best_option = architecture_options[0]
         best_provider = best_option["providers"][0]["provider"] if len(best_option["providers"]) == 1 else "multi"
@@ -630,10 +476,29 @@ async def process_chat(session_id: str | None, user_message: str, objective: str
         update_session(session_id, "provider", best_provider)
         update_session(session_id, "advisorRecommendations", architecture_options)
     else:
-        reply = follow_up_question or _next_question(updated_context)
+        if not follow_up_question:
+            # The model omitted the follow-up — derive one from the missing coverage area
+            missing = [area for area, covered in coverage.items() if not covered]
+            fallback_map = {
+                "business": "Could you tell me a bit about your industry and the type of workload you are running?",
+                "scale": "What kind of scale are you expecting — number of users, requests per day, or data volume?",
+                "security": "Do you have any compliance requirements such as HIPAA, PCI-DSS, or SOC2?",
+                "cost": "How would you describe your budget posture — cost-sensitive, startup budget, or flexible?",
+            }
+            follow_up_question = fallback_map.get(missing[0] if missing else "business",
+                "Could you tell me more about your workload, scale, compliance needs, and budget?")
+            logger.warning("Model omitted follow_up_question; using fallback for missing area: %s", missing)
+        reply = follow_up_question
 
     advisory_conversation.append({"role": "assistant", "content": reply})
-    reasoning_mode = _reasoning_mode(context_mode, option_mode)
+    reasoning_mode = "bedrock-model"
+
+    # Auto-generate session title from first user message
+    if not session_item.get("sessionTitle") and user_message:
+        title = user_message.strip()[:60]
+        if len(user_message.strip()) > 60:
+            title += "..."
+        update_session(session_id, "sessionTitle", title)
 
     update_session(session_id, "advisoryConversation", advisory_conversation)
     update_session(session_id, "advisoryContext", updated_context)
