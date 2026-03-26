@@ -17,12 +17,14 @@ def _get_client():
     global _client
     if _client is None:
         kwargs = {"region_name": settings.AWS_REGION}
-        if settings.AWS_ACCESS_KEY_ID and settings.AWS_SECRET_ACCESS_KEY:
-            kwargs["aws_access_key_id"] = settings.AWS_ACCESS_KEY_ID
-            kwargs["aws_secret_access_key"] = settings.AWS_SECRET_ACCESS_KEY
+        access_key = settings.BEDROCK_AWS_ACCESS_KEY_ID or settings.AWS_ACCESS_KEY_ID
+        secret_key = settings.BEDROCK_AWS_SECRET_ACCESS_KEY or settings.AWS_SECRET_ACCESS_KEY
+        if access_key and secret_key:
+            kwargs["aws_access_key_id"] = access_key
+            kwargs["aws_secret_access_key"] = secret_key
         if settings.AWS_SESSION_TOKEN:
             kwargs["aws_session_token"] = settings.AWS_SESSION_TOKEN
-        kwargs["config"] = Config(connect_timeout=1, read_timeout=2, retries={"max_attempts": 1})
+        kwargs["config"] = Config(connect_timeout=5, read_timeout=30, retries={"max_attempts": 2})
         _client = boto3.client("bedrock-runtime", **kwargs)
     return _client
 
