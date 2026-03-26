@@ -7,6 +7,7 @@ class ChatRequest(BaseModel):
     sessionId: str | None = None
     message: str
     objective: str = "recommendation"
+    userId: str = ""
 
 
 class ChatResponse(BaseModel):
@@ -18,7 +19,7 @@ class ChatResponse(BaseModel):
     context_coverage: dict[str, bool] = Field(default_factory=dict)
     architecture_options: list[dict[str, Any]] = Field(default_factory=list)
     prepared_summary: str = ""
-    reasoningMode: str = "fallback"
+    reasoningMode: str = "bedrock-model"
     objective: str = "recommendation"
 
 
