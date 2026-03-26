@@ -1,6 +1,5 @@
 import json
 import logging
-import re
 import time
 import uuid
 
@@ -66,72 +65,6 @@ Return ONLY a valid JSON array:
 ["service1", "service2", "service3"]
 """
 
-
-def _heuristic_intent(description: str) -> dict:
-    text = description.lower()
-    frameworks = []
-    for framework in ["HIPAA", "PCI-DSS", "SOC2", "ISO27001", "GDPR"]:
-        if framework.lower().replace("-", "") in text.replace("-", ""):
-            frameworks.append(framework)
-    if not frameworks:
-        frameworks = ["none"]
-
-    if "healthcare" in text or "patient" in text:
-        industry = "healthcare"
-    elif "fintech" in text or "payment" in text or "bank" in text:
-        industry = "fintech"
-    elif "ecommerce" in text or "retail" in text or "shop" in text:
-        industry = "ecommerce"
-    elif "saas" in text or "software" in text:
-        industry = "saas"
-    elif "government" in text or "public sector" in text:
-        industry = "government"
-    else:
-        industry = "other"
-
-    if "highly confidential" in text or "patient records" in text or "phi" in text:
-        data_classification = "highly-confidential"
-    elif "confidential" in text:
-        data_classification = "confidential"
-    elif "public" in text:
-        data_classification = "public"
-    else:
-        data_classification = "internal"
-
-    if "certified" in text:
-        maturity = "certified"
-    elif "in-progress" in text or "in progress" in text:
-        maturity = "in-progress"
-    else:
-        maturity = "not-started"
-
-    risk_tolerance = 1 if "non-negotiable" in text or "zero risk" in text else 3
-    if "cost sensitive" in text or "save costs" in text:
-        cost_pressure = 4
-    elif "startup" in text:
-        cost_pressure = 2
-    else:
-        cost_pressure = 3
-
-    mission_critical = []
-    for term in ["patient records", "billing", "payments", "identity", "analytics", "database", "storage"]:
-        if term in text:
-            mission_critical.append(term)
-
-    team_size = "20-person startup" if "startup" in text else "growing team"
-    return {
-        "industry": industry,
-        "complianceFrameworks": frameworks,
-        "complianceMaturity": maturity,
-        "teamSize": team_size,
-        "costPressure": cost_pressure,
-        "riskTolerance": risk_tolerance,
-        "missionCriticalServices": mission_critical,
-        "dataClassification": data_classification,
-        "weightReasoning": "Security is prioritized according to the described risk, compliance, and cost posture.",
-    }
-
-
 def _default_services(intent: dict, provider: str) -> list[str]:
     industry = intent.get("industry", "other")
     defaults = {
@@ -174,17 +107,18 @@ async def detect_services(description: str, intent: dict, provider: str = "aws")
             try:
                 parsed = json.loads(raw_text)
             except json.JSONDecodeError:
-                match = re.search(r"\[.*\]", raw_text, re.DOTALL)
-                if not match:
+                start = raw_text.find("[")
+                end = raw_text.rfind("]")
+                if start == -1 or end == -1 or end <= start:
                     raise
-                parsed = json.loads(match.group())
+                parsed = json.loads(raw_text[start : end + 1])
             if isinstance(parsed, list) and parsed:
                 return parsed[:6]
         except Exception as exc:
             logger.warning("Service detection attempt %s failed: %s", attempt + 1, exc)
             stricter_prompt = f"{stricter_prompt}\n\nIMPORTANT: Return ONLY a JSON array."
             time.sleep(0.2 * (attempt + 1))
-    return _default_services(intent, provider)
+    raise RuntimeError(f"Service detection failed for {provider}.")
 
 
 async def extract_intent(description: str, provider: str = "aws") -> dict:
@@ -192,11 +126,7 @@ async def extract_intent(description: str, provider: str = "aws") -> dict:
     if provider not in settings.SUPPORTED_PROVIDERS:
         raise HTTPException(status_code=400, detail=f"Provider '{provider}' not supported.")
 
-    try:
-        intent = invoke_bedrock_json(INTENT_PROMPT.replace("{description}", description))
-    except Exception as exc:
-        logger.warning("Intent extraction fell back to heuristics: %s", exc)
-        intent = _heuristic_intent(description)
+    intent = invoke_bedrock_json(INTENT_PROMPT.replace("{description}", description))
 
     intent.setdefault("complianceFrameworks", ["none"])
     if not intent["complianceFrameworks"]:
