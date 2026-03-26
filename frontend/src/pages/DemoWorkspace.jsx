@@ -8,12 +8,30 @@ import ConfigPanel from '../components/workspace/ConfigPanel';
 import RequirementRail from '../components/workspace/RequirementRail';
 import { signOutUser } from '../firebase/authService';
 import { auth } from '../firebase/config';
+import {
+  areWorkspaceSnapshotsEqual,
+  createWorkspaceStorageKey,
+  loadWorkspacePersistence,
+  saveWorkspacePersistence,
+  upsertWorkspaceSnapshot,
+} from '../utils/workspacePersistence';
 
 const API_BASE_URL = 'http://127.0.0.1:5000';
 const OBJECTIVE_TAB_MAP = {
   recommendation: 'recommended',
   optimize: 'optimize',
   terraform: 'terraform',
+};
+const DEFAULT_CONTEXT_COVERAGE = {
+  business: false,
+  scale: false,
+  security: false,
+  cost: false,
+};
+const OBJECTIVE_LABELS = {
+  recommendation: 'Recommendation',
+  optimize: 'Optimise',
+  terraform: 'Terraform',
 };
 
 const OBJECTIVE_INTRO = {
@@ -32,6 +50,45 @@ const createInitialChat = (objective = 'recommendation') => [
   },
 ];
 
+const truncateText = (value, maxLength = 96) => {
+  const normalized = (value || '').trim();
+  if (!normalized) {
+    return '';
+  }
+  return normalized.length > maxLength ? `${normalized.slice(0, maxLength - 3)}...` : normalized;
+};
+
+const createSessionTitle = (messages, objective) => {
+  const firstUserMessage = (messages || []).find((message) => message.role === 'user')?.content;
+  return truncateText(firstUserMessage, 64) || `${OBJECTIVE_LABELS[objective] || 'Nimbus'} session`;
+};
+
+const createSessionPreview = (snapshot) => {
+  const lastMessage = [...(snapshot?.chatMessages || [])]
+    .reverse()
+    .find((message) => typeof message?.content === 'string' && message.content.trim());
+
+  return truncateText(lastMessage?.content || snapshot?.preparedSummary || 'Saved workspace snapshot', 116);
+};
+
+const formatSessionTimestamp = (value) => {
+  if (!value) {
+    return 'Saved recently';
+  }
+
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) {
+    return 'Saved recently';
+  }
+
+  return date.toLocaleString(undefined, {
+    month: 'short',
+    day: 'numeric',
+    hour: 'numeric',
+    minute: '2-digit',
+  });
+};
+
 export default function DemoWorkspace() {
   const navigate = useNavigate();
   const { user } = useAuth();
@@ -41,15 +98,10 @@ export default function DemoWorkspace() {
   const [chatMessages, setChatMessages] = useState(createInitialChat('recommendation'));
   const [chatInput, setChatInput] = useState('');
   const [advisoryContext, setAdvisoryContext] = useState({});
-  const [contextCoverage, setContextCoverage] = useState({
-    business: false,
-    scale: false,
-    security: false,
-    cost: false,
-  });
+  const [contextCoverage, setContextCoverage] = useState(DEFAULT_CONTEXT_COVERAGE);
   const [architectureOptions, setArchitectureOptions] = useState([]);
   const [preparedSummary, setPreparedSummary] = useState('');
-  const [reasoningMode, setReasoningMode] = useState('fallback');
+  const [reasoningMode, setReasoningMode] = useState('bedrock-model');
   const [allConfigs, setAllConfigs] = useState({});
   const [schemas, setSchemas] = useState({});
   const [serviceCatalog, setServiceCatalog] = useState({});
@@ -61,6 +113,13 @@ export default function DemoWorkspace() {
   const [resendingEmail, setResendingEmail] = useState(false);
   const [emailBannerMessage, setEmailBannerMessage] = useState('');
   const [settingsOpen, setSettingsOpen] = useState(false);
+  const [previousSessions, setPreviousSessions] = useState([]);
+  const [isLoadingSession, setIsLoadingSession] = useState(false);
+  const [savedSessions, setSavedSessions] = useState([]);
+  const [activeSavedSessionId, setActiveSavedSessionId] = useState(null);
+  const [storageReady, setStorageReady] = useState(false);
+  const [loadedStorageKey, setLoadedStorageKey] = useState(null);
+  const storageKey = useMemo(() => createWorkspaceStorageKey(user?.uid), [user?.uid]);
 
   const session = useMemo(
     () =>
@@ -72,6 +131,49 @@ export default function DemoWorkspace() {
         : null,
     [serviceCatalog, sessionId],
   );
+
+  const resetWorkspace = (nextObjective = 'recommendation') => {
+    setSelectedObjective(nextObjective);
+    setSessionId(null);
+    setChatMessages(createInitialChat(nextObjective));
+    setChatInput('');
+    setAdvisoryContext({});
+    setContextCoverage(DEFAULT_CONTEXT_COVERAGE);
+    setArchitectureOptions([]);
+    setPreparedSummary('');
+    setReasoningMode('bedrock-model');
+    setAllConfigs({});
+    setSchemas({});
+    setServiceCatalog({});
+    setLoadingServices([]);
+    setStatusMessage('');
+  };
+
+  const applyWorkspaceSnapshot = (snapshot) => {
+    const nextObjective = snapshot?.objective || 'recommendation';
+
+    setSelectedObjective(nextObjective);
+    setSessionId(snapshot?.sessionId || null);
+    setChatMessages(
+      Array.isArray(snapshot?.chatMessages) && snapshot.chatMessages.length
+        ? snapshot.chatMessages
+        : createInitialChat(nextObjective),
+    );
+    setChatInput('');
+    setAdvisoryContext(snapshot?.advisoryContext || {});
+    setContextCoverage({
+      ...DEFAULT_CONTEXT_COVERAGE,
+      ...(snapshot?.contextCoverage || {}),
+    });
+    setArchitectureOptions(Array.isArray(snapshot?.architectureOptions) ? snapshot.architectureOptions : []);
+    setPreparedSummary(snapshot?.preparedSummary || '');
+    setReasoningMode(snapshot?.reasoningMode || 'bedrock-model');
+    setAllConfigs(snapshot?.allConfigs || {});
+    setSchemas(snapshot?.schemas || {});
+    setServiceCatalog(snapshot?.serviceCatalog || {});
+    setLoadingServices([]);
+    setStatusMessage('');
+  };
 
   const handleConfigUpdate = (service, fieldId, newValue, newReason) => {
     setAllConfigs((current) => ({
@@ -98,11 +200,119 @@ export default function DemoWorkspace() {
   }, [searchParams, setSearchParams]);
 
   useEffect(() => {
+    if (!storageKey) {
+      setSavedSessions([]);
+      setActiveSavedSessionId(null);
+      setStorageReady(false);
+      setLoadedStorageKey(null);
+      resetWorkspace('recommendation');
+      return;
+    }
+
+    const persisted = loadWorkspacePersistence(storageKey);
+    const activeSnapshot = persisted.activeSessionId
+      ? persisted.sessions.find((item) => item.sessionId === persisted.activeSessionId)
+      : null;
+
+    setSavedSessions(persisted.sessions);
+    setActiveSavedSessionId(persisted.activeSessionId);
+
+    if (activeSnapshot) {
+      applyWorkspaceSnapshot(activeSnapshot);
+    } else {
+      resetWorkspace('recommendation');
+    }
+
+    setLoadedStorageKey(storageKey);
+    setStorageReady(true);
+  }, [storageKey]);
+
+  useEffect(() => {
+    if (!storageReady || !storageKey || loadedStorageKey !== storageKey || !sessionId) {
+      return;
+    }
+
+    const snapshotSeed = {
+      sessionId,
+      title: createSessionTitle(chatMessages, selectedObjective),
+      objective: selectedObjective,
+      chatMessages,
+      advisoryContext,
+      contextCoverage,
+      architectureOptions,
+      preparedSummary,
+      reasoningMode,
+      allConfigs,
+      schemas,
+      serviceCatalog,
+    };
+
+    setSavedSessions((current) => {
+      const existing = current.find((item) => item.sessionId === sessionId);
+      const comparableSnapshot = {
+        ...snapshotSeed,
+        createdAt: existing?.createdAt || '',
+        updatedAt: existing?.updatedAt || '',
+      };
+
+      if (existing && areWorkspaceSnapshotsEqual(existing, comparableSnapshot)) {
+        return current;
+      }
+
+      const timestamp = new Date().toISOString();
+      return upsertWorkspaceSnapshot(current, {
+        ...snapshotSeed,
+        createdAt: existing?.createdAt || timestamp,
+        updatedAt: timestamp,
+      });
+    });
+    setActiveSavedSessionId((current) => (current === sessionId ? current : sessionId));
+  }, [
+    advisoryContext,
+    allConfigs,
+    architectureOptions,
+    chatMessages,
+    contextCoverage,
+    preparedSummary,
+    reasoningMode,
+    schemas,
+    selectedObjective,
+    serviceCatalog,
+    sessionId,
+    loadedStorageKey,
+    storageKey,
+    storageReady,
+  ]);
+
+  useEffect(() => {
+    if (!storageReady || !storageKey || loadedStorageKey !== storageKey) {
+      return;
+    }
+
+    saveWorkspacePersistence(storageKey, {
+      activeSessionId: activeSavedSessionId,
+      sessions: savedSessions,
+    });
+  }, [activeSavedSessionId, loadedStorageKey, savedSessions, storageKey, storageReady]);
+
+  useEffect(() => {
     const hasUserMessages = chatMessages.some((message) => message.role === 'user');
     if (!hasUserMessages) {
       setChatMessages(createInitialChat(selectedObjective));
     }
   }, [selectedObjective]);
+
+  // Load previous sessions from DynamoDB when user is available
+  useEffect(() => {
+    if (user?.uid) {
+      fetch(`${API_BASE_URL}/sessions?userId=${encodeURIComponent(user.uid)}`)
+        .then((r) => r.json())
+        .then((d) => setPreviousSessions(Array.isArray(d) ? d : []))
+        .catch(() => {});
+    } else {
+      setPreviousSessions([]);
+    }
+  }, [user?.uid]);
 
   const sendChatMessage = async (message) => {
     const nextMessage = message.trim();
@@ -123,6 +333,7 @@ export default function DemoWorkspace() {
           sessionId,
           message: nextMessage,
           objective: selectedObjective,
+          userId: user?.uid || '',
         }),
       });
       const data = await response.json();
@@ -142,9 +353,16 @@ export default function DemoWorkspace() {
       );
       setArchitectureOptions(data.architecture_options || []);
       setPreparedSummary(data.prepared_summary || '');
-      setReasoningMode(data.reasoningMode || 'fallback');
+      setReasoningMode(data.reasoningMode || 'bedrock-model');
       setSelectedObjective(data.objective || selectedObjective);
       setChatMessages((current) => [...current, { role: 'assistant', content: data.reply }]);
+      // Refresh sidebar session list
+      if (user?.uid) {
+        fetch(`${API_BASE_URL}/sessions?userId=${encodeURIComponent(user.uid)}`)
+          .then((r) => r.json())
+          .then((d) => setPreviousSessions(Array.isArray(d) ? d : []))
+          .catch(() => {});
+      }
     } catch (error) {
       setStatusMessage(error.message);
       setChatMessages((current) => [
@@ -155,7 +373,7 @@ export default function DemoWorkspace() {
             'I hit an error while processing that message. Please retry, and I will continue the requirement interview from the current context.',
         },
       ]);
-      setReasoningMode('fallback');
+      setReasoningMode('bedrock-model');
     } finally {
       setIsChatting(false);
     }
@@ -269,6 +487,58 @@ export default function DemoWorkspace() {
     }
   };
 
+  const handleStartNewSession = () => {
+    setActiveSavedSessionId(null);
+    resetWorkspace(selectedObjective);
+    setSettingsOpen(false);
+  };
+
+  const handleRestoreSession = async (sessionIdToRestore) => {
+    if (!sessionIdToRestore) {
+      return;
+    }
+
+    setIsLoadingSession(true);
+    setStatusMessage('');
+
+    try {
+      const response = await fetch(`${API_BASE_URL}/sessions/${sessionIdToRestore}`, {
+        method: 'GET',
+        headers: { 'Content-Type': 'application/json' },
+      });
+      const data = await response.json();
+      if (!response.ok) {
+        throw new Error(data.detail || 'Failed to load session.');
+      }
+
+      const snapshot = {
+        sessionId: data.sessionId,
+        title: data.sessionTitle,
+        objective: data.advisoryObjective,
+        chatMessages: data.chatMessages,
+        advisoryContext: data.advisoryContext,
+        contextCoverage: data.contextCoverage,
+        architectureOptions: data.architectureOptions,
+        preparedSummary: data.preparedSummary,
+        reasoningMode: data.reasoningMode,
+        allConfigs: data.allConfigs,
+        schemas: data.schemas,
+        serviceCatalog: data.serviceCatalog,
+        createdAt: data.createdAt,
+        updatedAt: data.updatedAt,
+      };
+
+      applyWorkspaceSnapshot(snapshot);
+      setActiveSavedSessionId(snapshot.sessionId);
+      setSettingsOpen(false);
+      setStatusMessage(`Restored ${snapshot.title || 'saved session'}.`);
+    } catch (error) {
+      setStatusMessage(error.message);
+    } finally {
+      setIsLoadingSession(false);
+    }
+  };
+
   const handleResendVerification = async () => {
     setResendingEmail(true);
     setEmailBannerMessage('');
@@ -297,6 +567,15 @@ export default function DemoWorkspace() {
     setStatusMessage(result.error || 'Failed to sign out.');
   };
 
+  const activeDrawerSessionId = sessionId || activeSavedSessionId;
+  const currentSavedSession = useMemo(
+    () => savedSessions.find((item) => item.sessionId === activeDrawerSessionId) || null,
+    [activeDrawerSessionId, savedSessions],
+  );
+  const previousSessionsLocal = useMemo(
+    () => savedSessions.filter((item) => item.sessionId !== activeDrawerSessionId),
+    [activeDrawerSessionId, savedSessions],
+  );
   const userName = user?.displayName || user?.email?.split('@')[0] || 'Nimbus user';
   const isEmailPasswordProvider = user?.providerData?.some((item) => item.providerId === 'password');
   const needsVerification = Boolean(user) && isEmailPasswordProvider && !user?.emailVerified;
@@ -321,7 +600,14 @@ export default function DemoWorkspace() {
           <header className="px-5 pb-1 pt-4 sm:px-6">
             <div className="flex items-center justify-between gap-4">
               <div className="min-w-0">
-                <h1 className="font-brand brand-wordmark">Nimbus</h1>
+                <h1 className="font-brand">
+                  <span className="brand-wordmark" aria-label="Nimbus">
+                    <span className="brand-wordmark__halo" />
+                    <span className="brand-wordmark__capsule">
+                      <span className="brand-wordmark__text">Nimbus</span>
+                    </span>
+                  </span>
+                </h1>
               </div>
               <button
                 type="button"
@@ -341,40 +627,42 @@ export default function DemoWorkspace() {
             </div>
           ) : null}
 
-          {hasStartedConversation ? (
-            <div className="px-5 pb-1 pt-2 sm:px-6">
-              <RequirementRail
-                advisoryContext={advisoryContext}
-                contextCoverage={contextCoverage}
-                preparedSummary={preparedSummary}
-                reasoningMode={reasoningMode}
-                embedded
-              />
-            </div>
-          ) : null}
-
           <main
             className={`min-h-0 flex-1 ${
               hasConfigLabContent ? 'grid xl:grid-cols-[minmax(0,1fr)_390px] xl:items-stretch' : ''
             }`}
           >
             <div className="min-w-0 px-5 py-2 sm:px-6">
-              <AdvisorChatPanel
-                messages={chatMessages}
-                chatInput={chatInput}
-                onInputChange={setChatInput}
-                onSendMessage={sendChatMessage}
-                isChatting={isChatting}
-                architectureOptions={architectureOptions}
-                preparedSummary={preparedSummary}
-                reasoningMode={reasoningMode}
-                onConfigureProviderPlan={handleConfigureProviderPlan}
-                onConfigureFullOption={handleConfigureFullOption}
-                isConfiguring={isConfiguring}
-                embedded
-                selectedObjective={selectedObjective}
-                onObjectiveChange={handleObjectiveChange}
-              />
+              <div className="flex h-full min-h-0 flex-col gap-3">
+                {hasStartedConversation ? (
+                  <RequirementRail
+                    advisoryContext={advisoryContext}
+                    contextCoverage={contextCoverage}
+                    preparedSummary={preparedSummary}
+                    reasoningMode={reasoningMode}
+                    embedded
+                  />
+                ) : null}
+
+                <div className="min-h-0 flex-1">
+                  <AdvisorChatPanel
+                    messages={chatMessages}
+                    chatInput={chatInput}
+                    onInputChange={setChatInput}
+                    onSendMessage={sendChatMessage}
+                    isChatting={isChatting}
+                    architectureOptions={architectureOptions}
+                    preparedSummary={preparedSummary}
+                    reasoningMode={reasoningMode}
+                    onConfigureProviderPlan={handleConfigureProviderPlan}
+                    onConfigureFullOption={handleConfigureFullOption}
+                    isConfiguring={isConfiguring}
+                    embedded
+                    selectedObjective={selectedObjective}
+                    onObjectiveChange={handleObjectiveChange}
+                  />
+                </div>
+              </div>
             </div>
 
             {hasConfigLabContent ? (
@@ -448,8 +736,27 @@ export default function DemoWorkspace() {
             ) : null}
 
             <div className="mt-4 rounded-3xl border border-[#d7e9f4] bg-[#fafdff] p-4">
-              <div className="text-[11px] font-semibold uppercase tracking-[0.24em] text-[#2792df]">Current session</div>
-              <div className="mt-3 space-y-3 text-sm text-[#4e6c82]">
+              <div className="flex items-start justify-between gap-4">
+                <div>
+                  <div className="text-[11px] font-semibold uppercase tracking-[0.24em] text-[#2792df]">Current session</div>
+                  <div className="mt-2 text-sm font-semibold text-[#16324a]">
+                    {currentSavedSession?.title || `${OBJECTIVE_LABELS[selectedObjective] || 'Nimbus'} session`}
+                  </div>
+                  <div className="mt-1 text-xs text-[#5f7f97]">
+                    {currentSavedSession
+                      ? `${OBJECTIVE_LABELS[currentSavedSession.objective] || 'Recommendation'} | ${formatSessionTimestamp(currentSavedSession.updatedAt)}`
+                      : 'Start a new advisory thread and Nimbus will keep this workspace saved locally.'}
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  onClick={handleStartNewSession}
+                  className="rounded-2xl border border-[#d7e9f4] px-3 py-2 text-xs font-semibold uppercase tracking-[0.18em] text-[#315770] transition-colors hover:bg-white"
+                >
+                  New session
+                </button>
+              </div>
+              <div className="mt-4 space-y-3 text-sm text-[#4e6c82]">
                 <div className="flex items-center justify-between gap-4">
                   <span>Context captured</span>
                   <span className="font-semibold text-[#16324a]">{readyCount}/4</span>
@@ -457,12 +764,16 @@ export default function DemoWorkspace() {
                 <div className="flex items-center justify-between gap-4">
                   <span>Reasoning mode</span>
                   <span className="font-semibold capitalize text-[#16324a]">
-                    {reasoningMode === 'bedrock-model' ? 'Model-backed' : reasoningMode === 'hybrid' ? 'Model + fallback' : 'Fallback'}
+                    {reasoningMode === 'bedrock-model' ? 'Model-backed' : 'Model-backed'}
                   </span>
                 </div>
                 <div className="flex items-center justify-between gap-4">
                   <span>Session started</span>
                   <span className="font-semibold text-[#16324a]">{sessionId ? 'Active' : 'Not started'}</span>
+                </div>
+                <div className="flex items-center justify-between gap-4">
+                  <span>Saved session ID</span>
+                  <span className="font-semibold text-[#16324a]">{currentSavedSession?.sessionId?.slice(0, 8) || 'Pending'}</span>
                 </div>
                 <div className="flex items-center justify-between gap-4">
                   <span>Output mode</span>
@@ -476,21 +787,35 @@ export default function DemoWorkspace() {
             <div className="mt-4 rounded-3xl border border-[#d7e9f4] bg-[#fafdff] p-4">
               <div className="text-[11px] font-semibold uppercase tracking-[0.24em] text-[#2792df]">Previous chats</div>
               <div className="mt-3 space-y-2">
-                {chatMessages.length <= 1 ? (
+                {previousSessions.length === 0 ? (
                   <div className="rounded-2xl border border-dashed border-[#d7e9f4] p-3 text-sm text-[#5f7f97]">
                     Your conversation history will appear here after you start chatting.
                   </div>
                 ) : (
-                  chatMessages.slice(1).map((message, index) => (
-                    <div
-                      key={`${message.role}-${index}`}
-                      className="rounded-2xl border border-[#d7e9f4] bg-white/80 p-3"
+                  previousSessions.map((s) => (
+                    <button
+                      key={s.sessionId}
+                      type="button"
+                      onClick={() => handleRestoreSession(s.sessionId)}
+                      disabled={isLoadingSession}
+                      className={`w-full rounded-2xl border p-3 text-left transition-colors disabled:opacity-50 ${
+                        s.sessionId === sessionId
+                          ? 'border-[#8ecff9] bg-[#eaf7ff]'
+                          : 'border-[#d7e9f4] bg-white/80 hover:bg-white'
+                      }`}
                     >
-                      <div className="text-[10px] font-semibold uppercase tracking-[0.18em] text-[#6b8ba2]">
-                        {message.role === 'user' ? 'You' : 'Nimbus'}
+                      <div className="truncate text-sm font-medium text-[#16324a]">
+                        {s.sessionTitle || 'Untitled chat'}
                       </div>
-                      <div className="mt-2 max-h-[72px] overflow-hidden text-sm leading-6 text-[#4e6c82]">{message.content}</div>
-                    </div>
+                      <div className="mt-1 flex items-center gap-2">
+                        <span className="rounded-full border border-[#d7e9f4] px-2 py-0.5 text-[10px] uppercase tracking-[0.14em] text-[#6b8ba2]">
+                          {s.advisoryObjective || 'recommendation'}
+                        </span>
+                        <span className="text-[10px] text-[#8ba5b8]">
+                          {s.createdAt ? new Date(s.createdAt).toLocaleDateString() : ''}
+                        </span>
+                      </div>
+                    </button>
                   ))
                 )}
               </div>
