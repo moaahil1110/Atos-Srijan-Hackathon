@@ -48,14 +48,18 @@ def get_compliance_context(
     frameworks: list[str],
     num_results: int = 5,
 ) -> str:
+    if not settings.BEDROCK_KB_ID:
+        logger.warning("BEDROCK_KB_ID is not configured — skipping KB compliance context.")
+        return ""
+
     try:
-        if settings.BEDROCK_KB_ID:
-            result = retrieve_compliance_context(query, frameworks, num_results)
-            if result:
-                return result
-    except Exception as exc:  # pragma: no cover - depends on AWS
-        logger.warning("KB retrieval failed, using fallback: %s", exc)
+        result = retrieve_compliance_context(query, frameworks, num_results)
+    except Exception as exc:
+        logger.warning("KB retrieval failed, continuing without compliance context: %s", exc)
+        return ""
 
-    from utils.compliance_mapper import get_text
+    if not result:
+        logger.info("No compliance context returned from KB for query: %s", query)
+        return ""
 
-    return get_text(frameworks=frameworks, field_keywords=[])
+    return result
