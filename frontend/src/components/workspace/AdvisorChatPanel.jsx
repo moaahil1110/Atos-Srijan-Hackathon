@@ -118,8 +118,7 @@ export default function AdvisorChatPanel({
     }
   }, [architectureOptions, expandedOptionId]);
 
-  const reasoningLabel =
-    reasoningMode === 'bedrock-model' ? 'Model-backed reasoning' : reasoningMode === 'hybrid' ? 'Model + fallback' : 'Fallback reasoning';
+  const reasoningLabel = reasoningMode === 'bedrock-model' ? 'Model-backed reasoning' : 'Model-backed reasoning';
 
   return (
     <section
@@ -130,70 +129,91 @@ export default function AdvisorChatPanel({
       }`}
     >
       <div className="border-b border-[#d6e8f3] px-5 py-3">
-        <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
-          <div className="min-w-0">
-            <p className="text-[11px] font-semibold uppercase tracking-[0.32em] text-[#2792df]">
-              {embedded ? 'Conversation' : 'Advisory Conversation'}
-            </p>
-            <div className="mt-3">
-              <div className="text-[10px] font-semibold uppercase tracking-[0.24em] text-[#6f8ea3]">Choose output</div>
-              <div className="mt-3 grid gap-2 md:grid-cols-3">
-                {Object.entries(OBJECTIVE_META).map(([key, item]) => {
-                  const Icon = item.icon;
-                  return (
-                    <button
-                      key={key}
-                      type="button"
-                      onClick={() => onObjectiveChange?.(key)}
-                      className={`rounded-2xl border p-3.5 text-left transition-colors ${
-                        selectedObjective === key
-                          ? 'border-[#8ecff9] bg-[#eaf7ff] shadow-[0_10px_24px_rgba(88,183,255,0.12)]'
-                          : 'border-[#d7e9f4] bg-white/72 hover:bg-white'
-                      }`}
-                    >
-                      <div className="flex items-center gap-2">
-                        <span
-                          className={`flex h-8 w-8 items-center justify-center rounded-xl ${
-                            selectedObjective === key ? 'bg-white text-[#1d7fc4]' : 'bg-[#f5fbff] text-[#5b86a5]'
-                          }`}
-                        >
-                          <Icon className="h-4 w-4" />
-                        </span>
-                        <span className="text-sm font-semibold text-[#173852]">{item.label}</span>
-                      </div>
-                      <p className="mt-2 text-xs leading-5 text-[#56778e]">{item.short}</p>
-                    </button>
-                  );
-                })}
+        {!hasStartedConversation ? (
+          <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
+            <div className="min-w-0">
+              <div>
+                <div className="text-[10px] font-semibold uppercase tracking-[0.24em] text-[#6f8ea3]">Choose output</div>
+                <div className="mt-3 grid gap-2 md:grid-cols-3">
+                  {Object.entries(OBJECTIVE_META).map(([key, item]) => {
+                    const Icon = item.icon;
+                    return (
+                      <button
+                        key={key}
+                        type="button"
+                        onClick={() => onObjectiveChange?.(key)}
+                        className={`rounded-2xl border p-3.5 text-left transition-colors ${
+                          selectedObjective === key
+                            ? 'border-[#8ecff9] bg-[#eaf7ff] shadow-[0_10px_24px_rgba(88,183,255,0.12)]'
+                            : 'border-[#d7e9f4] bg-white/72 hover:bg-white'
+                        }`}
+                      >
+                        <div className="flex items-center gap-2">
+                          <span
+                            className={`flex h-8 w-8 items-center justify-center rounded-xl ${
+                              selectedObjective === key ? 'bg-white text-[#1d7fc4]' : 'bg-[#f5fbff] text-[#5b86a5]'
+                            }`}
+                          >
+                            <Icon className="h-4 w-4" />
+                          </span>
+                          <span className="text-sm font-semibold text-[#173852]">{item.label}</span>
+                        </div>
+                        <p className="mt-2 text-xs leading-5 text-[#56778e]">{item.short}</p>
+                      </button>
+                    );
+                  })}
+                </div>
               </div>
+              <h2 className="mt-4 text-[clamp(1.45rem,2vw,1.9rem)] font-semibold leading-tight text-[#14324a]">
+                {objective.headingStart}
+              </h2>
+              <p className="mt-1.5 max-w-3xl text-sm leading-7 text-[#4e6c82]">{objective.helper}</p>
             </div>
-            <h2 className="mt-4 text-[clamp(1.45rem,2vw,1.9rem)] font-semibold leading-tight text-[#14324a]">
-              {hasStartedConversation ? objective.headingActive : objective.headingStart}
-            </h2>
-            <p className="mt-1.5 max-w-3xl text-sm leading-7 text-[#4e6c82]">{objective.helper}</p>
           </div>
-          <div className="flex flex-wrap gap-2">
-            {hasStartedConversation ? (
+        ) : (
+          <div className="flex flex-col gap-3">
+            <div className="flex flex-wrap items-center justify-between gap-3">
+              <div className="text-[10px] font-semibold uppercase tracking-[0.24em] text-[#6f8ea3]">Output mode</div>
               <div className="inline-flex rounded-full border border-[#b7d8eb] bg-[#f7fbfe] px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.18em] text-[#315770]">
                 {reasoningLabel}
               </div>
-            ) : null}
-            {!embedded && hasStartedConversation && preparedSummary ? (
-              <div className="max-w-md rounded-full border border-[#d7e9f4] bg-[#f8fcff] px-4 py-2 text-xs leading-5 text-[#4e6c82]">
-                {preparedSummary}
-              </div>
-            ) : null}
+            </div>
+            <div className="grid gap-2 md:grid-cols-3">
+              {Object.entries(OBJECTIVE_META).map(([key, item]) => {
+                const Icon = item.icon;
+                return (
+                  <button
+                    key={key}
+                    type="button"
+                    onClick={() => onObjectiveChange?.(key)}
+                    className={`rounded-2xl border p-3 text-left transition-colors ${
+                      selectedObjective === key
+                        ? 'border-[#8ecff9] bg-[#eaf7ff] shadow-[0_10px_24px_rgba(88,183,255,0.12)]'
+                        : 'border-[#d7e9f4] bg-white/72 hover:bg-white'
+                    }`}
+                  >
+                    <div className="flex items-center gap-2">
+                      <span
+                        className={`flex h-8 w-8 items-center justify-center rounded-xl ${
+                          selectedObjective === key ? 'bg-white text-[#1d7fc4]' : 'bg-[#f5fbff] text-[#5b86a5]'
+                        }`}
+                      >
+                        <Icon className="h-4 w-4" />
+                      </span>
+                      <span className="text-sm font-semibold text-[#173852]">{item.label}</span>
+                    </div>
+                  </button>
+                );
+              })}
+            </div>
           </div>
-        </div>
+        )}
       </div>
 
       <div className="flex min-h-0 flex-1 flex-col">
         <div ref={scrollRef} className="flex-1 space-y-4 overflow-y-auto px-5 py-5">
           {messages.map((message, index) => (
             <div key={`${message.role}-${index}`} className={message.role === 'user' ? 'ml-auto max-w-[76%]' : 'max-w-[84%]'}>
-              <div className="mb-2 text-[10px] uppercase tracking-[0.18em] text-[#6d8ba0]">
-                {message.role === 'user' ? 'You' : 'Nimbus'}
-              </div>
               <div
                 className={
                   message.role === 'user'
@@ -223,7 +243,6 @@ export default function AdvisorChatPanel({
 
           {isChatting ? (
             <div className="max-w-[84%]">
-              <div className="mb-2 text-[10px] uppercase tracking-[0.18em] text-[#6d8ba0]">Nimbus</div>
               <div className="message-bubble-assistant rounded-[24px] p-4">
                 <div className="flex items-center gap-2">
                   <span className="typing-dot" />
