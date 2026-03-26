@@ -4,7 +4,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from mangum import Mangum
 
-from routers import config, explain, intent, optimize, schema, terraform
+from routers import config, explain, intent, optimize, schema, sessions, terraform
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(name)s: %(message)s")
 
@@ -28,6 +28,7 @@ app.include_router(config.router)
 app.include_router(explain.router)
 app.include_router(optimize.router)
 app.include_router(terraform.router)
+app.include_router(sessions.router)
 
 
 @app.get("/health")
