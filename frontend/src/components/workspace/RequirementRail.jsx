@@ -10,8 +10,6 @@ const LABELS = {
 
 const REASONING_LABELS = {
   'bedrock-model': 'Model-backed',
-  hybrid: 'Model + fallback',
-  fallback: 'Fallback',
 };
 
 export default function RequirementRail({ advisoryContext, contextCoverage, preparedSummary, reasoningMode, embedded = false }) {
@@ -20,24 +18,29 @@ export default function RequirementRail({ advisoryContext, contextCoverage, prep
   const entries = Object.entries(advisoryContext || {}).slice(0, 6);
 
   return (
-    <section className={embedded ? '' : 'rounded-3xl border border-[#c9e0ef] bg-white/76 px-5 py-4 shadow-[0_18px_45px_rgba(115,173,214,0.08)] backdrop-blur-md'}>
-      <div className={embedded ? 'px-0 py-0' : ''}>
-      <div className="flex flex-col gap-4 xl:flex-row xl:items-center xl:justify-between">
-        <div className="min-w-0 xl:max-w-[30%]">
+    <section
+      className={
+        embedded
+          ? 'rounded-[28px] border border-[#d7e9f4] bg-[#fafdff] px-4 py-4'
+          : 'rounded-3xl border border-[#c9e0ef] bg-white/76 px-5 py-4 shadow-[0_18px_45px_rgba(115,173,214,0.08)] backdrop-blur-md'
+      }
+    >
+      <div className="flex flex-col gap-4 xl:flex-row xl:items-start xl:justify-between">
+        <div className="min-w-0 xl:max-w-[34%]">
           <div className="flex flex-wrap items-center gap-2">
-            <p className="text-[11px] font-semibold uppercase tracking-[0.28em] text-[#2792df]">Conversation status</p>
+            <p className="text-[11px] font-semibold uppercase tracking-[0.28em] text-[#2792df]">Progress</p>
             <span className="rounded-full border border-[#b7d8eb] bg-[#f7fbfe] px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.18em] text-[#315770]">
-              {REASONING_LABELS[reasoningMode] || 'Fallback'}
+              {REASONING_LABELS[reasoningMode] || 'Model-backed'}
             </span>
           </div>
           <p className="mt-2 text-sm leading-6 text-[#4e6c82]">
-            {preparedSummary || 'Nimbus is capturing the key requirements from the conversation as you answer.'}
+            {preparedSummary || 'Still gathering the key business, scale, security, and cost signals.'}
           </p>
         </div>
 
-        <div className="xl:w-[220px]">
+        <div className="xl:w-[240px]">
           <div className="flex items-center justify-between text-sm text-[#41637a]">
-            <span>Context coverage</span>
+            <span>Captured</span>
             <span>
               {filled}/{total}
             </span>
@@ -62,11 +65,9 @@ export default function RequirementRail({ advisoryContext, contextCoverage, prep
         </div>
 
         <div className="xl:max-w-[42%]">
-          <div className="text-[10px] uppercase tracking-[0.18em] text-[#6b8ba2]">Captured requirements</div>
+          <div className="text-[10px] uppercase tracking-[0.18em] text-[#6b8ba2]">Captured so far</div>
           {entries.length === 0 ? (
-            <div className="mt-2 text-sm text-[#5f7f97]">
-              Requirement signals will appear here after the conversation starts.
-            </div>
+            <div className="mt-2 text-sm text-[#5f7f97]">Requirement signals will appear here as the conversation progresses.</div>
           ) : (
             <div className="mt-3 flex flex-wrap gap-2">
               {entries.map(([key, value]) => (
@@ -77,7 +78,6 @@ export default function RequirementRail({ advisoryContext, contextCoverage, prep
             </div>
           )}
         </div>
-      </div>
       </div>
     </section>
   );
