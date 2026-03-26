@@ -1,14 +1,10 @@
 import json
-import logging
-
 from fastapi import HTTPException
 
 from utils.bedrock_client import invoke_bedrock
 from utils.dynamo_client import get_service_provider, get_session, update_session
 from utils.kb_client import get_compliance_context
 from utils.service_mapper import get_provider_label
-
-logger = logging.getLogger(__name__)
 
 EXPLAIN_SYSTEM_PROMPT = """
 You are a cloud security advisor for a {industry} company.
@@ -58,27 +54,6 @@ def _parse_update(response: str):
     except Exception:
         return response.strip(), None
 
-
-def _deterministic_explanation(message: str, field_id: str, frameworks: list[str], current_value):
-    lowered = message.lower()
-    if field_id in {
-        "ServerSideEncryptionConfiguration",
-        "encryption.defaultKmsKeyName",
-        "allowBlobPublicAccess",
-    } and ("sse-s3" in lowered or "public" in lowered or "disable" in lowered):
-        clause = "HIPAA \u00a7164.312(e)(2)(ii)" if "HIPAA" in frameworks else "security best practice"
-        return (
-            f"For this company, {current_value} should stay in place because {clause} favors stronger key control, "
-            "restricted exposure, and auditability for sensitive records. The safer compromise is to tune cost on a "
-            "less sensitive setting instead of relaxing a direct protection control."
-        )
-    return (
-        "This setting was chosen to match your company's risk profile, compliance posture, and the specific "
-        "service exposure involved. If you want to tune cost, we should do it on adjustable fields rather than "
-        "weakening a control that carries direct security or audit impact."
-    )
-
-
 async def explain_field(
     session_id: str,
     field_id: str,
@@ -127,11 +102,7 @@ async def explain_field(
         system_prompt = system_prompt.replace(key, value)
     messages = [{"role": item["role"], "content": [{"text": item["content"]}]} for item in field_history]
 
-    try:
-        raw_response = invoke_bedrock(prompt="", system=system_prompt, messages=messages)
-    except Exception as exc:
-        logger.warning("Explain flow fell back to deterministic answer: %s", exc)
-        raw_response = _deterministic_explanation(message, field_id, frameworks, current_value)
+    raw_response = invoke_bedrock(prompt="", system=system_prompt, messages=messages)
 
     response_text, config_update = _parse_update(raw_response)
     field_history.append({"role": "assistant", "content": response_text})
