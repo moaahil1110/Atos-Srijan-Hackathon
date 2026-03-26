@@ -1,6 +1,5 @@
 import asyncio
 import json
-import logging
 
 from fastapi import HTTPException
 
@@ -8,52 +7,57 @@ from services.schema_service import get_schema
 from utils.bedrock_client import invoke_bedrock_json
 from utils.dynamo_client import get_service_config, get_service_provider, get_session
 from utils.kb_client import get_compliance_context
-from utils.service_mapper import (
-    get_provider_label,
-    get_provider_service_name,
-)
+from utils.service_mapper import get_provider_label, get_provider_service_name
 
-logger = logging.getLogger(__name__)
+OPTIMIZE_PROMPT = """<|begin_of_text|><|start_header_id|>system<|end_header_id|>
+You are a cloud security auditor specialising in compliance gap analysis. Compare an existing cloud configuration against a recommended secure baseline and return ONLY a valid JSON array. No markdown, no explanation, no text outside the JSON array.
+<|eot_id|><|start_header_id|>user<|end_header_id|>
 
-OPTIMIZE_PROMPT = """
-You are a cloud security auditor for a {industry} company.
+Audit {provider} {service} for this company:
 
 Company profile:
-- Compliance: {frameworks} ({maturity})
-- Risk tolerance: {riskTolerance}/5
-- Priority weights: security={security}, compliance={compliance}, cost={cost}
+- Industry: {industry}
+- Compliance frameworks: {frameworks} (maturity: {maturity})
+- Risk tolerance: {riskTolerance}/5 (1 = very risk averse)
+- Priority weights - security: {security}, compliance: {compliance}, cost: {cost}
 
-Compliance documentation:
+Compliance documentation (cite specific clause numbers - never invent them):
 {compliance_text}
 
-Compare EXISTING configuration against RECOMMENDED configuration.
-
-EXISTING (what the company currently has):
+EXISTING configuration (what the company currently has):
 {existing_config_json}
 
-RECOMMENDED (what NIMBUS1000 generated):
+RECOMMENDED configuration (NIMBUS1000 secure baseline):
 {recommended_config_json}
 
-For each field where existing differs from recommended,
-create a gap entry.
+For each field where EXISTING differs from RECOMMENDED, create one gap entry.
 
-Rules:
-- LOCKED_SECURE fields: severity is always "critical"
-- Compliance violations: severity is "critical"
-- Missing fields: treat as most insecure default
-- Reasons must cite: "Violates {FRAMEWORK} \u00a7{CLAUSE}: explanation"
-- If no clause applies, use security impact for severity
+Severity rules:
+- "critical": LOCKED_SECURE fields, direct compliance violations, or missing security controls
+- "high": PREFER_SECURE fields weaker than recommended, significant security risk
+- "medium": BALANCED/OPTIMISE_COST fields misconfigured, moderate risk
+- "low": Minor deviations with minimal impact
 
-Return ONLY a valid JSON array sorted critical first:
+Reason format:
+- GOOD: "Violates HIPAA Section 164.312(e)(2)(ii): current value disables encryption of ePHI - SSE-KMS satisfies this clause and provides the audit trail required for your in-progress programme."
+- BAD: "This value is weaker than recommended."
+- If no clause applies: "Security best practice - current value increases attack surface by [specific risk]."
+
+Treat any missing field as the most insecure possible default.
+Sort results: critical first, then high, medium, low.
+If there are no gaps, return: []
+
+Return ONLY this JSON array:
 [
-  {
-    "fieldId": "exact field name",
-    "currentValue": "what user has",
-    "recommendedValue": "what it should be",
+  {{
+    "fieldId": "exact field name from the config",
+    "currentValue": "what the company currently has (as string)",
+    "recommendedValue": "what it should be (as string)",
     "severity": "critical|high|medium|low",
-    "reason": "Violates HIPAA \u00a7164.312(e)(2)(ii): ..."
-  }
+    "reason": "compliance clause citation and specific security impact"
+  }}
 ]
+<|eot_id|><|start_header_id|>assistant<|end_header_id|>
 """
 
 SEVERITY_ORDER = {"critical": 0, "high": 1, "medium": 2, "low": 3}
@@ -68,47 +72,6 @@ def _default_insecure_value(field: dict):
     if field_type == "integer":
         return 0
     return ""
-
-
-def _normalize_recommended_value(entry):
-    if isinstance(entry, dict) and "value" in entry:
-        return entry["value"], entry.get("reason", "")
-    return entry, ""
-
-
-def _severity(field: dict) -> str:
-    if field.get("instruction") == "LOCKED_SECURE":
-        return "critical"
-    if field.get("complianceActive"):
-        return "critical"
-    if field.get("securityRelevance") == "high":
-        return "high"
-    if field.get("securityRelevance") == "medium":
-        return "medium"
-    return "low"
-
-
-def _deterministic_gaps(schema_fields: list[dict], existing_config: dict, recommended_config: dict, frameworks: list[str]):
-    gaps = []
-    clause = "HIPAA \u00a7164.312(e)(2)(ii)" if "HIPAA" in frameworks else "security best practice"
-    for field in schema_fields:
-        recommended_value, recommended_reason = _normalize_recommended_value(recommended_config.get(field["fieldId"]))
-        existing_value = existing_config.get(field["fieldId"], _default_insecure_value(field))
-        if str(existing_value) == str(recommended_value):
-            continue
-        severity = _severity(field)
-        reason_prefix = f"Violates {clause}: " if "HIPAA" in frameworks else ""
-        fallback_reason = f"{field['label']} is weaker than the recommended secure baseline."
-        gaps.append(
-            {
-                "fieldId": field["fieldId"],
-                "currentValue": str(existing_value),
-                "recommendedValue": str(recommended_value),
-                "severity": severity,
-                "reason": f"{reason_prefix}{recommended_reason or fallback_reason}",
-            }
-        )
-    return sorted(gaps, key=lambda item: SEVERITY_ORDER.get(item["severity"], 4))
 
 
 async def optimize_config(session_id: str, service: str, existing_config: dict) -> list:
@@ -141,6 +104,8 @@ async def optimize_config(session_id: str, service: str, existing_config: dict) 
     compliance_text = get_compliance_context(query=query, frameworks=frameworks, num_results=5)
     prompt = OPTIMIZE_PROMPT
     replacements = {
+        "{provider}": get_provider_label(provider),
+        "{service}": canonical_service,
         "{industry}": profile.get("industry", "other"),
         "{frameworks}": ", ".join(frameworks or ["none"]),
         "{maturity}": profile.get("complianceMaturity", "not-started"),
@@ -155,12 +120,10 @@ async def optimize_config(session_id: str, service: str, existing_config: dict) 
     for key, value in replacements.items():
         prompt = prompt.replace(key, value)
 
-    try:
-        response = await asyncio.to_thread(invoke_bedrock_json, prompt)
-        gaps = response.get("gaps", response if isinstance(response, list) else [])
-    except Exception as exc:
-        logger.warning("Optimize flow fell back to deterministic comparison: %s", exc)
-        gaps = _deterministic_gaps(schema.get("fields", []), padded_existing, recommended_config, frameworks)
+    response = await asyncio.to_thread(invoke_bedrock_json, prompt)
+    gaps = response.get("gaps", response) if isinstance(response, dict) else response
+    if not isinstance(gaps, list):
+        gaps = []
 
     gaps = sorted(gaps, key=lambda item: SEVERITY_ORDER.get(str(item.get("severity", "low")).lower(), 4))
     for gap in gaps:
