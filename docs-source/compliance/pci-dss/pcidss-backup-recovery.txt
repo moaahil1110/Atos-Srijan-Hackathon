@@ -1,0 +1,20 @@
+Document Name: PCI DSS Backup and Recovery
+Compliance Family: PCI-DSS
+Topic: backup-recovery
+Source: PCI DSS v4.0 - Requirement 12.3 (https://www.pcisecuritystandards.org/document_library)
+Date Collected: 27/03/2026
+Type: Official Documentation
+
+
+Requirement 9: Restrict Physical Access to Cardholder Data.
+
+9.4 Media with cardholder data is securely stored, accessed, distributed, and destroyed.
+9.4.1 All media with cardholder data is physically secured.
+9.4.1.1 Offline media backups with cardholder data are stored in a secure location, such as an off-site facility.
+9.4.1.2 The secure location's security is reviewed at least annually.
+
+Requirement 12: Support Information Security with Organizational Policies and Programs.
+
+12.10 Suspected and confirmed security incidents that could impact the CDE are responded to immediately.
+12.10.1 An incident response plan exists and is ready to be activated in the event of a suspected or confirmed security incident.
+12.10.2 The incident response plan includes business recovery and continuity procedures, including data backup and restoration processes.

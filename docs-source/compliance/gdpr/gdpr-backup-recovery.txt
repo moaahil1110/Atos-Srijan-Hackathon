@@ -1,0 +1,354 @@
+Document Name: GDPR Backup and Recovery
+Compliance Family: GDPR
+Topic: backup-recovery
+Source: GDPR Article 32(1)(c) - Ability to Restore Availability (https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX%3A32016R0679)
+Date Collected: 27/03/2026
+Type: Official Documentation
+
+================================================================================
+GDPR — BACKUP AND RECOVERY
+================================================================================
+ 
+OVERVIEW
+--------
+The GDPR does not use the words "backup" or "disaster recovery" explicitly.
+However, the obligation to maintain backup and recovery capabilities for personal
+data is clearly and directly derived from several core provisions of the regulation.
+The primary basis is Article 32, which requires organizations to ensure the
+ongoing availability and resilience of personal data processing systems and to
+implement the ability to restore availability and access to personal data in a
+timely manner after a physical or technical incident.
+ 
+Failure to maintain adequate backup and recovery for personal data is a failure
+of the security of processing obligation under Article 32. It may also constitute
+a violation of the integrity and confidentiality principle in Article 5(1)(f).
+ 
+Relevant articles:
+ 
+  - Article 5(1)(f):  Integrity and confidentiality principle
+  - Article 17:       Right to erasure — implications for backed-up data
+  - Article 25:       Data protection by design and by default
+  - Article 32:       Security of processing — availability and resilience
+  - Article 33:       Breach notification — loss of data as a notifiable breach
+  - Article 83:       Administrative fines
+ 
+--------------------------------------------------------------------------------
+ARTICLE 5(1)(f) — INTEGRITY AND CONFIDENTIALITY PRINCIPLE
+--------------------------------------------------------------------------------
+Full text: Personal data shall be "processed in a manner that ensures appropriate
+security of the personal data, including protection against unauthorised or unlawful
+processing and against accidental loss, destruction or damage, using appropriate
+technical or organisational measures ('integrity and confidentiality')."
+ 
+This is one of the six core data protection principles in the GDPR. The phrase
+"accidental loss, destruction or damage" directly establishes a legal obligation
+to protect personal data from being irretrievably lost.
+ 
+This means:
+1. Personal data must not be stored in a way that creates a high risk of
+   permanent loss in the event of a system failure, hardware fault, or
+   natural disaster.
+2. Backup mechanisms are a direct technical implementation of this principle.
+3. The "appropriate" standard is risk-based: more sensitive data (e.g., health
+   records, financial data) requires more robust backup controls than lower-risk
+   data.
+ 
+Cloud security implication: For any cloud service storing personal data,
+enabling automated backups, versioning, and point-in-time recovery is a direct
+implementation of Article 5(1)(f). Turning off backup features for cost savings
+on services handling personal data may constitute a GDPR violation.
+ 
+--------------------------------------------------------------------------------
+ARTICLE 32 — SECURITY OF PROCESSING
+--------------------------------------------------------------------------------
+Full text (paragraph 1): "Taking into account the state of the art, the costs
+of implementation and the nature, scope, context and purposes of processing as
+well as the risk of varying likelihood and severity for the rights and freedoms
+of natural persons, the controller and the processor shall implement appropriate
+technical and organisational measures to ensure a level of security appropriate
+to the risk, including inter alia as appropriate:
+ 
+  (a) the pseudonymisation and encryption of personal data;
+  (b) the ability to ensure the ongoing confidentiality, integrity, availability
+      and resilience of processing systems and services;
+  (c) the ability to restore the availability and access to personal data in a
+      timely manner in the event of a physical or technical incident;
+  (d) a process for regularly testing, assessing and evaluating the effectiveness
+      of technical and organisational measures for ensuring the security of the
+      processing."
+ 
+Article 32(1)(b) — Availability and Resilience:
+This sub-clause establishes a specific obligation for availability. "Availability"
+means personal data must be accessible when it is needed. "Resilience" means the
+system must be able to withstand and recover from disruptions. Backup systems are
+the primary technical mechanism for satisfying this requirement.
+ 
+Article 32(1)(c) — Ability to Restore Availability and Access:
+This is the most direct GDPR backup obligation. Organizations must have the
+technical capability to restore access to personal data following a physical
+or technical incident. Examples of such incidents include:
+  - Hardware failure
+  - Ransomware attacks
+  - Accidental deletion of data
+  - Cloud provider outages
+  - Natural disasters affecting data center infrastructure
+  - Software corruption or database failure
+ 
+The phrase "in a timely manner" means the recovery capability must be active
+and tested, not merely theoretical. An organization that has never tested its
+recovery procedures cannot demonstrate this capability.
+ 
+Article 32(1)(d) — Regular Testing:
+Backup systems must be tested regularly. A backup that has never been tested
+cannot be relied upon as a compliance measure. Testing evidence (restore test
+logs, recovery time records) constitutes audit evidence under Article 30 and
+the accountability principle in Article 5(2).
+ 
+Full text (paragraph 2): "In assessing the appropriate level of security,
+account shall be taken in particular of the risks that are presented by
+processing, in particular from accidental or unlawful destruction, loss,
+alteration, unauthorised disclosure of, or access to personal data transmitted,
+stored or otherwise processed."
+ 
+This paragraph confirms that accidental destruction and loss are among the
+primary risks that security measures — including backups — must address.
+ 
+Full text (paragraph 4): "The controller and processor shall take steps to
+ensure that any natural person acting under the authority of the controller
+or the processor who has access to personal data does not process them except
+on instructions from the controller, unless he or she is required to do so
+by Union or Member State law."
+ 
+This clause also applies to backup systems: personnel with access to backup
+data must be operating under defined instructions and must not process that
+data beyond the purpose of backup and recovery.
+ 
+--------------------------------------------------------------------------------
+ARTICLE 25 — DATA PROTECTION BY DESIGN AND BY DEFAULT
+--------------------------------------------------------------------------------
+Full text (summary): The controller shall implement appropriate technical and
+organisational measures designed to implement data-protection principles
+effectively and integrate the necessary safeguards into the processing.
+ 
+Backup and recovery implications:
+1. Recovery systems should be designed with data minimisation in mind — backup
+   images should not retain personal data longer than the live system would.
+2. Backup access controls should be as strict as production access controls —
+   backups are not a lower-security copy of the data.
+3. Encryption should be applied to backup data by default, not as an optional
+   add-on.
+4. Backup destinations (e.g., cross-region S3 buckets, Azure backup vaults, GCP
+   backup storage) should be assessed for compliance with data residency
+   requirements before being configured.
+ 
+--------------------------------------------------------------------------------
+ARTICLE 17 — RIGHT TO ERASURE — IMPLICATIONS FOR BACKUP DATA
+--------------------------------------------------------------------------------
+Full text (paragraph 1): "The data subject shall have the right to obtain from
+the controller the erasure of personal data concerning him or her without undue
+delay" where one of specified grounds applies (e.g., data no longer necessary,
+consent withdrawn, unlawful processing).
+ 
+Backup data is fully within the scope of GDPR. Personal data in backup archives
+and snapshots remains personal data to which GDPR obligations apply. This
+has several critical implications for backup and recovery design:
+ 
+1. ERASURE REQUESTS APPLY TO BACKUPS
+   When a data subject invokes their Article 17 right to erasure, the controller
+   must erase the personal data not only from live systems but also from backups,
+   unless:
+   - Erasure from backups is technically not feasible at the time of the request,
+   - AND the controller documents why, AND commits to erasure when the backup is
+     next accessed or rotated.
+ 
+   The EDPB (European Data Protection Board) acknowledges that immediate erasure
+   from backups may not always be possible. However, organizations must have a
+   documented approach for handling erasure requests against backup data.
+ 
+2. BACKUP RETENTION PERIODS MUST BE DEFINED AND JUSTIFIED
+   Backups that retain personal data indefinitely create ongoing GDPR exposure.
+   Backup retention periods must be set and enforced. When a backup lifecycle ends,
+   personal data within it must be securely deleted or made effectively
+   unidentifiable.
+ 
+3. BACKUPS AS PROCESSORS
+   If a third-party backup provider stores personal data, that provider is a
+   processor under Article 28. A Data Processing Agreement must be in place
+   before that provider receives any personal data. The DPA must specify:
+   - What data the backup provider may access
+   - Where it may be stored (geographic restrictions)
+   - Retention periods
+   - Security requirements
+   - The provider's obligation to assist with erasure requests
+ 
+4. CROSS-REGION AND CROSS-BORDER BACKUPS
+   Backing up personal data of EU/EEA residents to cloud regions outside the EU/EEA
+   constitutes an international data transfer under Chapter V of the GDPR. This is
+   only permitted if:
+   - The destination country has an adequacy decision (Article 45), OR
+   - Appropriate safeguards are in place (e.g., Standard Contractual Clauses
+     under Article 46), OR
+   - Binding Corporate Rules (Article 47) apply.
+ 
+   Cloud storage replication to US regions, for example, is subject to these
+   transfer restrictions for EU personal data.
+ 
+--------------------------------------------------------------------------------
+ARTICLE 33 — BREACH NOTIFICATION AND BACKUP RELEVANCE
+--------------------------------------------------------------------------------
+Full text (paragraph 1): "In the case of a personal data breach, the controller
+shall without undue delay and, where feasible, not later than 72 hours after
+having become aware of it, notify the personal data breach to the supervisory
+authority."
+ 
+A personal data breach includes the accidental loss or destruction of personal
+data (Article 4(12) definition: "a breach of security leading to the accidental
+or unlawful destruction, loss, alteration, unauthorised disclosure of, or access
+to, personal data").
+ 
+This means:
+1. Loss of personal data because there was no backup, or a backup failed, can
+   constitute a notifiable personal data breach if the loss is likely to result
+   in a risk to the rights and freedoms of individuals.
+2. A ransomware attack that encrypts personal data and destroys it is a breach
+   requiring notification if the data cannot be restored from backup.
+3. Accidental deletion of a database containing personal data is a breach if
+   there is no backup enabling recovery.
+ 
+Having functional, tested backups is therefore also a breach-prevention and
+breach-mitigation measure. The presence of a working backup may reduce the
+severity of an incident below the notification threshold.
+ 
+Breach documentation (Article 33(5)): Even where notification is not required,
+all incidents involving potential data loss must be documented in the breach
+register. This includes incidents where backup recovery was successfully invoked.
+ 
+--------------------------------------------------------------------------------
+SPECIFIC CLOUD BACKUP CONFIGURATION GUIDANCE
+--------------------------------------------------------------------------------
+The following cloud configurations directly satisfy GDPR backup and recovery
+requirements under Articles 5(1)(f), 32(1)(b), and 32(1)(c):
+ 
+AWS:
+ 
+  S3:
+    - Enable versioning: retains previous versions of objects, enabling recovery
+      from accidental deletion or overwrite
+    - Enable S3 Object Lock (WORM) for audit-critical data: prevents deletion
+      during compliance retention period
+    - Enable cross-region replication (CRR) for disaster recovery: data replicated
+      to secondary region
+    - Note: Cross-region replication to non-EU regions for EU personal data
+      requires Article 46 safeguards
+ 
+  RDS:
+    - Enable automated backups with a retention period appropriate to recovery
+      requirements (minimum 7 days recommended; up to 35 days supported)
+    - Enable point-in-time recovery (PITR): allows database restore to any
+      second within the retention window
+    - Enable Multi-AZ deployment: automatic failover to standby instance on
+      primary failure
+    - Enable deletion protection: prevents accidental database deletion
+ 
+  EC2/EBS:
+    - Enable automated EBS snapshots via AWS Backup or Data Lifecycle Manager
+    - Define snapshot retention policy aligned with backup retention schedule
+    - Test restore from snapshot on a defined schedule (quarterly recommended)
+ 
+  Encryption:
+    - All backups must be encrypted at rest using KMS customer-managed keys (CMKs)
+    - This satisfies Article 32(1)(a) and protects backed-up personal data
+      from unauthorized access even if backup storage is compromised
+ 
+Azure:
+ 
+  Azure Backup Service:
+    - Enable Azure Backup for all VMs, databases, and file shares containing
+      personal data
+    - Configure Recovery Services Vault with geo-redundant storage (GRS) for
+      cross-region resilience
+    - Apply Azure Backup policies with defined daily/weekly/monthly/annual
+      retention periods
+    - Enable soft delete: prevents backup data from being permanently deleted
+      for a defined grace period after deletion request
+ 
+  Azure SQL / PostgreSQL:
+    - Automated backups are enabled by default: retain for 7–35 days
+    - Enable geo-redundant backup for cross-region recovery capability
+    - Test point-in-time restore procedures regularly
+ 
+  Encryption:
+    - Azure Backup encrypts all backup data using service-managed or
+      customer-managed keys in Azure Key Vault
+ 
+GCP:
+ 
+  Cloud Storage:
+    - Enable versioning: retains non-current versions of objects
+    - Configure Object Lifecycle Management: defines retention and deletion
+      schedules for backup objects
+    - Use dual-region or multi-region buckets for resilience
+ 
+  Cloud SQL:
+    - Enable automated backups with defined retention (minimum 7 days)
+    - Enable point-in-time recovery (PITR) using binary logging
+    - Test instance clone/restore procedures regularly
+ 
+  Compute Engine:
+    - Enable persistent disk snapshots via Cloud Scheduler or Backup for GCE
+    - Define snapshot retention lifecycle policies
+ 
+  Encryption:
+    - All Google-managed cloud storage is encrypted by default
+    - Use Customer-Managed Encryption Keys (CMEK) for data requiring
+      explicit key ownership under Article 32
+ 
+--------------------------------------------------------------------------------
+BACKUP RETENTION POLICY REQUIREMENTS UNDER GDPR
+--------------------------------------------------------------------------------
+GDPR does not define specific backup retention periods. However:
+ 
+1. Backup retention periods must be defined and documented.
+2. They must be justified based on the recovery purpose and legal obligations.
+3. They must not exceed what is necessary for the recovery purpose
+   (storage limitation principle, Article 5(1)(e)).
+4. When backup lifecycle ends, personal data must be securely and irreversibly
+   deleted.
+5. Backup retention periods for different data categories may differ based on
+   the sensitivity and associated legal retention requirements.
+ 
+Secure deletion at end of backup lifecycle:
+  - Cryptographic erasure (deleting the encryption key) is an accepted method
+    of rendering backed-up personal data inaccessible where direct deletion
+    is not technically feasible.
+  - This approach is particularly relevant for backup tapes, immutable storage,
+    or cloud snapshot chains.
+ 
+--------------------------------------------------------------------------------
+TESTING OBLIGATIONS
+--------------------------------------------------------------------------------
+Under Article 32(1)(d), backup and recovery procedures must be regularly tested.
+ 
+Testing requirements:
+  - Define a testing schedule (minimum annually; quarterly preferred for
+    high-risk processing)
+  - Document test methodology, date, scope, and outcome
+  - Test full recovery, not just backup creation
+  - Verify recovery time objective (RTO) and recovery point objective (RPO)
+    meet operational and legal requirements
+  - Retain test results as audit evidence
+ 
+--------------------------------------------------------------------------------
+KEY ARTICLES REFERENCED IN THIS DOCUMENT
+--------------------------------------------------------------------------------
+Article 4(12)   — Definition of personal data breach (includes data loss)
+Article 5(1)(e) — Storage limitation
+Article 5(1)(f) — Integrity and confidentiality (protection against loss)
+Article 17      — Right to erasure (applies to backup data)
+Article 25      — Data protection by design (apply to backup architecture)
+Article 28      — Processor obligations (backup vendors as processors)
+Article 32(1)(b)— Ongoing availability and resilience
+Article 32(1)(c)— Ability to restore availability and access
+Article 32(1)(d)— Regular testing of backup and recovery measures
+Article 33      — Breach notification (data loss may trigger notification)
+Article 83      — Administrative fines for security failures

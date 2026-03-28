@@ -1,0 +1,161 @@
+Document Name: HIPAA Access Control
+Compliance Family: HIPAA
+Topic: access-control
+Source: HHS Security Rule Educational Paper Series - Technical Safeguards (Vol 2, Paper 4)
+Date Collected: 26/03/2026
+Type: Official Documentation
+
+STANDARD
+§ 164.312(a)(1)
+Access Control
+The Security Rule defines access in § 164.304 as “the ability or the means necessary to read,
+write, modify, or communicate data/information or otherwise use any system resource. (This
+definition applies to “access” as used in this subpart, not as used in subpart E of this part [the
+HIPAA Privacy Rule]).” Access controls provide users with rights and/or privileges to access
+and perform functions using information systems, applications, programs, or files. Access
+controls should enable authorized users to access the minimum necessary information needed to
+perform job functions. Rights and/or privileges should be granted to authorized users based on a
+set of access rules that the covered entity is required to
+implement as part of § 164.308(a)(4), the Information Access
+Management standard under the Administrative Safeguards
+section of the Rule.
+The Access Control standard requires a covered entity to:
+NOTE: For more information
+about Risk Analysis and Risk
+Management, see paper 6 in
+this series, “Basics of Risk
+Analysis and Risk
+Management.”
+4 Security Standards: Technical Safeguards
+Volume 2 / Paper 4 4 5/2005: rev. 3/2007
+NOTE: For a discussion on
+“required“ and “addressable”
+Implementation Specifications,
+see the first paper in this series,
+“Security 101 for Covered
+Entities.”
+“Implement technical policies and procedures for electronic information
+systems that maintain electronic protected health information to allow
+access only to those persons or software programs that have been granted
+access rights as specified in § 164.308(a)(4)[Information Access
+Management].”
+A covered entity can comply with this standard through a combination of access control methods
+and technical controls. There are a variety of access control methods and technical controls that
+are available within most information systems. The Security Rule does not identify a specific
+type of access control method or technology to implement.
+Regardless of the technology or information system used,
+access controls should be appropriate for the role and/or
+function of the workforce member. For example, even
+workforce members responsible for monitoring and
+administering information systems with EPHI, such as
+administrators or super users, must only have access to EPHI
+as appropriate for their role and/or job function.
+Four implementation specifications are associated with the Access Controls standard.
+1. Unique User Identification (Required)
+2. Emergency Access Procedure (Required)
+3. Automatic Logoff (Addressable)
+4. Encryption and Decryption (Addressable)
+1. UNIQUE USER IDENTIFICATION (R) - § 164.312(a)(2)(i)
+The Unique User Identification implementation specification states that a covered entity
+must:
+“Assign a unique name and/or number for identifying and tracking user
+identity.”
+User identification is a way to identify a specific user of an information system, typically
+by name and/or number. A unique user identifier allows an entity to track specific user
+activity when that user is logged into an information system. It enables an entity to hold
+users accountable for functions performed on information systems with EPHI when
+logged into those systems.
+The Rule does not describe or provide a single format for user identification. Covered
+entities must determine the best user identification strategy based on their workforce and
+4 Security Standards: Technical Safeguards
+Volume 2 / Paper 4 5 5/2005: rev. 3/2007
+NOTE: Like many of the
+Technical Safeguards
+implementation specifications,
+covered entities may already
+have emergency access
+procedures in place.
+operations. Some organizations may use the employee name or a variation of the name
+(e.g. jsmith). However, other organizations may choose an alternative such as
+assignment of a set of random numbers and characters. A randomly assigned user
+identifier is more difficult for an unauthorized user (e.g., a hacker) to guess, but may also
+be more difficult for authorized users to remember and management to recognize. The
+organization must weigh these factors when making its decision. Regardless of the
+format, unlike email addresses, no one other than the user needs to remember the user
+identifier.
+Sample questions for covered entities to consider:
+ Does each workforce member have a unique user identifier?
+ What is the current format used for unique user identification?
+ Can the unique user identifier be used to track user activity within
+information systems that contain EPHI?
+2. EMERGENCY ACCESS PROCEDURE (R) - § 164.312(a)(2)(ii)
+This implementation specification requires a covered entity to:
+“Establish (and implement as needed) procedures for obtaining necessary
+electronic protected health information during an emergency.”
+These procedures are documented instructions and operational practices for obtaining
+access to necessary EPHI during an emergency situation. Access controls are necessary
+under emergency conditions, although they may be
+very different from those used in normal operational
+circumstances. Covered entities must determine the
+types of situations that would require emergency
+access to an information system or application that
+contains EPHI.
+Procedures must be established beforehand to instruct
+workforce members on possible ways to gain access to needed EPHI in, for example, a
+situation in which normal environmental systems, such as electrical power, have been
+severely damaged or rendered inoperative due to a natural or manmade disaster.
+4 Security Standards: Technical Safeguards
+Volume 2 / Paper 4 6 5/2005: rev. 3/2007
+Sample questions for covered entities to consider:
+ Who needs access to the EPHI in the event of an emergency?
+ Are there policies and procedures in place to provide appropriate access to
+EPHI in emergency situations?
+3. AUTOMATIC LOGOFF (A) - § 164.312(a)(2)(iii)
+Where this implementation specification is a reasonable and appropriate safeguard for a
+covered entity, the covered entity must:
+“Implement electronic procedures that terminate an electronic session
+after a predetermined time of inactivity.”
+As a general practice, users should logoff the system they are working on when their
+workstation is unattended. However, there will be times when workers may not have the
+time, or will not remember, to log off a workstation. Automatic logoff is an effective
+way to prevent unauthorized users from accessing EPHI on a workstation when it is left
+unattended for a period of time.
+Many applications have configuration settings for automatic logoff. After a
+predetermined period of inactivity the application will automatically logoff the user.
+Some systems that may have more limited capabilities may activate an operating system
+screen saver that is password protected after a period of system inactivity. In either case,
+the information that was displayed on the screen is no longer accessible to unauthorized
+users.
+Sample questions for covered entities to consider:
+ Do current information systems have an automatic logoff capability?
+ Is the automatic logoff feature activated on all workstations with access to
+EPHI?
+4. ENCRYTION AND DECRYPTION (A) - § 164.312(a)(2)(iv)
+Where this implementation specification is a reasonable and appropriate safeguard for a
+covered entity, the covered entity must:
+“Implement a mechanism to encrypt and decrypt electronic protected
+health information.”
+4 Security Standards: Technical Safeguards
+Volume 2 / Paper 4 7 5/2005: rev. 3/2007
+STANDARD
+§ 164.312(b)
+NOTE: The goal of encryption
+is to protect EPHI from being
+accessed and viewed by
+unauthorized users.
+Encryption is a method of converting an original
+message of regular text into encoded text. The text is
+encrypted by means of an algorithm (i.e., type of
+procedure or formula). If information is encrypted,
+there would be a low probability that anyone other
+than the receiving party who has the key to the code or access to another confidential
+process would be able to decrypt (i.e., translate) the text and convert it into plain,
+comprehensible text.
+There are many different encryption methods and technologies to protect data from being
+accessed and viewed by unauthorized users.
+Sample questions for covered entities to consider:
+ Which EPHI should be encrypted and decrypted to prevent access by
+persons or software programs that have not been granted access rights?
+ What encryption and decryption mechanisms are reasonable and appropriate
+to implement to prevent access to EPHI by persons or software programs
+that have not been granted access rights?

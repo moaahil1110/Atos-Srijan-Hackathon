@@ -1,0 +1,21 @@
+Document Name: PCI DSS Access Control
+Compliance Family: PCI-DSS
+Topic: access-control
+Source: PCI DSS v4.0 - Requirement 7 (https://www.pcisecuritystandards.org/document_library)
+Date Collected: 27/03/2026
+Type: Official Documentation
+
+Requirement 7: Restrict access to system components and cardholder data by business need to know.
+
+7.1 Processes and mechanisms for restricting access to system components and cardholder data by business need to know are defined and understood.
+7.1.1 All security policies and operational procedures that are identified in Requirement 7 are: Documented, Kept up to date, In use, and Known to all affected parties.
+7.1.2 Roles and responsibilities for performing activities in Requirement 7 are documented, assigned, and understood.
+
+7.2 Access to system components and data is appropriately defined and assigned.
+7.2.1 An access control model is defined and includes granting access as follows: 
+- Appropriate access depending on the entity's business and access needs. 
+- Access to system components and data resources that is based on users' job classification and functions. 
+- The least privileges required (for example, user, administrator) to perform a job function.
+
+7.3 Access to system components and data is managed via an access control system(s).
+7.3.1 Access to system components and data is restricted to only those individuals whose job requires such access.

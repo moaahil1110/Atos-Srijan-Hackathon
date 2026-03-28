@@ -1,0 +1,124 @@
+Document Name: HIPAA Contingency Plan
+Compliance Family: HIPAA
+Topic: backup-recovery
+Source: HHS Security Rule Educational Paper Series - Administrative Safeguards (Vol 2, Paper 2)
+Date Collected: 26/03/2026
+Type: Official Documentation
+
+STANDARD
+§ 164.308(a)(7)
+Contingency Plan
+The purpose of contingency planning is to establish strategies for recovering access to EPHI
+should the organization experience an emergency or other occurrence, such as a power outage
+and/or disruption of critical business operations. The goal is to ensure that organizations have
+their EPHI available when it is needed. The Contingency Plan standard requires that covered
+entities:
+“Establish (and implement as needed) policies and procedures for
+responding to an emergency or other occurrence (for example, fire,
+vandalism, system failure, and natural disaster) that damages systems that
+contain electronic protected health information.”
+The Contingency Plan standard includes five implementation specifications.
+1. Data Backup Plan (Required)
+2. Disaster Recovery Plan (Required)
+3. Emergency Mode Operation Plan (Required)
+4. Testing and Revision Procedures (Addressable)
+5. Applications and Data Criticality Analysis (Addressable)
+1. DATA BACKUP PLAN (R) - § 164.308(a)(7)(ii)(A)
+The Data Backup Plan implementation specification requires covered entities to:
+“Establish and implement procedures to create and maintain retrievable
+exact copies of electronic protected health information.”
+Most covered entities may have backup procedures as part of current business practices.
+Data Backup plans are an important safeguard for all covered entities, and a required
+implementation specification.
+Sample questions for covered entities to consider:
+ What is the EPHI that must be backed up?
+ Does the plan include all important sources of data such as patient
+accounting systems, electronic medical records, health maintenance and
+case management information, digital recordings of diagnostic images,
+electronic test results, or any other electronic documents created or used?
+2 Security Standards: Administrative Safeguards
+Volume 2 / Paper 2 20 5/2005: rev. 3/2007
+ Has the organization considered the various methods of backups, including
+tape, disk, or CD?
+ Does the backup plan include storage of backups in a safe, secure place?
+ Is the organization’s frequency of backups appropriate for its environment?
+2. DISASTER RECOVERY PLAN (R) - § 164.308(a)(7)(ii)(B)
+The Disaster Recovery Plan implementation specification requires covered entities to:
+“Establish (and implement as needed) procedures to restore any loss of
+data.”
+Some covered entities may already have a general disaster plan that meets this
+requirement; however, each entity must review the current plan to ensure that it allows
+them to recover EPHI.
+Sample questions for covered entities to consider:
+ Does the disaster recovery plan address issues specific to the covered
+entity’s operating environment?
+ Does the plan address what data is to be restored?
+ Is a copy of the disaster recovery plan readily accessible at more than one
+location?
+3. EMERGENCY MODE OPERATION PLAN (R) - § 164.308(a)(7)(ii)(C)
+The Emergency Mode Operation Plan implementation specification requires covered
+entities to:
+“Establish (and implement as needed) procedures to enable continuation
+of critical business processes for protection of the security of electronic
+protected health information while operating in emergency mode.”
+When a covered entity is operating in emergency mode due to a technical failure or
+power outage, security processes to protect EPHI must be maintained.
+2 Security Standards: Administrative Safeguards
+Volume 2 / Paper 2 21 5/2005: rev. 3/2007
+Sample questions for covered entities to consider:
+ Does the organization’s plan balance the need to protect the data with the
+organization’s need to access the data?
+ Will alternative security measures be used to protect the EPHI?
+ Does the emergency mode operation plan include possible manual
+procedures for security protection that can be implemented as needed?
+ Does the emergency mode operation plan include telephone numbers and
+contact names for all persons that must be notified in the event of a disaster,
+as well as roles and responsibilities of those people involved in the
+restoration process?
+4. TESTING AND REVISION PROCEDURES (A) - § 164.308(a)(7)(ii)(D)
+Where the Testing and Revision Procedures implementation specification is a reasonable
+and appropriate safeguard for the covered entity, the covered entity must:
+“Implement procedures for periodic testing and revision of contingency
+plans.”
+It is important to point out that this implementation specification applies to all
+implementation specifications under the Contingency Plan standard, including the Data
+Backup Plan, Disaster Recovery Plan, and Emergency Mode Operations Plan.
+Disaster recovery and emergency mode operations
+plans might be tested by using a scenario-based walk-
+thru (to avoid daily operations impacts) or by
+performing complete live tests. The comprehensiveness
+and sophistication of the testing and revision
+procedures depends on the complexity of the covered entity’s organization and other
+factors such as size and costs. It is expected that the frequency and comprehensiveness of
+the procedures will vary among covered entities.
+Sample questions for covered entities to consider:
+ Are the processes for restoring data from backups, disaster recovery and
+emergency mode operation documented?
+NOTE: Testing and revision
+procedures will vary in
+frequency and
+comprehensiveness.
+2 Security Standards: Administrative Safeguards
+Volume 2 / Paper 2 22 5/2005: rev. 3/2007
+STANDARD
+§ 164.308(a)(8)
+ Do those responsible for performing contingency planning tasks understand
+their responsibilities?
+ Have those responsible actually
+performed a test of the procedures?
+ Have the results of each test been
+documented and any problems with the
+test reviewed and corrected?
+5. APPLICATION AND DATA CRITICALITY ANALYSIS (A) -
+§ 164.308(a)(7)(ii)(E)
+The last implementation specification in the Contingency Plan standard is Application
+and Data Criticality Analysis. Where this implementation specification is a reasonable
+and appropriate safeguard for the covered entity, the covered entity must:
+“Assess the relative criticality of specific applications and data in support
+of other contingency plan components.”
+This implementation specification requires covered entities to identify their software
+applications (data applications that store, maintain or transmit EPHI) and determine how
+important each is to patient care or business needs, in order to prioritize for data backup,
+disaster recovery and/or emergency operations plans. A prioritized list of specific
+applications and data will help determine which applications or information systems get
+restored first and/or which must be available at all times.

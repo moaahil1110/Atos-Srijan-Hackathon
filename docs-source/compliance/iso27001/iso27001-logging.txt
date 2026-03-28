@@ -1,0 +1,57 @@
+Document Name: ISO 27001 Logging and Monitoring
+Compliance Family: ISO 27001
+Topic: logging
+Source: ISO/IEC 27001:2022 - Annex A Controls 8.15 and 8.16
+Date Collected: 27/03/2026
+Type: Official Documentation
+
+
+8.15 Logging
+Control:
+Logs that record activities, exceptions, faults and other relevant events shall be produced,
+stored, protected and analysed.
+
+8.16 Monitoring Activities
+Control:
+Networks, systems and applications shall be monitored for anomalous behaviour and appropriate
+actions taken to evaluate potential information security incidents.
+
+Additional related controls:
+
+8.17 Clock Synchronization
+Control:
+The clocks of information processing systems used by the organization shall be synchronized
+to approved time sources.
+
+9.1 Monitoring, Measurement, Analysis and Evaluation
+The organization shall determine:
+a) what needs to be monitored and measured, including information security processes and controls;
+b) the methods for monitoring, measurement, analysis and evaluation, as applicable, to ensure valid
+results. The methods selected should produce comparable and reproducible results to be considered
+valid;
+c) when the monitoring and measuring shall be performed;
+d) who shall monitor and measure;
+e) when the results from monitoring and measurement shall be analysed and evaluated;
+f) who shall analyse and evaluate these results.
+Documented information shall be available as evidence of the results.
+The organization shall evaluate the information security performance and the effectiveness of the
+information security management system.
+
+5.25 Assessment and Decision on Information Security Events
+Control:
+The organization shall assess information security events and decide if they are to be categorized
+as information security incidents.
+
+5.26 Response to Information Security Incidents
+Control:
+Information security incidents shall be responded to in accordance with the documented procedures.
+
+5.27 Learning from Information Security Incidents
+Control:
+Knowledge gained from information security incidents shall be used to strengthen and improve
+the information security controls.
+
+5.28 Collection of Evidence
+Control:
+The organization shall establish and implement procedures for the identification, collection,
+acquisition and preservation of evidence related to information security events.

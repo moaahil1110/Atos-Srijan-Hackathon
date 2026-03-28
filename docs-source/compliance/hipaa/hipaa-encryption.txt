@@ -1,0 +1,53 @@
+Document Name: HIPAA Encryption
+Compliance Family: HIPAA
+Topic: encryption
+Source: HHS Security Rule Educational Paper Series - Technical Safeguards (Vol 2, Paper 4)
+Date Collected: 26/03/2026
+Type: Official Documentation
+
+
+2. ENCRYPTION (A) - § 164.312(e)(2)(ii)
+Where this implementation specification is a reasonable and appropriate safeguard for a
+covered entity, the covered entity must:
+“Implement a mechanism to encrypt electronic protected health
+information whenever deemed appropriate.”
+As previously described in the Access Control standard, encryption is a method of
+converting an original message of regular text into encoded or unreadable text that is
+eventually decrypted into plain comprehensible text. The Encryption implementation
+specification is addressable, similar to the addressable implementation specification at §
+164.312(a)(2)(iv), which addresses Encryption and Decryption.
+There are various types of encryption technology available to covered entities. For an
+encryption strategy to be successful, an organization must consider many factors. For
+example, for encryption technologies to work properly when data is being transmitted,
+both the sender and receiver must be using the same or compatible technology.
+Covered entities use open networks such as the Internet and e-mail systems differently.
+Currently no single interoperable encryption solution for communicating over open
+networks exists. Adopting a single industry-wide
+encryption standard in the Security Rule would likely
+have placed too high a financial and technical burden
+on many covered entities. The Security Rule allows
+covered entities the flexibility to determine when,
+with whom, and what method of encryption to use.
+A covered entity should discuss reasonable and appropriate security measures for the
+encryption of EPHI during transmission over electronic communications networks with
+its IT professionals, vendors, business associates, and trading partners.
+Covered entities must consider the use of encryption for transmitting EPHI, particularly
+over the Internet. As business practices and technology change, situations may arise
+where EPHI being transmitted from a covered entity would be at significant risk of being
+accessed by unauthorized entities. Where risk analysis shows such risk to be significant, a
+covered entity must encrypt those transmissions under the addressable implementation
+specification for encryption.
+NOTE: There are various types
+of encryption technology. To
+work properly, both the sender
+and the receiver must use the
+same or compatible technology.
+4 Security Standards: Technical Safeguards
+Volume 2 / Paper 4 13 5/2005: rev. 3/2007
+Sample questions for covered entities to consider:
+How does the organization transmit EPHI?
+How often does the organization transmit EPHI?
+Based on the risk analysis, is encryption needed to protect EPHI during
+transmission?
+What methods of encryption will be used to protect the transmission of
+EPHI?

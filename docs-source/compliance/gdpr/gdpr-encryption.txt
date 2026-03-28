@@ -1,0 +1,240 @@
+Document Name: GDPR Encryption
+Compliance Family: GDPR
+Topic: encryption
+Source: GDPR Article 32(1)(a) (https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX%3A32016R0679)
+Date Collected: 27/03/2026
+Type: Official Documentation
+
+================================================================================
+GDPR ENCRYPTION REQUIREMENTS
+================================================================================
+ 
+OVERVIEW
+--------
+The GDPR does not mandate a specific encryption algorithm or strength but identifies
+encryption as an explicitly recommended technical measure in multiple articles. It
+also treats the presence of encryption as a mitigating factor in personal data breach
+notification obligations. The regulation's risk-based approach means that encryption
+is practically required for any personal data exposed to meaningful risk.
+ 
+--------------------------------------------------------------------------------
+ARTICLE 4 - DEFINITIONS
+--------------------------------------------------------------------------------
+ 
+Article 4(5) - Pseudonymisation:
+  'pseudonymisation' means the processing of personal data in such a manner that the
+  personal data can no longer be attributed to a specific data subject without the use
+  of additional information, provided that such additional information is kept separately
+  and is subject to technical and organisational measures to ensure that the personal
+  data are not attributed to an identified or identifiable natural person.
+ 
+Note: Pseudonymisation is distinct from encryption but is frequently implemented via
+encryption. The GDPR treats pseudonymised data as still being personal data unless the
+re-identification key is permanently destroyed.
+ 
+Recital 26:
+  Personal data which have undergone pseudonymisation, which could be attributed to a
+  natural person by the use of additional information, should be considered to be
+  information on an identifiable natural person.
+ 
+Recital 28:
+  The application of pseudonymisation to personal data can reduce the risks to the data
+  subjects concerned and help controllers and processors to meet their data-protection
+  obligations. The explicit introduction of 'pseudonymisation' in this Regulation is
+  not intended to preclude any other measures of data protection.
+ 
+Recital 29:
+  In order to create incentives to apply pseudonymisation when processing personal data,
+  measures of pseudonymisation should, whilst allowing general analysis, be possible
+  within the same controller when that controller has taken technical and organisational
+  measures necessary to ensure, for the processing concerned, that this Regulation is
+  implemented, and that additional information for attributing the personal data to a
+  specific data subject is kept separately.
+ 
+Cloud Implication:
+  - Where personal data is stored in cloud databases or object storage, pseudonymisation
+    (e.g., tokenisation, encryption with key separation) should be applied where feasible.
+  - Encryption keys must be stored separately from the encrypted data, ideally in a
+    dedicated key management service (AWS KMS, Azure Key Vault, GCP Cloud KMS).
+ 
+--------------------------------------------------------------------------------
+ARTICLE 25 - DATA PROTECTION BY DESIGN (ENCRYPTION AS DEFAULT)
+--------------------------------------------------------------------------------
+ 
+Article 25(1):
+  The controller shall implement appropriate technical and organisational measures, such
+  as pseudonymisation, which are designed to implement data-protection principles, such
+  as data minimisation, in an effective manner.
+ 
+Cloud Implication:
+  - Encryption at rest must be enabled by default on all storage resources handling
+    personal data (S3 buckets, RDS instances, Blob Storage accounts, Cloud SQL instances).
+  - Default encryption must use strong algorithms (AES-256 or equivalent).
+  - Encryption in transit must be enforced; plaintext connections must be disabled.
+ 
+--------------------------------------------------------------------------------
+ARTICLE 32 - SECURITY OF PROCESSING (PRIMARY ENCRYPTION ARTICLE)
+--------------------------------------------------------------------------------
+ 
+Article 32(1)(a):
+  The controller and the processor shall implement appropriate technical and
+  organisational measures to ensure a level of security appropriate to the risk,
+  including as appropriate:
+  (a) the pseudonymisation and encryption of personal data;
+ 
+This is the primary statutory basis for encryption under the GDPR. The phrase
+"as appropriate" links directly to the risk assessment under Article 32(2).
+ 
+Article 32(1)(b):
+  the ability to ensure the ongoing confidentiality, integrity, availability and
+  resilience of processing systems and services;
+ 
+Article 32(2):
+  In assessing the appropriate level of security, account shall be taken in particular
+  of the risks that are presented by processing, in particular from accidental or
+  unlawful destruction, loss, alteration, unauthorised disclosure of, or access to,
+  personal data transmitted, stored or otherwise processed.
+ 
+Recital 83:
+  In order to maintain security and to prevent processing in infringement of this
+  Regulation, the controller or processor should evaluate the risks inherent in the
+  processing and implement measures to mitigate those risks, such as encryption. Those
+  measures should ensure an appropriate level of security, including confidentiality,
+  taking into account the state of the art and the costs of implementation in relation
+  to the risks and the nature of the personal data to be protected. In assessing data
+  security risk, consideration should be given to the risks that are presented by
+  personal data processing, such as accidental or unlawful destruction, loss, alteration,
+  unauthorised disclosure of, or access to, personal data transmitted, stored or
+  otherwise processed which may in particular lead to physical, material or non-material
+  damage.
+ 
+Cloud Implication:
+  - Encryption at rest: All cloud storage services (object storage, block storage,
+    databases) that store personal data must have encryption at rest enabled.
+  - Encryption in transit: All API endpoints and data transfer paths must enforce TLS
+    (minimum TLS 1.2; TLS 1.3 preferred). Unencrypted protocols (HTTP, FTP) must be
+    disabled for resources handling personal data.
+  - Key management: Customer-managed keys (CMKs) are preferred over provider-managed
+    keys for sensitive personal data because CMKs provide stronger demonstrable control.
+  - Key rotation must be enabled and configured for all CMKs.
+ 
+--------------------------------------------------------------------------------
+ARTICLE 34 - COMMUNICATION OF BREACH TO DATA SUBJECT (ENCRYPTION AS MITIGANT)
+--------------------------------------------------------------------------------
+ 
+Article 34(1):
+  When the personal data breach is likely to result in a high risk to the rights and
+  freedoms of natural persons, the controller shall communicate the personal data
+  breach to the data subject without undue delay.
+ 
+Article 34(3)(a) - Exemption from Notification:
+  The communication to the data subject referred to in paragraph 1 shall not be
+  required if any of the following conditions are met:
+  (a) the controller has implemented appropriate technical and organisational protection
+      measures, and those measures were applied to the personal data affected by the
+      personal data breach, in particular those that render the personal data unintelligible
+      to any person who is not authorised to access it, such as encryption.
+ 
+Practical Implication:
+  If personal data is properly encrypted at rest and the encryption keys were not
+  compromised in a breach, the controller may be exempt from the obligation to notify
+  individual data subjects. This provides a direct operational incentive for strong
+  encryption practices.
+ 
+Cloud Implication:
+  - Strong encryption with separate key management is a breach notification risk mitigant.
+  - If an S3 bucket is exposed but all objects are AES-256 encrypted with KMS CMKs that
+    were not compromised, breach notification to individuals may not be required.
+  - This makes encryption with proper key separation a materially important control.
+ 
+--------------------------------------------------------------------------------
+ARTICLE 33 - NOTIFICATION OF BREACH TO SUPERVISORY AUTHORITY
+--------------------------------------------------------------------------------
+ 
+Article 33(3)(d):
+  The notification of a personal data breach to the supervisory authority shall at least
+  include a description of the measures taken or proposed to be taken by the controller
+  to address the personal data breach, including, where appropriate, measures to mitigate
+  its possible adverse effects.
+ 
+Practical Implication:
+  The presence of encryption must be documented and reported as a mitigating measure
+  when notifying the supervisory authority of a breach. The notification assessment
+  must include whether encrypted data was involved and whether keys were exposed.
+ 
+--------------------------------------------------------------------------------
+ARTICLE 89 - SAFEGUARDS FOR ARCHIVING AND RESEARCH PURPOSES
+--------------------------------------------------------------------------------
+ 
+Article 89(1):
+  Processing for archiving purposes in the public interest, scientific or historical
+  research purposes or statistical purposes shall be subject to appropriate safeguards,
+  in accordance with this Regulation, for the rights and freedoms of the data subject.
+  Those safeguards shall ensure that technical and organisational measures are in place
+  in particular in order to ensure respect for the principle of data minimisation. Those
+  measures may include pseudonymisation provided that those purposes can be fulfilled
+  in that manner.
+ 
+Cloud Implication:
+  - Long-term archival storage (S3 Glacier, Azure Archive, GCS Archive) for personal
+    data must still have encryption enabled.
+  - Archived personal data should use CMKs with lifecycle policies that can revoke
+    access when retention periods expire.
+ 
+--------------------------------------------------------------------------------
+PRACTICAL CLOUD ENCRYPTION CONTROLS DERIVED FROM GDPR
+--------------------------------------------------------------------------------
+ 
+1. Object Storage (S3 / Blob Storage / GCS):
+   - Enable default server-side encryption on all buckets/containers.
+   - Use customer-managed keys (AWS KMS CMK, Azure Key Vault key, GCP CMEK) for
+     personal data.
+   - Enable bucket keys (S3) to reduce KMS call costs while maintaining CMK protection.
+   - Enforce HTTPS-only access; disable HTTP.
+   - Set minimum TLS version to TLS 1.2 or higher.
+ 
+2. Relational Databases (RDS / Azure PostgreSQL / Cloud SQL):
+   - Enable encryption at rest; this covers data files, logs, backups, snapshots, and
+     replicas.
+   - Enable SSL/TLS enforcement for all client connections; reject unencrypted connections.
+   - Use CMKs where the sensitivity of data justifies the operational overhead.
+   - For RDS: enable Performance Insights encryption and automated backup encryption.
+ 
+3. Compute (EC2 / VMs / Compute Engine):
+   - Encrypt all EBS volumes / managed disks / persistent disks attached to instances
+     that process personal data.
+   - Use encrypted AMIs / images.
+   - Do not store personal data in unencrypted instance storage (ephemeral disks).
+ 
+4. Serverless / Functions:
+   - Ensure environment variables containing personal data or credentials are encrypted
+     at rest using CMKs.
+   - Use encrypted layers and deployment packages where personal data might be embedded.
+ 
+5. CDN / Network Transfer (CloudFront / Azure CDN / Cloud CDN):
+   - Enforce HTTPS for all viewer connections; redirect HTTP to HTTPS.
+   - Set minimum TLS version to TLS 1.2.
+   - Disable outdated cipher suites that do not provide forward secrecy.
+ 
+6. Key Management Best Practices:
+   - Enable automatic key rotation (annually as minimum; more frequently for high-risk data).
+   - Restrict key usage policies to only the services and roles that require them.
+   - Enable key deletion protection; require a minimum waiting period before key deletion.
+   - Store encryption keys in a hardware security module (HSM)-backed service where
+     the sensitivity of data justifies it.
+   - Never store encryption keys in the same location as the encrypted data.
+ 
+--------------------------------------------------------------------------------
+PENALTIES FOR NON-COMPLIANCE WITH ENCRYPTION OBLIGATIONS
+--------------------------------------------------------------------------------
+ 
+Article 83(4):
+  Infringements of Article 25 (data protection by design) and Article 32 (security
+  of processing, including encryption) are subject to administrative fines of up to
+  EUR 10,000,000 or 2% of global annual turnover, whichever is higher.
+ 
+Supervisory Authority Guidance:
+  Several EU Data Protection Authorities have issued enforcement decisions specifically
+  citing the failure to implement adequate encryption as a violation of Article 32.
+  Notable cases include fines for storing passwords in plaintext, transmitting personal
+  data over unencrypted connections, and failing to encrypt backup media.

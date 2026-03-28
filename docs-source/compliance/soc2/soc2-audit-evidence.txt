@@ -1,0 +1,17 @@
+Document Name: SOC 2 Audit Evidence
+Compliance Family: SOC 2
+Topic: audit-evidence
+Source: AICPA Trust Services Criteria - CC4.1 to CC4.2 (https://www.aicpa-cima.com/resources/landing/system-and-organization-controls-soc-suite-of-services)
+Date Collected: 27/03/2026
+Type: Official Documentation
+
+
+CC4.1 The entity selects, develops, and performs ongoing and/or separate evaluations to ascertain whether the components of internal control are present and functioning.
+Points of Focus:
+- Performs Ongoing Evaluations: The entity performs ongoing evaluations to ascertain whether the components of internal control are present and functioning.
+- Evaluates Objectively: The entity evaluates internal control objectively to provide assurance that the components are functioning.
+
+CC7.3 The entity evaluates security events to determine whether they could or have resulted in a failure of the entity to meet its objectives (security incidents) and, if so, takes actions to prevent or address such failures.
+Points of Focus:
+- Analyzes Security Events: The entity analyzes security events to determine whether they represent security incidents.
+- Documents Security Incidents: The entity documents security incidents and the actions taken to address them.

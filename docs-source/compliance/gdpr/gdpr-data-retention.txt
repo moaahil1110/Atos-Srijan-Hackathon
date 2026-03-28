@@ -1,0 +1,388 @@
+Document Name: GDPR Data Retention
+Compliance Family: GDPR
+Topic: data-retention
+Source: GDPR Article 5(1)(e) - Storage Limitation (https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX%3A32016R0679)
+Date Collected: 27/03/2026
+Type: Official Documentation
+
+
+================================================================================
+GDPR — DATA RETENTION
+================================================================================
+ 
+OVERVIEW
+--------
+Data retention under the GDPR is governed primarily by the storage limitation
+principle in Article 5(1)(e) and the right to erasure in Article 17. Together,
+these provisions require organizations to:
+ 
+1. Keep personal data only for as long as it is necessary for the purpose for
+   which it was collected.
+2. Define and document retention periods before or at the time of collection.
+3. Securely delete or effectively anonymise personal data when the retention
+   period expires.
+4. Apply the same retention obligations to all copies of data — including
+   backups, archives, and cloud snapshots.
+ 
+The GDPR does not specify fixed retention durations for most categories of
+personal data. Instead, it requires organizations to justify each retention
+period based on the purpose of processing, applicable legal or regulatory
+obligations, and the principle of data minimisation.
+ 
+Relevant articles:
+ 
+  - Article 5(1)(b): Purpose limitation
+  - Article 5(1)(c): Data minimisation
+  - Article 5(1)(e): Storage limitation
+  - Article 5(2):    Accountability — demonstrate retention decisions
+  - Article 6:       Lawfulness of processing — basis for retention
+  - Article 13–14:   Transparency — inform subjects of retention periods
+  - Article 17:      Right to erasure
+  - Article 30:      Records of processing — document retention periods
+  - Article 89:      Derogations for archiving, research, statistics
+ 
+--------------------------------------------------------------------------------
+ARTICLE 5(1)(e) — STORAGE LIMITATION PRINCIPLE
+--------------------------------------------------------------------------------
+Full text: Personal data shall be "kept in a form which permits identification
+of data subjects for no longer than is necessary for the purposes for which the
+personal data are processed; personal data may be stored for longer periods
+insofar as the personal data will be processed solely for archiving purposes in
+the public interest, scientific or historical research purposes or statistical
+purposes in accordance with Article 89(1) subject to implementation of the
+appropriate technical and organisational measures required by this Regulation
+in order to safeguard the rights and freedoms of the data subject
+('storage limitation')."
+ 
+This is the core GDPR data retention obligation. Key principles derived from it:
+ 
+1. TIME-BOUND BY PURPOSE
+   Data must only be held for as long as it serves the purpose for which it was
+   collected. Once the purpose is fulfilled, the legal basis for retention ends
+   and the data must be deleted or anonymised.
+ 
+2. NO INDEFINITE RETENTION
+   Keeping personal data indefinitely without a specific, documented justification
+   is non-compliant. The absence of a retention schedule is itself a GDPR
+   violation under the accountability principle (Article 5(2)).
+ 
+3. IDENTIFICATION AS THE THRESHOLD
+   The storage limitation applies to data "which permits identification of data
+   subjects." This means:
+   - Truly anonymised data (where re-identification is impossible) falls outside
+     GDPR scope.
+   - Pseudonymised data (e.g., records linked to a tokenized ID) still permits
+     identification and remains within GDPR scope.
+   - Archived or backed-up data containing identifiable personal data remains
+     subject to the storage limitation.
+ 
+4. ARCHIVING EXCEPTION
+   The storage limitation does not apply to data retained for archiving purposes
+   in the public interest, scientific or historical research, or statistical
+   purposes — provided:
+   - Appropriate safeguards are implemented (Article 89(1))
+   - The data is not used for other purposes
+   - Technical measures minimize the risk to data subjects (e.g., pseudonymisation)
+ 
+--------------------------------------------------------------------------------
+ARTICLE 5(1)(b) — PURPOSE LIMITATION AND RETENTION
+--------------------------------------------------------------------------------
+Full text: Personal data shall be "collected for specified, explicit and legitimate
+purposes and not further processed in a manner that is incompatible with those
+purposes."
+ 
+Purpose limitation intersects directly with retention: if data is being retained
+beyond the period needed for its original purpose, continuing to hold it requires
+either a compatible new purpose or a new lawful basis. Retention purely because
+the data "might be useful one day" is not a valid purpose.
+ 
+--------------------------------------------------------------------------------
+ARTICLE 5(1)(c) — DATA MINIMISATION AND RETENTION
+--------------------------------------------------------------------------------
+Full text: Personal data shall be "adequate, relevant and limited to what is
+necessary in relation to the purposes for which they are processed."
+ 
+Data minimisation applies not only to what data is collected but to how long it
+is held. Holding more data fields, or holding data for longer, than is necessary
+for the processing purpose violates data minimisation. Organizations must
+regularly review retained data and delete fields or records that are no longer
+necessary.
+ 
+--------------------------------------------------------------------------------
+ARTICLE 6 — LAWFUL BASIS AND ITS EFFECT ON RETENTION
+--------------------------------------------------------------------------------
+Full text (summary): Processing is lawful only if at least one of the following
+applies:
+  (a) The data subject has given consent
+  (b) Processing is necessary for the performance of a contract
+  (c) Processing is necessary for compliance with a legal obligation
+  (d) Processing is necessary to protect vital interests
+  (e) Processing is necessary for a task in the public interest
+  (f) Processing is necessary for the legitimate interests of the controller
+ 
+The lawful basis chosen for processing determines the retention period:
+ 
+  CONSENT (6(1)(a)):
+    Retention is valid only as long as consent remains in force. When consent is
+    withdrawn, the lawful basis ends and the data must be deleted unless another
+    basis applies. Consent records themselves should be retained to demonstrate
+    that consent was valid during the period of processing.
+ 
+  CONTRACT (6(1)(b)):
+    Data collected for contract performance can be retained for the duration of
+    the contract and for a reasonable period thereafter to handle post-contract
+    queries, disputes, or legal claims. Common retention period: contract
+    duration plus applicable statute of limitations (varies by jurisdiction).
+ 
+  LEGAL OBLIGATION (6(1)(c)):
+    Specific legal or regulatory requirements may mandate minimum retention
+    periods (e.g., tax records 6–7 years, employment records 6 years in the UK).
+    These obligations override the storage limitation for the required period
+    but do not justify retention beyond it.
+ 
+  LEGITIMATE INTERESTS (6(1)(f)):
+    Retention must be no longer than is necessary for the legitimate interest.
+    Balancing test results and retention justification should be documented.
+ 
+--------------------------------------------------------------------------------
+ARTICLE 13 AND 14 — TRANSPARENCY: INFORMING DATA SUBJECTS OF RETENTION PERIODS
+--------------------------------------------------------------------------------
+Full text (Article 13(2)(a)): At the time personal data are collected, the
+controller shall provide the data subject with "the period for which the personal
+data will be stored, or if that is not possible, the criteria used to determine
+that period."
+ 
+Full text (Article 14(3)(a)): The same obligation applies where data was not
+obtained directly from the data subject.
+ 
+Implications:
+1. Retention periods must be determined before data is collected — not after.
+2. Where a specific period cannot be stated, the criteria for determining the
+   period must be explained (e.g., "retained for the duration of the contract
+   plus 6 years").
+3. Privacy notices and consent forms must reflect the actual retention period.
+4. If the retention period changes, data subjects must be informed.
+ 
+--------------------------------------------------------------------------------
+ARTICLE 17 — RIGHT TO ERASURE ('RIGHT TO BE FORGOTTEN')
+--------------------------------------------------------------------------------
+Full text (paragraph 1): "The data subject shall have the right to obtain from
+the controller the erasure of personal data concerning him or her without undue
+delay and the controller shall have the obligation to erase personal data without
+undue delay where one of the following grounds applies:
+ 
+  (a) the personal data are no longer necessary in relation to the purposes
+      for which they were collected or otherwise processed;
+  (b) the data subject withdraws consent on which the processing is based and
+      there is no other legal ground for the processing;
+  (c) the data subject objects to the processing pursuant to Article 21(1) and
+      there are no overriding legitimate grounds for the processing, or the
+      data subject objects pursuant to Article 21(2);
+  (d) the personal data have been unlawfully processed;
+  (e) the personal data have to be erased for compliance with a legal obligation
+      in Union or Member State law;
+  (f) the personal data have been collected in relation to the offer of
+      information society services referred to in Article 8(1)."
+ 
+The right to erasure is not absolute. It may be overridden where processing is
+necessary for:
+  - Exercising freedom of expression and information (Article 17(3)(a))
+  - Compliance with a legal obligation (Article 17(3)(b))
+  - Public health purposes (Article 17(3)(c))
+  - Archiving in the public interest, scientific/historical research, or
+    statistics (Article 17(3)(d))
+  - Establishment, exercise or defence of legal claims (Article 17(3)(e))
+ 
+Erasure vs. anonymisation:
+  - Where complete deletion is not feasible (e.g., data embedded in backup
+    archives), effective anonymisation — removing all direct and indirect
+    identifiers so re-identification is not possible — is an accepted alternative.
+  - Pseudonymisation is NOT anonymisation: pseudonymised data remains personal
+    data and is still subject to the right to erasure.
+ 
+--------------------------------------------------------------------------------
+ARTICLE 30 — RECORDS OF PROCESSING — DOCUMENTING RETENTION PERIODS
+--------------------------------------------------------------------------------
+Full text (paragraph 1(f)): Records of processing activities shall include
+"where possible, the envisaged time limits for erasure of different categories
+of data."
+ 
+This means:
+  - The retention schedule for each data category must be documented in the
+    Record of Processing Activities (RoPA).
+  - This documentation must be available to the supervisory authority on request.
+  - If erasure time limits cannot be specified precisely, the criteria for
+    determining them must be stated.
+ 
+A complete retention schedule in the RoPA is strong evidence that the
+organization is managing personal data in a structured and accountable way.
+ 
+--------------------------------------------------------------------------------
+ARTICLE 89 — DEROGATIONS FOR ARCHIVING, RESEARCH, AND STATISTICS
+--------------------------------------------------------------------------------
+Full text (summary): Processing for archiving purposes in the public interest,
+scientific or historical research purposes, or statistical purposes shall be
+subject to appropriate safeguards (e.g., pseudonymisation). Member States may
+provide further derogations from certain data subject rights in these contexts.
+ 
+Conditions for invoking the Article 89 derogation:
+  1. The primary purpose of retention must genuinely be archiving, research,
+     or statistics — not general business purposes.
+  2. Appropriate safeguards must be implemented (typically pseudonymisation
+     and access controls).
+  3. The derogation cannot be used as a general escape from the storage
+     limitation principle.
+ 
+--------------------------------------------------------------------------------
+ESTABLISHING A GDPR-COMPLIANT RETENTION SCHEDULE
+--------------------------------------------------------------------------------
+A compliant retention schedule must:
+ 
+1. IDENTIFY ALL DATA CATEGORIES
+   Map every category of personal data processed by the organization, including
+   data held in cloud databases, object storage, backups, logs, and archives.
+ 
+2. DETERMINE THE LAWFUL BASIS FOR EACH CATEGORY
+   Document which Article 6 basis applies to each data category and how it
+   affects the retention period.
+ 
+3. IDENTIFY APPLICABLE LEGAL RETENTION REQUIREMENTS
+   Some personal data is subject to mandatory minimum retention periods under
+   sector-specific law (e.g., financial, employment, health). These override
+   the storage limitation for the required minimum period.
+ 
+4. SET DEFINED RETENTION PERIODS
+   Specify a period for each data category. Where an exact period cannot be given,
+   document the criteria that will be used to determine when data is deleted.
+ 
+5. IMPLEMENT AUTOMATED DELETION OR ANONYMISATION
+   Manual deletion processes are error-prone. Automated lifecycle policies should
+   enforce deletion or anonymisation at the end of the retention period.
+ 
+6. APPLY RETENTION TO ALL COPIES
+   Retention periods apply equally to production data, backups, archives, logs,
+   and cloud snapshots. Each must be included in the retention schedule.
+ 
+7. REVIEW AND UPDATE REGULARLY
+   Retention schedules should be reviewed at least annually and when processing
+   purposes change.
+ 
+8. DOCUMENT AND MAKE AVAILABLE
+   The schedule must be recorded in the RoPA (Article 30) and reflected in
+   privacy notices (Articles 13–14).
+ 
+--------------------------------------------------------------------------------
+CLOUD CONFIGURATION IMPLICATIONS — SUMMARY
+--------------------------------------------------------------------------------
+GDPR retention obligations translate directly into the following cloud
+configuration requirements:
+ 
+1. OBJECT STORAGE LIFECYCLE POLICIES
+   - AWS S3: Configure Lifecycle Rules to automatically expire objects after the
+     defined retention period. Set expiration actions to permanently delete
+     objects. Use Intelligent-Tiering for cost efficiency during the retention
+     period where access frequency is variable.
+   - Azure Blob Storage: Configure Blob Lifecycle Management policies with
+     delete actions after defined number of days since last modification or
+     creation. Enable immutability policies with defined retention intervals
+     for compliance-locked data.
+   - GCP Cloud Storage: Configure Object Lifecycle Management rules with
+     Age condition and Delete action to enforce retention periods. Use
+     retention policies on buckets to prevent deletion before minimum
+     retention period expires.
+ 
+2. DATABASE RETENTION
+   - Implement application-level data purging routines aligned with the
+     retention schedule.
+   - For RDS/Cloud SQL/Azure SQL: implement scheduled jobs to delete expired
+     personal data records.
+   - Ensure purging logic covers all tables and fields holding personal data,
+     not just primary user records.
+   - Test purging routines and retain records of execution as audit evidence.
+ 
+3. LOG RETENTION
+   - Logs containing personal data (e.g., application logs with user identifiers,
+     IP addresses, or behavioral data) are subject to GDPR retention limits.
+   - Define log retention periods and configure CloudWatch, Azure Monitor, or
+     GCP Cloud Logging accordingly.
+   - Minimum retention for security audit logs: 12 months operational plus
+     longer archival if required for breach evidence.
+   - Logs should be reviewed for personal data content. Excessive personal data
+     in logs (e.g., full request payloads containing user data) should be reduced
+     at collection time through sanitization or redaction.
+ 
+4. BACKUP RETENTION
+   - Backup retention periods must be documented and enforced.
+   - AWS Backup, Azure Backup, and GCP Backup policies should define retention
+     periods aligned with the RoPA.
+   - When a backup expires, the personal data in it must be deleted. This includes
+     automated deletion of snapshot chains and backup vault entries.
+ 
+5. ENCRYPTION AND KEY MANAGEMENT FOR RETENTION ENFORCEMENT
+   - Cryptographic erasure: deleting the encryption key renders encrypted
+     personal data irrecoverable and constitutes effective erasure where direct
+     deletion is not feasible.
+   - AWS KMS, Azure Key Vault, and GCP Cloud KMS support key deletion with
+     configurable grace periods (minimum 7–30 days depending on provider).
+   - Cryptographic erasure must be documented to serve as audit evidence that
+     the data is no longer accessible.
+ 
+6. AUDIT AND REPORTING
+   - Maintain records of data deletions and lifecycle policy executions.
+   - Generate periodic reports showing that retention schedules are being
+     enforced in practice.
+   - These reports are audit evidence under Article 5(2) accountability.
+ 
+--------------------------------------------------------------------------------
+SPECIAL CATEGORIES OF DATA — HEIGHTENED RETENTION OBLIGATIONS
+--------------------------------------------------------------------------------
+Article 9 defines special categories of personal data requiring heightened
+protection, including:
+  - Health data
+  - Genetic and biometric data
+  - Racial or ethnic origin
+  - Political opinions
+  - Religious or philosophical beliefs
+  - Trade union membership
+  - Sexual orientation and sex life data
+ 
+For special categories:
+  - Retention periods should generally be shorter unless a specific legal
+    obligation requires longer retention.
+  - Deletion processes must be more rigorous and fully auditable.
+  - Storage in cloud environments must be documented and assessed via DPIA
+    (Article 35).
+ 
+--------------------------------------------------------------------------------
+PENALTIES FOR RETENTION VIOLATIONS
+--------------------------------------------------------------------------------
+Under Article 83(5), violations of the basic principles for processing, including
+the storage limitation principle (Article 5), and violations of the right to
+erasure (Article 17) can result in fines of up to:
+  - EUR 20,000,000, or
+  - 4% of total worldwide annual turnover of the preceding financial year,
+    whichever is higher.
+ 
+Under Article 83(4), violations of recordkeeping obligations (Article 30)
+including failure to document retention periods can result in fines of up to:
+  - EUR 10,000,000, or
+  - 2% of total worldwide annual turnover,
+    whichever is higher.
+ 
+--------------------------------------------------------------------------------
+KEY ARTICLES REFERENCED IN THIS DOCUMENT
+--------------------------------------------------------------------------------
+Article 4(1)    — Definition of personal data
+Article 4(5)    — Definition of pseudonymisation
+Article 5(1)(b) — Purpose limitation
+Article 5(1)(c) — Data minimisation
+Article 5(1)(e) — Storage limitation
+Article 5(2)    — Accountability
+Article 6       — Lawfulness of processing
+Article 9       — Special categories of personal data
+Article 13      — Transparency (collected directly from subject)
+Article 14      — Transparency (not collected from subject)
+Article 17      — Right to erasure
+Article 30      — Records of processing activities
+Article 89      — Archiving and research derogations
+Article 83      — Administrative fines

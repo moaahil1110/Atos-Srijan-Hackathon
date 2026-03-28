@@ -1,0 +1,227 @@
+file: compliance/hipaa/hipaa-encryption.txt
+source: HHS Security Rule Educational Paper Series - Technical Safeguards (Vol 2, Paper 4)
+topic: encryption
+framework: hipaa
+status: pending
+
+file: compliance/hipaa/hipaa-identity-authentication.txt
+source: HHS Security Rule Educational Paper Series - Technical Safeguards (Vol 2, Paper 4)
+topic: identity-authentication
+framework: hipaa
+status: pending
+
+file: compliance/hipaa/hipaa-network-protection.txt
+source: HHS Security Rule Educational Paper Series - Technical Safeguards (Vol 2, Paper 4)
+topic: network-protection
+framework: hipaa
+status: pending
+
+file: compliance/hipaa/hipaa-data-retention.txt
+source: https://www.hhs.gov/hipaa/for-professionals/privacy/laws-regulations/index.html
+topic: data-retention
+framework: hipaa
+status: pending
+
+file: compliance/hipaa/hipaa-backup-recovery.txt
+source: HHS Security Rule Educational Paper Series - Administrative Safeguards (Vol 2, Paper 2)
+topic: backup-recovery
+framework: hipaa
+status: pending
+
+file: compliance/hipaa/hipaa-audit-evidence.txt
+source: HHS Security Rule Educational Paper Series - Administrative Safeguards (Vol 2, Paper 2)
+topic: audit-evidence
+framework: hipaa
+status: pending
+
+file: compliance/pci-dss/pcidss-access-control.txt
+source: PCI DSS v4.0 - Requirement 7
+topic: access-control
+framework: pci-dss
+status: pending
+
+file: compliance/pci-dss/pcidss-encryption.txt
+source: PCI DSS v4.0 - Requirements 3 and 4
+topic: encryption
+framework: pci-dss
+status: pending
+
+file: compliance/pci-dss/pcidss-logging.txt
+source: PCI DSS v4.0 - Requirement 10
+topic: logging
+framework: pci-dss
+status: pending
+
+file: compliance/pci-dss/pcidss-identity-authentication.txt
+source: PCI DSS v4.0 - Requirement 8
+topic: identity-authentication
+framework: pci-dss
+status: pending
+
+file: compliance/pci-dss/pcidss-network-protection.txt
+source: PCI DSS v4.0 - Requirements 1 and 2
+topic: network-protection
+framework: pci-dss
+status: pending
+
+file: compliance/pci-dss/pcidss-data-retention.txt
+source: PCI DSS v4.0 - Requirement 3.2
+topic: data-retention
+framework: pci-dss
+status: pending
+
+file: compliance/pci-dss/pcidss-backup-recovery.txt
+source: PCI DSS v4.0 - Requirement 12.3
+topic: backup-recovery
+framework: pci-dss
+status: pending
+
+file: compliance/pci-dss/pcidss-audit-evidence.txt
+source: PCI DSS v4.0 - Requirement 10.7
+topic: audit-evidence
+framework: pci-dss
+status: pending
+
+file: compliance/soc2/soc2-access-control.txt
+source: AICPA Trust Services Criteria - CC6.1 to CC6.3
+topic: access-control
+framework: soc2
+status: pending
+
+file: compliance/soc2/soc2-encryption.txt
+source: AICPA Trust Services Criteria - CC6.7
+topic: encryption
+framework: soc2
+status: pending
+
+file: compliance/soc2/soc2-logging.txt
+source: AICPA Trust Services Criteria - CC7.1 to CC7.2
+topic: logging
+framework: soc2
+status: pending
+
+file: compliance/soc2/soc2-identity-authentication.txt
+source: AICPA Trust Services Criteria - CC6.2
+topic: identity-authentication
+framework: soc2
+status: pending
+
+file: compliance/soc2/soc2-network-protection.txt
+source: AICPA Trust Services Criteria - CC6.6
+topic: network-protection
+framework: soc2
+status: pending
+
+file: compliance/soc2/soc2-data-retention.txt
+source: AICPA Trust Services Criteria - A1.2 Availability Criteria
+topic: data-retention
+framework: soc2
+status: pending
+
+file: compliance/soc2/soc2-backup-recovery.txt
+source: AICPA Trust Services Criteria - A1.3
+topic: backup-recovery
+framework: soc2
+status: pending
+
+file: compliance/soc2/soc2-audit-evidence.txt
+source: AICPA Trust Services Criteria - CC4.1 to CC4.2
+topic: audit-evidence
+framework: soc2
+status: pending
+
+file: compliance/iso27001/iso27001-access-control.txt
+source: ISO/IEC 27001:2022 - Annex A Control 5.15 and 5.18
+topic: access-control
+framework: iso27001
+status: pending
+
+file: compliance/iso27001/iso27001-encryption.txt
+source: ISO/IEC 27001:2022 - Annex A Control 8.24
+topic: encryption
+framework: iso27001
+status: pending
+
+file: compliance/iso27001/iso27001-logging.txt
+source: ISO/IEC 27001:2022 - Annex A Control 8.15 and 8.16
+topic: logging
+framework: iso27001
+status: pending
+
+file: compliance/iso27001/iso27001-identity-authentication.txt
+source: ISO/IEC 27001:2022 - Annex A Control 5.16 and 8.5
+topic: identity-authentication
+framework: iso27001
+status: pending
+
+file: compliance/iso27001/iso27001-network-protection.txt
+source: ISO/IEC 27001:2022 - Annex A Control 8.20 and 8.22
+topic: network-protection
+framework: iso27001
+status: pending
+
+file: compliance/iso27001/iso27001-data-retention.txt
+source: ISO/IEC 27001:2022 - Annex A Control 5.33
+topic: data-retention
+framework: iso27001
+status: pending
+
+file: compliance/iso27001/iso27001-backup-recovery.txt
+source: ISO/IEC 27001:2022 - Annex A Control 8.13
+topic: backup-recovery
+framework: iso27001
+status: pending
+
+file: compliance/iso27001/iso27001-audit-evidence.txt
+source: ISO/IEC 27001:2022 - Clause 9.2 Internal Audit
+topic: audit-evidence
+framework: iso27001
+status: pending
+
+file: compliance/gdpr/gdpr-access-control.txt
+source: GDPR Article 25 and Article 32
+topic: access-control
+framework: gdpr
+status: pending
+
+file: compliance/gdpr/gdpr-encryption.txt
+source: GDPR Article 32(1)(a)
+topic: encryption
+framework: gdpr
+status: pending
+
+file: compliance/gdpr/gdpr-logging.txt
+source: GDPR Article 30 - Records of Processing Activities
+topic: logging
+framework: gdpr
+status: pending
+
+file: compliance/gdpr/gdpr-identity-authentication.txt
+source: GDPR Article 32 - Security of Processing
+topic: identity-authentication
+framework: gdpr
+status: pending
+
+file: compliance/gdpr/gdpr-network-protection.txt
+source: GDPR Article 32 - Security of Processing
+topic: network-protection
+framework: gdpr
+status: pending
+
+file: compliance/gdpr/gdpr-data-retention.txt
+source: GDPR Article 5(1)(e) - Storage Limitation
+topic: data-retention
+framework: gdpr
+status: pending
+
+file: compliance/gdpr/gdpr-backup-recovery.txt
+source: GDPR Article 32(1)(c) - Ability to Restore Availability
+topic: backup-recovery
+framework: gdpr
+status: pending
+
+file: compliance/gdpr/gdpr-audit-evidence.txt
+source: GDPR Article 5(2) - Accountability Principle
+topic: audit-evidence
+framework: gdpr
+status: pending
