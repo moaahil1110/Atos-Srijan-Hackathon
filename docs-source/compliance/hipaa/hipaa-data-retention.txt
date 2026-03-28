@@ -1,0 +1,28 @@
+Document Name: HIPAA Documentation Retention
+Compliance Family: HIPAA
+Topic: data-retention
+Source: https://www.hhs.gov/hipaa/for-professionals/privacy/laws-regulations/index.html
+Date Collected: 26/03/2026
+Type: Official Documentation
+
+Policies and Procedures and Documentation Requirements
+• Policies and Procedures. A regulated entity must adopt reasonable and appropriate policies and procedures to comply with the provisions of the Security Rule. ™3
+• Documentation. A regulated entity must maintain documentation required for written policies and procedures implemented to comply with the Security Rule and actions, activities, or assessments required by the Security Rule to be documented until six years after the later of: 1) the date of the document's creation or 2) the date the document was last in effect.74
+• Availability. A regulated entity must make the written policies and procedures it implements to comply with the Security Rule and its documentation of required actions, activities, and assessments available to those persons responsible for implementing the procedures described in the documentation.?5
+• Updates. A regulated entity must periodically review and update its documentation in response to environmental or organizational changes that affect the security of ePHI.76
+
+Policies and Procedures § 164.316(a)
+Implement reasonable and appropriate policies and procedures to comply with the standards, implementation specifications, or other requirements of this subpart, taking into account those factors specified in § 164.306(b)(2)(i), (ii), (iii), and (iv). This standard is not to be construed to permit or excuse an action that violates any other standard, implementation specification, or other requirements of this subpart. A covered entity may change its policies and procedures at any time, provided that the changes are documented and are implemented in accordance with this subpart.
+
+Documentation § 164.316(b)(1)
+(i) Maintain the policies and procedures implemented to comply with this subpart in written (which may be electronic) form; and
+(ii) If an action, activity or assessment is required by this subpart to be documented, maintain a written (which may be electronic) record of the action, activity, or assessment.
+
+Time Limit (R) - § 164.316(b)(2)(i)
+Retain the documentation required by paragraph (b)(1) of this section for 6 years from the date of its creation or the date when it last was in effect, whichever is later.
+
+Availability (R) - § 164.316(b)(2)(ii)
+Make documentation available to those persons responsible for implementing the procedures to which the documentation pertains.
+
+Updates (R) - § 164.316(b)(2)(iii)
+Review documentation periodically, and update as needed, in response to environmental or operational changes affecting the security of the electronic protected health information.

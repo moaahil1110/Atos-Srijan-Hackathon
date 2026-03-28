@@ -1,0 +1,36 @@
+
+
+STANDARD
+§ 164.312(b)
+
+Audit Controls
+The next standard in the Technical Safeguards section is Audit Controls. This standard has no
+implementation specifications. The Audit Controls standard requires a covered entity to:
+“Implement hardware, software, and/or procedural mechanisms that
+record and examine activity in information systems that contain or use
+electronic protected health information.”
+Most information systems provide some level of audit controls with a reporting method, such as
+audit reports. These controls are useful for recording and examining information system activity,
+especially when determining if a security violation occurred.
+It is important to point out that the Security Rule does not identify data that must be gathered by
+the audit controls or how often the audit reports should be reviewed. A covered entity must
+consider its risk analysis and organizational factors, such as current technical infrastructure,
+hardware and software security capabilities, to determine reasonable and appropriate audit
+controls for information systems that contain or use EPHI.
+4 Security Standards: Technical Safeguards
+Volume 2 / Paper 4 8 5/2005: rev. 3/2007
+STANDARD
+§ 164.312(c)(1)
+NOTE: The integrity of EPHI
+can be compromised by both
+technical and non-technical
+sources.
+Sample questions for covered entities to consider:
+ What audit control mechanisms are reasonable and appropriate to implement
+so as to record and examine activity in information systems that contain or
+use EPHI?
+ What are the audit control capabilities of information systems with EPHI?
+ Do the audit controls implemented allow the organization to adhere to
+policy and procedures developed to comply with the required
+implementation specification at § 164.308(a)(1)(ii)(D) for Information
+System Activity Review?

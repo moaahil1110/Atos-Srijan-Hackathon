@@ -1,0 +1,133 @@
+Document Name: HIPAA Transmission Security
+Compliance Family: HIPAA
+Topic: network-protection
+Source: HHS Security Rule Educational Paper Series - Technical Safeguards (Vol 2, Paper 4)
+Date Collected: 26/03/2026
+Type: Official Documentation
+
+STANDARD
+§ 164.312(e)(1)
+Transmission Security
+The final standard listed in the Technical Safeguards section is Transmission Security. This
+standard requires a covered entity to:
+“Implement technical security measures to guard against unauthorized
+access to electronic protected health information that is being transmitted
+over an electronic communications network.”
+In order to determine the technical security measures to implement to comply with this standard,
+covered entities must review the current methods used to transmit EPHI. For instance, is EPHI
+transmitted through email, over the Internet, or via some form of private or point-to-point
+network? Once the methods of transmission are reviewed, the covered entity must identify the
+available and appropriate means to protect EPHI as it is transmitted, select appropriate solutions,
+4 Security Standards: Technical Safeguards
+Volume 2 / Paper 4 11 5/2005: rev. 3/2007
+and document its decisions. The Security Rule allows for EPHI to be sent over an electronic
+open network as long as it is adequately protected.
+This standard has two implementation specifications:
+1. Integrity Controls (Addressable)
+2. Encryption (Addressable)
+1. INTEGRITY CONTROLS (A) - § 164.312(e)(2)(i)
+Where this implementation specification is a reasonable and appropriate safeguard for a
+covered entity, the covered entity must:
+“Implement security measures to ensure that electronically transmitted
+electronic protected health information is not improperly modified without
+detection until disposed of.”
+Protecting the integrity of EPHI maintained in information systems was discussed
+previously in the Integrity standard. Integrity in this context is focused on making sure
+the EPHI is not improperly modified during transmission.
+A primary method for protecting the integrity of EPHI being transmitted is through the
+use of network communications protocols. In
+general, these protocols, among other things, ensure
+that the data sent is the same as the data received.
+There are other security measures that can provide
+integrity controls for EPHI being transmitted over an
+electronic communications network, such as data or
+message authentication codes, that a covered entity
+may want to consider.
+Sample questions for covered entities to consider:
+ What security measures are currently used to protect EPHI during
+transmission?
+ Has the risk analysis identified scenarios that may result in modification to
+EPHI by unauthorized sources during transmission?
+NOTE: A covered entity should
+discuss reasonable and
+appropriate security measures
+to protect the integrity of EPHI
+during transmission with its IT
+professionals, vendors,
+business associates, and
+trading partners.
+4 Security Standards: Technical Safeguards
+Volume 2 / Paper 4 12 5/2005: rev. 3/2007
+ What security measures can be implemented to protect EPHI in transmission
+from unauthorized access?
+2. ENCRYPTION (A) - § 164.312(e)(2)(ii)
+Where this implementation specification is a reasonable and appropriate safeguard for a
+covered entity, the covered entity must:
+“Implement a mechanism to encrypt electronic protected health
+information whenever deemed appropriate.”
+As previously described in the Access Control standard, encryption is a method of
+converting an original message of regular text into encoded or unreadable text that is
+eventually decrypted into plain comprehensible text. The Encryption implementation
+specification is addressable, similar to the addressable implementation specification at §
+164.312(a)(2)(iv), which addresses Encryption and Decryption.
+There are various types of encryption technology available to covered entities. For an
+encryption strategy to be successful, an organization must consider many factors. For
+example, for encryption technologies to work properly when data is being transmitted,
+both the sender and receiver must be using the same or compatible technology.
+Covered entities use open networks such as the Internet and e-mail systems differently.
+Currently no single interoperable encryption solution for communicating over open
+networks exists. Adopting a single industry-wide
+encryption standard in the Security Rule would likely
+have placed too high a financial and technical burden
+on many covered entities. The Security Rule allows
+covered entities the flexibility to determine when,
+with whom, and what method of encryption to use.
+A covered entity should discuss reasonable and appropriate security measures for the
+encryption of EPHI during transmission over electronic communications networks with
+its IT professionals, vendors, business associates, and trading partners.
+Covered entities must consider the use of encryption for transmitting EPHI, particularly
+over the Internet. As business practices and technology change, situations may arise
+where EPHI being transmitted from a covered entity would be at significant risk of being
+accessed by unauthorized entities. Where risk analysis shows such risk to be significant, a
+covered entity must encrypt those transmissions under the addressable implementation
+specification for encryption.
+NOTE: There are various types
+of encryption technology. To
+work properly, both the sender
+and the receiver must use the
+same or compatible technology.
+4 Security Standards: Technical Safeguards
+Volume 2 / Paper 4 13 5/2005: rev. 3/2007
+Sample questions for covered entities to consider:
+ How does the organization transmit EPHI?
+ How often does the organization transmit EPHI?
+ Based on the risk analysis, is encryption needed to protect EPHI during
+transmission?
+ What methods of encryption will be used to protect the transmission of
+EPHI?
+In Summary
+The Security Rule Technical Safeguards are the technology and related policies and procedures
+that protect EPHI and control access to it. The Technical Safeguards standards apply to all
+EPHI. The Rule requires a covered entity to comply with the Technical Safeguards standards
+and provides the flexibility to covered entities to determine which technical security measures
+will be implemented.
+Together with reasonable and appropriate Administrative and Physical Safeguards, successful
+implementation of the Technical Safeguards standards will help ensure that a covered entity will
+protect the confidentiality, integrity and availability of EPHI.
+4 Security Standards: Technical Safeguards
+Volume 2 / Paper 4 14 5/2005: rev. 3/2007
+Resources
+The remaining papers in this series will address other specific topics related to the Security Rule.
+The next paper in this series covers the final sections of the Security Rule, Organizational
+Requirements and Policies and Procedures and Documentation Requirements.
+Covered entities should periodically check the CMS website at www.cms.hhs.gov under
+“Regulations and Guidance” for additional information and resources as they work through the
+security implementation process. There are many other sources of information available on the
+Internet. While CMS does not endorse guidance provided by other organizations, covered
+entities may also want to check with other local and national professional health care
+organizations, such as national provider and health plan associations for additional information.
+Need more information?
+Visit the CMS website often at www.cms.hhs.gov under “Regulations and Guidance” for the
+latest security papers, checklists, and announcements of upcoming events.
+Visit the Office for Civil Rights website, http://www.hhs.gov/ocr/hipaa, for the latest
+guidance, FAQs and other information on the Privacy Rule.

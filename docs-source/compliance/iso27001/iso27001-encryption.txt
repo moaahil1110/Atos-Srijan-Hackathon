@@ -1,0 +1,46 @@
+Document Name: ISO 27001 Encryption
+Compliance Family: ISO 27001
+Topic: encryption
+Source: ISO/IEC 27001:2022 - Annex A Control 8.24
+Date Collected: 27/03/2026
+Type: Official Documentation
+
+
+8.24 Use of Cryptography
+Control:
+Rules for the effective use of cryptography, including cryptographic key management, shall be
+defined and implemented.
+
+Additional related controls:
+
+8.5 Secure Authentication
+Control:
+Secure authentication technologies and procedures shall be implemented based on information
+access restrictions and the topic-specific policy on access control.
+
+5.14 Information Transfer
+Control:
+Information transfer rules, procedures, or agreements shall be in place for all types of transfer
+facilities within the organization and between the organization and other parties.
+
+7.10 Storage Media
+Control:
+Storage media shall be managed through their life cycle of acquisition, use, transportation and
+disposal in accordance with the organization's classification scheme and handling requirements.
+
+8.11 Data Masking
+Control:
+Data masking shall be used in accordance with the organization's topic-specific policy on access
+control and other related topic-specific policies, and business requirements, taking applicable
+legislation into consideration.
+
+8.12 Data Leakage Prevention
+Control:
+Data leakage prevention measures shall be applied to systems, networks and any other devices
+that process, store or transmit sensitive information.
+
+Context from ISO/IEC 27001:2022 Section 6.1.3:
+Organizations shall determine all controls necessary to implement the information security risk
+treatment options chosen. Cryptographic controls are a key mechanism for protecting the
+confidentiality, integrity and availability of information, particularly for data in transit and data
+at rest across cloud and network environments.

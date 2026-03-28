@@ -1,0 +1,14 @@
+Document Name: SOC 2 Logging and Monitoring
+Compliance Family: SOC 2
+Topic: logging
+Source: AICPA Trust Services Criteria - CC7.1 to CC7.2 (https://www.aicpa-cima.com/resources/landing/system-and-organization-controls-soc-suite-of-services)
+Date Collected: 27/03/2026
+Type: Official Documentation
+
+
+CC7.2 The entity monitors system components and the operation of those components for anomalies that are indicative of malicious acts, natural disasters, and errors affecting the entity's ability to meet its objectives; anomalies are analyzed to determine whether they represent security events.
+
+Points of Focus:
+- Implements Detection Policies and Procedures: The entity implements policies and procedures to detect anomalies and security events.
+- Monitors the Infrastructure and Software: The entity monitors the IT infrastructure and software to detect anomalies and security events.
+- Analyzes Anomalies: The entity analyzes anomalies to determine whether they represent security events.

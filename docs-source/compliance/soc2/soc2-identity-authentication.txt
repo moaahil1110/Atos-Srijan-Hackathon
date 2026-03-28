@@ -1,0 +1,18 @@
+Document Name: SOC 2 Identity and Authentication
+Compliance Family: SOC 2
+Topic: identity-authentication
+Source: AICPA Trust Services Criteria - CC6.2 (https://www.aicpa-cima.com/resources/landing/system-and-organization-controls-soc-suite-of-services)
+Date Collected: 27/03/2026
+Type: Official Documentation
+
+
+CC6.2 Prior to issuing system credentials and granting system access, the entity evaluates the identity of internal and external users.
+Points of Focus:
+- Identifies Users: The entity identifies users who require access to the system based on their role and business requirements.
+- Evaluates Identity: The entity evaluates the identity of users to verify they are who they claim to be prior to issuing system credentials.
+
+CC6.3 The entity authorizes, modifies, or removes access to data, software, functions, and other IT resources to enable individuals to meet the entity's objectives.
+Points of Focus:
+- Implements Authentication: The entity implements robust authentication mechanisms (such as complex passwords, tokens, or biometrics) to authenticate users.
+- Manages Credentials: The entity securely manages credentials throughout their lifecycle, including issuance, storage, rotation, and revocation.
+- Uses Multi-Factor Authentication: The entity implements multi-factor authentication (MFA) for all remote access to the network and for all administrative or privileged access to system components.

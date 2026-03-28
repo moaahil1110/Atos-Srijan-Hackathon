@@ -1,0 +1,81 @@
+Document Name: ISO 27001 Audit Evidence
+Compliance Family: ISO 27001
+Topic: audit-evidence
+Source: ISO/IEC 27001:2022 - Sections 9.2.1 and 9.2.2
+Date Collected: 27/03/2026
+Type: Official Documentation
+
+
+9.2 Internal Audit
+
+9.2.1 General
+The organization shall conduct internal audits at planned intervals to provide information on
+whether the information security management system:
+a) conforms to:
+   1) the organization's own requirements for its information security management system;
+   2) the requirements of this document;
+b) is effectively implemented and maintained.
+
+9.2.2 Internal Audit Programme
+The organization shall plan, establish, implement and maintain an audit programme(s), including
+the frequency, methods, responsibilities, planning requirements and reporting.
+When establishing the internal audit programme(s), the organization shall consider the importance
+of the processes concerned and the results of previous audits.
+The organization shall:
+a) define the audit criteria and scope for each audit;
+b) select auditors and conduct audits that ensure objectivity and the impartiality of the audit process;
+c) ensure that the results of the audits are reported to relevant management.
+Documented information shall be available as evidence of the implementation of the audit
+programme(s) and the audit results.
+
+9.3 Management Review
+
+9.3.1 General
+Top management shall review the organization's information security management system at
+planned intervals to ensure its continuing suitability, adequacy and effectiveness.
+
+9.3.2 Management Review Inputs
+The management review shall include consideration of:
+a) the status of actions from previous management reviews;
+b) changes in external and internal issues that are relevant to the information security management
+   system;
+c) changes in needs and expectations of interested parties that are relevant to the information
+   security management system;
+d) feedback on the information security performance, including trends in:
+   1) nonconformities and corrective actions;
+   2) monitoring and measurement results;
+   3) audit results;
+   4) fulfilment of information security objectives;
+e) feedback from interested parties;
+f) results of risk assessment and status of risk treatment plan;
+g) opportunities for continual improvement.
+
+9.3.3 Management Review Results
+The results of the management review shall include decisions related to continual improvement
+opportunities and any needs for changes to the information security management system.
+Documented information shall be available as evidence of the results of management reviews.
+
+Additional related controls from Annex A:
+
+5.35 Independent Review of Information Security
+Control:
+The organization's approach to managing information security and its implementation including
+people, processes and technologies shall be reviewed independently at planned intervals, or when
+significant changes occur.
+
+5.36 Compliance with Policies, Rules and Standards for Information Security
+Control:
+Compliance with the organization's information security policy, topic-specific policies, rules and
+standards shall be regularly reviewed.
+
+10.2 Nonconformity and Corrective Action (from Section 10):
+When a nonconformity occurs, the organization shall:
+a) react to the nonconformity, and as applicable take action to control and correct it and deal with
+   the consequences;
+b) evaluate the need for action to eliminate the causes of nonconformity in order that it does not
+   recur or occur elsewhere;
+c) implement any action needed;
+d) review the effectiveness of any corrective action taken; and
+e) make changes to the information security management system, if necessary.
+Documented information shall be available as evidence of the nature of the nonconformities and
+any subsequent actions taken, and the results of any corrective action.

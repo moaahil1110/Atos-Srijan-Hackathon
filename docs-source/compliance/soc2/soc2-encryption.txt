@@ -1,0 +1,16 @@
+Document Name: SOC 2 Encryption
+Compliance Family: SOC 2
+Topic: encryption
+Source: AICPA Trust Services Criteria - CC6.7 (https://www.aicpa-cima.com/resources/landing/system-and-organization-controls-soc-suite-of-services)
+Date Collected: 27/03/2026
+Type: Official Documentation
+
+
+CC6.6 The entity implements logical access security measures to protect against threats from sources outside its boundaries.
+Points of Focus:
+- Uses Encryption: The entity uses encryption or other equivalent security techniques to protect information during transmission over public or untrusted networks and when stored on portable media or devices.
+
+CC6.7 The entity restricts the transmission, movement, and removal of information to authorized internal and external users and processes, and protects it during transmission, movement, or removal to meet the entity's objectives.
+Points of Focus:
+- Protects Information During Transmission: The entity implements encryption to protect data in transit.
+- Protects Information at Rest: The entity implements encryption to protect data at rest.

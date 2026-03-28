@@ -1,0 +1,16 @@
+Document Name: SOC 2 Network Protection
+Compliance Family: SOC 2
+Topic: network-protection
+Source: AICPA Trust Services Criteria - CC6.6 (https://www.aicpa-cima.com/resources/landing/system-and-organization-controls-soc-suite-of-services)
+Date Collected: 27/03/2026
+Type: Official Documentation
+
+
+CC6.6 The entity implements logical access security measures to protect against threats from sources outside its boundaries.
+Points of Focus:
+- Restricts Access to the Network: The entity restricts access to its network boundaries to authorized personnel and devices.
+- Uses Firewalls and Intrusion Detection Systems: The entity implements boundary protection systems, such as firewalls and intrusion detection systems, to monitor and control communications at external boundaries.
+
+CC6.8 The entity implements controls to prevent or detect the introduction of unauthorized or malicious software to meet the entity's objectives.
+Points of Focus:
+- Restricts Unauthorized Connections: The entity restricts the connection of unauthorized devices and software to the network.

@@ -1,0 +1,265 @@
+Document Name: GDPR Network Protection
+Compliance Family: GDPR
+Topic: network-protection
+Source: GDPR Article 32 - Security of Processing (https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX%3A32016R0679)
+Date Collected: 27/03/2026
+Type: Official Documentation
+
+
+================================================================================
+GDPR NETWORK PROTECTION REQUIREMENTS
+================================================================================
+ 
+OVERVIEW
+--------
+The GDPR does not specify network architecture requirements directly but the
+obligations under Article 5 (integrity and confidentiality), Article 25 (data
+protection by design), Article 32 (security of processing), and Recital 49 (network
+and information security as a legitimate interest) together impose network protection
+obligations. In particular, protecting personal data from "unauthorised disclosure
+of, or access to" personal data transmitted over networks is a core requirement.
+ 
+--------------------------------------------------------------------------------
+ARTICLE 5 - INTEGRITY AND CONFIDENTIALITY PRINCIPLE
+--------------------------------------------------------------------------------
+ 
+Article 5(1)(f):
+  Personal data shall be processed in a manner that ensures appropriate security of
+  the personal data, including protection against unauthorised or unlawful processing
+  and against accidental loss, destruction or damage, using appropriate technical or
+  organisational measures ('integrity and confidentiality').
+ 
+Practical Implication:
+  Network-level protection is a technical measure that implements the integrity and
+  confidentiality principle. Data transmitted over unsecured networks is vulnerable
+  to interception (loss of confidentiality) and tampering (loss of integrity).
+ 
+--------------------------------------------------------------------------------
+RECITAL 49 - NETWORK AND INFORMATION SECURITY AS LEGITIMATE INTEREST
+--------------------------------------------------------------------------------
+ 
+Recital 49:
+  The processing of personal data to the extent strictly necessary and proportionate
+  for the purposes of ensuring network and information security, i.e. the ability of
+  a network or an information system to resist, at a given level of confidence,
+  accidental events or unlawful or malicious actions that compromise the availability,
+  authenticity, integrity and confidentiality of stored or transmitted personal data,
+  and the security of the related services offered by, or accessible via, those
+  networks and systems, by public authorities, by computer emergency response teams
+  (CERTs), computer security incident response teams (CSIRTs), by providers of
+  electronic communications networks and services and by providers of security
+  technologies and services, constitutes a legitimate interest of the data controller
+  concerned. This could, for example, include preventing unauthorised access to
+  electronic communications networks and malicious code distribution and stopping
+  'denial of service' attacks and damage to computer and electronic communication
+  systems.
+ 
+Practical Implication:
+  Recital 49 explicitly recognises that running firewalls, intrusion detection systems,
+  DDoS protection, and network monitoring is not only permitted but is itself a
+  legitimate interest. This means that network security tooling does not require a
+  separate consent basis when it processes personal data incidentally (e.g., logging
+  IP addresses for security purposes).
+ 
+Cloud Implication:
+  - WAF (Web Application Firewall) deployment, DDoS protection (AWS Shield, Azure DDoS
+    Protection, GCP Cloud Armor), and network flow logging are all justified and
+    expected under GDPR.
+ 
+--------------------------------------------------------------------------------
+ARTICLE 25 - DATA PROTECTION BY DESIGN (NETWORK ARCHITECTURE)
+--------------------------------------------------------------------------------
+ 
+Article 25(1):
+  The controller shall implement appropriate technical and organisational measures,
+  such as pseudonymisation, which are designed to implement data-protection principles
+  in an effective manner and to integrate the necessary safeguards into the processing.
+ 
+Article 25(2):
+  The controller shall ensure that by default personal data are not made accessible
+  without the individual's intervention to an indefinite number of natural persons.
+ 
+Practical Implication:
+  By default, services handling personal data must not be exposed to the public
+  internet. Network segmentation and private networking must be the default design,
+  not an afterthought.
+ 
+Cloud Implication:
+  - Databases must not have public endpoints enabled.
+  - Application tiers must be in private subnets.
+  - Public internet exposure must be limited to intended public-facing services only.
+  - Private endpoints/service endpoints must be used for cloud service access within
+    a VPC/VNet.
+ 
+--------------------------------------------------------------------------------
+ARTICLE 32 - SECURITY OF PROCESSING (NETWORK PROTECTION OBLIGATIONS)
+--------------------------------------------------------------------------------
+ 
+Article 32(1):
+  The controller and the processor shall implement appropriate technical and
+  organisational measures to ensure a level of security appropriate to the risk,
+  including as appropriate:
+  (a) the pseudonymisation and encryption of personal data;
+  (b) the ability to ensure the ongoing confidentiality, integrity, availability and
+      resilience of processing systems and services;
+  (c) the ability to restore the availability and access to personal data in a timely
+      manner in the event of a physical or technical incident.
+ 
+Article 32(2):
+  In assessing the appropriate level of security, account shall be taken in particular
+  of the risks that are presented by processing, in particular from accidental or
+  unlawful destruction, loss, alteration, unauthorised disclosure of, or access to,
+  personal data transmitted, stored or otherwise processed.
+ 
+The phrase "transmitted, stored or otherwise processed" explicitly covers data in
+transit over networks. Protection of personal data during transmission is a direct
+requirement of Article 32.
+ 
+Recital 83:
+  The controller or processor should evaluate the risks inherent in the processing
+  and implement measures to mitigate those risks, such as encryption. Those measures
+  should ensure an appropriate level of security, including confidentiality, taking
+  into account the state of the art and the costs of implementation.
+ 
+"State of the art" for network protection includes TLS 1.2/1.3 for all transmissions,
+WAF for web-facing services, private networking where feasible, and network-level
+threat detection.
+ 
+Cloud Implication - Encryption in Transit:
+  - All connections to and from services handling personal data must use TLS.
+  - Minimum TLS version: TLS 1.2. TLS 1.3 preferred.
+  - SSL/TLS certificates must be valid, not self-signed (except for internal services
+    where certificate validation is still enforced), and renewed before expiry.
+  - HTTP access must be redirected to HTTPS or rejected entirely.
+ 
+Cloud Implication - Network Segmentation:
+  - Use VPC / VNet to isolate personal data workloads from other workloads.
+  - Security groups / NSGs must follow least-privilege ingress and egress rules.
+  - Do not use 0.0.0.0/0 as an inbound rule for resources handling personal data.
+  - Use private subnets for databases and application servers; use public subnets only
+    for load balancers and CDN origins.
+  - Use NACLs (AWS) or subnet-level controls as a defence-in-depth layer.
+ 
+Cloud Implication - Private Endpoints:
+  - Use VPC Endpoints (AWS), Private Endpoints (Azure), or Private Service Connect
+    (GCP) for cloud service access to avoid traffic traversing the public internet.
+  - This applies to: object storage, databases, KMS, secrets management, and any other
+    service that handles personal data.
+ 
+--------------------------------------------------------------------------------
+ARTICLE 32 - AVAILABILITY AND RESILIENCE (NETWORK AVAILABILITY)
+--------------------------------------------------------------------------------
+ 
+Article 32(1)(b):
+  the ability to ensure the ongoing confidentiality, integrity, availability and
+  resilience of processing systems and services.
+ 
+Article 32(1)(c):
+  the ability to restore the availability and access to personal data in a timely
+  manner in the event of a physical or technical incident.
+ 
+Practical Implication:
+  Network resilience is a GDPR obligation. DDoS attacks and network outages are
+  "physical or technical incidents" that must be accounted for. Data subjects have
+  rights of access (Article 15) and rectification (Article 16), and controllers must
+  be able to fulfill these even in the event of attacks.
+ 
+Cloud Implication:
+  - Enable DDoS protection at the network level (AWS Shield Standard minimum; Shield
+    Advanced for critical applications, Azure DDoS Protection, GCP Cloud Armor).
+  - Use multi-AZ or multi-region deployment where personal data availability is critical.
+  - Configure health checks and auto-scaling to maintain availability.
+  - CDN (CloudFront, Azure CDN, GCP Cloud CDN) can help absorb traffic and reduce
+    exposure of origin services.
+ 
+--------------------------------------------------------------------------------
+ARTICLE 44-49 - INTERNATIONAL DATA TRANSFERS (NETWORK IMPLICATION)
+--------------------------------------------------------------------------------
+ 
+Article 44:
+  Any transfer of personal data to a third country or an international organisation
+  shall take place only if the conditions laid down in this Chapter are complied with
+  by the controller and processor.
+ 
+Article 46(1):
+  In the absence of a decision pursuant to Article 45(3), a controller or processor
+  may transfer personal data to a third country or an international organisation only
+  if the controller or processor has provided appropriate safeguards, and on condition
+  that enforceable data subject rights and effective legal remedies for data subjects
+  are available.
+ 
+Practical Implication:
+  Any personal data that traverses a network outside the EU/EEA is potentially a
+  cross-border transfer subject to Chapter V of the GDPR. Network routing must be
+  considered when designing data flows.
+ 
+Cloud Implication:
+  - If personal data of EU residents is processed, cloud regions used must be
+    documented and cross-border transfers must be covered by appropriate safeguards
+    (Standard Contractual Clauses, Binding Corporate Rules, or adequacy decisions).
+  - Data residency settings on cloud services (S3 bucket region, Azure region, GCP
+    region) must be configured to comply with transfer restrictions.
+  - CDN edge caching must be evaluated: caching personal data at edge nodes in third
+    countries may constitute a transfer.
+ 
+--------------------------------------------------------------------------------
+PRACTICAL CLOUD NETWORK CONTROLS DERIVED FROM GDPR
+--------------------------------------------------------------------------------
+ 
+1. Encryption in Transit:
+   - Enforce HTTPS/TLS for all public-facing endpoints and APIs.
+   - Enforce TLS for internal service-to-service communication where personal data is
+     transmitted.
+   - Configure minimum TLS version to TLS 1.2 (enforce TLS 1.3 where supported).
+   - Disable SSLv3, TLS 1.0, and TLS 1.1.
+   - Use valid, CA-signed certificates; implement automated certificate renewal.
+ 
+2. Network Segmentation:
+   - Use separate VPCs/VNets for different workload tiers.
+   - Deploy databases and application servers in private subnets.
+   - Use load balancers and CDN as the public internet boundary.
+   - Restrict security group / NSG rules: no 0.0.0.0/0 inbound on port 22 (SSH) or
+     3389 (RDP) for production systems.
+   - Use bastion hosts or session manager for administrative access instead of
+     direct internet-exposed SSH/RDP.
+ 
+3. Private Connectivity:
+   - Use VPC Endpoints / Private Endpoints for all cloud services that handle personal
+     data to avoid public internet traversal.
+   - Use PrivateLink / Private Service Connect for cross-VPC service access.
+ 
+4. DDoS and WAF:
+   - Enable WAF in front of all web applications and APIs that handle personal data.
+   - Configure WAF rules to block common attacks (OWASP Top 10).
+   - Enable DDoS protection at the network and application layer.
+ 
+5. Network Monitoring:
+   - Enable VPC Flow Logs / NSG Flow Logs / GCP VPC Flow Logs.
+   - Monitor for unusual egress patterns that may indicate data exfiltration.
+   - Alert on security group / firewall rule changes.
+ 
+6. Data Residency:
+   - Configure cloud resources in approved regions.
+   - Restrict resource creation to approved regions using organisation policies /
+     SCPs / constraints.
+   - Audit cross-region data replication to ensure transfers are covered by safeguards.
+ 
+--------------------------------------------------------------------------------
+PENALTIES FOR NON-COMPLIANCE WITH NETWORK PROTECTION OBLIGATIONS
+--------------------------------------------------------------------------------
+ 
+Article 83(4):
+  Infringements of Article 25 and Article 32 (including network protection failures
+  that expose personal data) are subject to fines up to EUR 10,000,000 or 2% of
+  global annual turnover.
+ 
+Article 83(5):
+  Infringements of the basic principles including integrity and confidentiality
+  (Article 5(1)(f)) are subject to fines up to EUR 20,000,000 or 4% of global annual
+  turnover.
+ 
+Supervisory Authority Guidance:
+  Multiple DPA enforcement actions have resulted from failures to encrypt data in
+  transit (e.g., transmitting personal data over HTTP). Unencrypted network
+  transmission of personal data has been consistently treated as a violation of
+  Article 32(1)(a) and Article 5(1)(f).

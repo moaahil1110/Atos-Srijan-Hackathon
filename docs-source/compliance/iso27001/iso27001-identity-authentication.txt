@@ -1,0 +1,41 @@
+Document Name: ISO 27001 Identity and Authentication
+Compliance Family: ISO 27001
+Topic: identity-authentication
+Source: ISO/IEC 27001:2022 - Annex A Controls 5.16, 5.17, and 8.5
+Date Collected: 27/03/2026
+Type: Official Documentation
+
+
+5.16 Identity Management
+Control:
+The full life cycle of identities shall be managed.
+
+5.17 Authentication Information
+Control:
+Allocation and management of authentication information shall be controlled by a management
+process, including advising personnel on appropriate handling of authentication information.
+
+8.5 Secure Authentication
+Control:
+Secure authentication technologies and procedures shall be implemented based on information
+access restrictions and the topic-specific policy on access control.
+
+Additional related controls:
+
+6.1 Screening
+Control:
+Background verification checks on all candidates to become personnel shall be carried out prior
+to joining the organization and on an ongoing basis taking into consideration applicable laws,
+regulations and ethics and be proportional to the business requirements, the classification of
+the information to be accessed and the perceived risks.
+
+5.2 Information Security Roles and Responsibilities
+Control:
+Information security roles and responsibilities shall be defined and allocated according to the
+organization needs.
+
+Context from ISO/IEC 27001:2022 Section 6.1.2:
+The organization shall define and apply an information security risk assessment process that
+identifies the risk owners, analyses the information security risks including assessing the
+realistic likelihood of their occurrence, and evaluates the information security risks by comparing
+results of risk analysis with the established risk criteria.

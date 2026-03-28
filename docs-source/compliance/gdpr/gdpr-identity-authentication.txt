@@ -1,0 +1,245 @@
+Document Name: GDPR Identity and Authentication
+Compliance Family: GDPR
+Topic: identity-authentication
+Source: GDPR Article 32 - Security of Processing (https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX%3A32016R0679)
+Date Collected: 27/03/2026
+Type: Official Documentation
+
+
+================================================================================
+GDPR IDENTITY AND AUTHENTICATION REQUIREMENTS
+================================================================================
+ 
+OVERVIEW
+--------
+The GDPR does not define specific authentication protocols but establishes obligations
+that can only be satisfied through strong identity and authentication controls. The key
+obligations are: ensuring only authorised persons can access personal data (Article 32),
+applying data protection by default (Article 25), verifying the identity of data
+subjects making access requests (Article 12), and demonstrating accountability
+(Article 5(2)). Recital 64 explicitly addresses identity verification in the context
+of online services.
+ 
+--------------------------------------------------------------------------------
+ARTICLE 4 - DEFINITIONS (RELEVANT TO IDENTITY)
+--------------------------------------------------------------------------------
+ 
+Article 4(1) - Personal Data:
+  'personal data' means any information relating to an identified or identifiable
+  natural person ('data subject'); an identifiable natural person is one who can be
+  identified, directly or indirectly, in particular by reference to an identifier such
+  as a name, an online identifier or to one or more factors specific to the physical,
+  physiological, genetic, mental, economic, cultural or social identity of that natural
+  person.
+ 
+Article 4(5) - Pseudonymisation:
+  'pseudonymisation' means the processing of personal data in such a manner that the
+  personal data can no longer be attributed to a specific data subject without the use
+  of additional information, provided that such additional information is kept separately
+  and is subject to technical and organisational measures to ensure that the personal
+  data are not attributed to an identified or identifiable natural person.
+ 
+Note: Identifiers used for authentication (user IDs, session tokens, API keys) may
+themselves constitute personal data if they can identify a natural person.
+ 
+--------------------------------------------------------------------------------
+ARTICLE 5 - INTEGRITY AND CONFIDENTIALITY PRINCIPLE
+--------------------------------------------------------------------------------
+ 
+Article 5(1)(f):
+  Personal data shall be processed in a manner that ensures appropriate security of
+  the personal data, including protection against unauthorised or unlawful processing
+  and against accidental loss, destruction or damage, using appropriate technical or
+  organisational measures ('integrity and confidentiality').
+ 
+Practical Implication:
+  Authentication is the gateway to the "authorised" access requirement. Without strong
+  authentication, the confidentiality and integrity principle cannot be met. Weak
+  authentication (e.g., no MFA, default credentials, shared passwords) directly
+  violates Article 5(1)(f).
+ 
+--------------------------------------------------------------------------------
+ARTICLE 25 - DATA PROTECTION BY DESIGN AND BY DEFAULT
+--------------------------------------------------------------------------------
+ 
+Article 25(1):
+  The controller shall implement appropriate technical and organisational measures,
+  such as pseudonymisation, which are designed to implement data-protection principles
+  in an effective manner and to integrate the necessary safeguards into the processing.
+ 
+Article 25(2):
+  The controller shall implement appropriate technical and organisational measures for
+  ensuring that, by default, only personal data which are necessary for each specific
+  purpose of the processing are processed. In particular, such measures shall ensure
+  that by default personal data are not made accessible without the individual's
+  intervention to an indefinite number of natural persons.
+ 
+Cloud Implication:
+  - IAM roles must follow least privilege as the default; overly broad roles must
+    require explicit justification and approval.
+  - Service accounts must not be assigned human-level permissions.
+  - Root/owner accounts must not be used for routine operations; dedicated IAM
+    users/roles must be created for all workloads.
+  - MFA must be enforced by default for all human access to cloud management consoles
+    and APIs that can reach personal data.
+ 
+--------------------------------------------------------------------------------
+ARTICLE 29 - PROCESSING UNDER THE AUTHORITY OF THE CONTROLLER
+--------------------------------------------------------------------------------
+ 
+Article 29:
+  The processor and any person acting under the authority of the controller or of the
+  processor who has access to personal data shall not process those data except on
+  instructions from the controller, unless required to do so by Union or Member State
+  law.
+ 
+Practical Implication:
+  Only persons who are identified, authenticated, and acting under documented
+  instructions may process personal data. Anonymous or shared-credential access to
+  personal data is incompatible with this requirement because it is impossible to
+  attribute processing actions to a specific natural person acting under instructions.
+ 
+Cloud Implication:
+  - No shared IAM users or shared credentials for accessing personal data.
+  - Each person must have an individual identity with their own credentials.
+  - Service-to-service authentication must use roles or managed identities, not shared
+    static credentials.
+ 
+--------------------------------------------------------------------------------
+ARTICLE 32 - SECURITY OF PROCESSING
+--------------------------------------------------------------------------------
+ 
+Article 32(1):
+  The controller and the processor shall implement appropriate technical and
+  organisational measures to ensure a level of security appropriate to the risk,
+  including as appropriate:
+  (a) the pseudonymisation and encryption of personal data;
+  (b) the ability to ensure the ongoing confidentiality, integrity, availability and
+      resilience of processing systems and services.
+ 
+Article 32(4):
+  The controller and processor shall take steps to ensure that any natural person acting
+  under the authority of the controller or the processor who has access to personal data
+  does not process them except on instructions from the controller, unless required to
+  do so by Union or Member State law.
+ 
+Recital 83:
+  The controller or processor should evaluate the risks inherent in the processing and
+  implement measures to mitigate those risks, such as encryption. Those measures should
+  ensure an appropriate level of security, including confidentiality, taking into account
+  the state of the art.
+ 
+Cloud Implication:
+  - "State of the art" authentication for cloud environments means MFA using hardware
+    tokens, authenticator apps (TOTP), or FIDO2/WebAuthn.
+  - Password-only authentication is not considered "state of the art" for systems
+    processing personal data under current EU supervisory authority guidance.
+  - IAM password policies must enforce minimum length, complexity, and rotation.
+  - Privileged access (admin roles) must require stronger authentication than standard
+    roles (step-up MFA or just-in-time access).
+ 
+--------------------------------------------------------------------------------
+ARTICLE 12 - VERIFICATION OF DATA SUBJECT IDENTITY FOR ACCESS REQUESTS
+--------------------------------------------------------------------------------
+ 
+Article 12(1):
+  The controller shall take appropriate measures to provide any information referred to
+  in Articles 13 and 14 and any communication under Articles 15 to 22 and 34 relating
+  to processing to the data subject in a concise, transparent, intelligible and easily
+  accessible form, using clear and plain language.
+ 
+Article 12(6):
+  Without prejudice to Article 11, where the controller has reasonable doubts
+  concerning the identity of the natural person making the request referred to in
+  Articles 15 to 21, the controller may request the provision of additional information
+  necessary to confirm the identity of the data subject.
+ 
+Recital 64:
+  The controller should use all reasonable measures to verify the identity of a data
+  subject who requests access, in particular in the context of online services and
+  online identifiers. A controller should not retain personal data for the sole purpose
+  of being able to react to potential requests.
+ 
+Practical Implication:
+  Controllers must implement identity verification for data subject rights requests
+  (Subject Access Requests). The verification method must be proportionate: over-
+  collecting identity documents for low-risk requests may itself breach data minimisation.
+ 
+Cloud Implication:
+  - User-facing applications that handle Subject Access Requests must implement a
+    secure, verifiable identity confirmation flow.
+  - This flow must not collect more identity information than is necessary to confirm
+    the data subject's identity for the specific request.
+ 
+--------------------------------------------------------------------------------
+ARTICLE 17 - RIGHT TO ERASURE (IDENTITY IMPLICATION)
+--------------------------------------------------------------------------------
+ 
+Article 17(1):
+  The data subject shall have the right to obtain from the controller the erasure of
+  personal data concerning him or her without undue delay.
+ 
+Practical Implication:
+  Executing erasure requires the ability to identify and locate all personal data
+  belonging to a specific data subject across all systems. This requires that
+  personal data be tagged to an identity and that identity management be consistent
+  across systems.
+ 
+Cloud Implication:
+  - Data subject identifiers must be consistent across databases, object storage, and
+    logs to enable comprehensive erasure.
+  - Systems must be designed so that personal data can be found and deleted by
+    data subject identifier without deleting data belonging to other subjects.
+ 
+--------------------------------------------------------------------------------
+PRACTICAL CLOUD IDENTITY AND AUTHENTICATION CONTROLS DERIVED FROM GDPR
+--------------------------------------------------------------------------------
+ 
+1. IAM / Identity Management:
+   - Enforce MFA for all human IAM users and root/owner accounts.
+   - Disable or remove unused IAM users, roles, and service accounts.
+   - Apply least-privilege role assignments; avoid Administrator/Owner roles for routine
+     access.
+   - Use IAM Access Analyzer (AWS), Azure AD Access Reviews, or GCP IAM Recommender to
+     detect and remediate overly permissive access.
+ 
+2. Service-to-Service Authentication:
+   - Use IAM roles with instance profiles (AWS), managed identities (Azure), or
+     service accounts with Workload Identity Federation (GCP) instead of static keys.
+   - Rotate any static service account keys on a defined schedule.
+   - Do not embed credentials in code, environment variables without encryption, or
+     version control.
+ 
+3. Human Access to Cloud Consoles:
+   - Enforce MFA organisation-wide through AWS Organizations SCPs, Azure AD Conditional
+     Access, or GCP Organisation Policy constraints.
+   - Use Single Sign-On (SSO) with identity federation where possible to centralise
+     identity lifecycle management.
+   - Enforce strong password policies (minimum 12 characters; no common passwords).
+ 
+4. Privileged Access:
+   - Implement just-in-time (JIT) privileged access for production environments handling
+     personal data.
+   - Log all privileged access sessions.
+   - Require manager approval for privilege escalation.
+   - Revoke privileged access after the session.
+ 
+5. Database Authentication:
+   - Enable IAM authentication for databases (RDS IAM auth, Azure AD auth for PostgreSQL,
+     Cloud SQL IAM auth).
+   - Disable native database users where IAM authentication is available.
+   - Rotate database master passwords on a defined schedule.
+ 
+--------------------------------------------------------------------------------
+PENALTIES FOR NON-COMPLIANCE WITH IDENTITY AND AUTHENTICATION OBLIGATIONS
+--------------------------------------------------------------------------------
+ 
+Article 83(4):
+  Infringements of Article 25 (data protection by design and by default) and Article 32
+  (security of processing, including authentication) are subject to administrative fines
+  of up to EUR 10,000,000 or 2% of global annual turnover, whichever is higher.
+ 
+Article 83(5):
+  Infringements of the basic principles including integrity and confidentiality
+  (Article 5(1)(f)) are subject to fines up to EUR 20,000,000 or 4% of global annual
+  turnover, whichever is higher.

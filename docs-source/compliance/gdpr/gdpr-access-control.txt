@@ -1,0 +1,222 @@
+Document Name: GDPR Access Control
+Compliance Family: GDPR
+Topic: access-control
+Source: GDPR Article 25 and Article 32 (https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX%3A32016R0679)
+Date Collected: 27/03/2026
+Type: Official Documentation
+
+================================================================================
+GDPR ACCESS CONTROL REQUIREMENTS
+================================================================================
+ 
+OVERVIEW
+--------
+The GDPR does not prescribe a specific named "access control" standard but establishes
+access control obligations across several articles. The core requirement is that
+personal data must only be accessible to those who need it, that access must be
+technically enforced, and that the controller must be able to demonstrate compliance.
+ 
+--------------------------------------------------------------------------------
+ARTICLE 5 - PRINCIPLES RELATING TO PROCESSING OF PERSONAL DATA
+--------------------------------------------------------------------------------
+ 
+Article 5(1)(f) - Integrity and Confidentiality (Security Principle):
+  Personal data shall be processed in a manner that ensures appropriate security of
+  the personal data, including protection against unauthorised or unlawful processing
+  and against accidental loss, destruction or damage, using appropriate technical or
+  organisational measures ('integrity and confidentiality').
+ 
+Article 5(2) - Accountability:
+  The controller shall be responsible for, and be able to demonstrate compliance with,
+  paragraph 1 ('accountability').
+ 
+Cloud Implication:
+  - Storage services (S3, Blob, GCS) must have public access disabled.
+  - IAM roles must enforce least-privilege access to personal data.
+  - Controllers must be able to produce evidence of these controls on demand.
+ 
+--------------------------------------------------------------------------------
+ARTICLE 25 - DATA PROTECTION BY DESIGN AND BY DEFAULT
+--------------------------------------------------------------------------------
+ 
+Article 25(1):
+  Taking into account the state of the art, the cost of implementation and the nature,
+  scope, context and purposes of processing as well as the risks of varying likelihood
+  and severity for rights and freedoms of natural persons posed by the processing, the
+  controller shall, both at the time of the determination of the means for processing
+  and at the time of the processing itself, implement appropriate technical and
+  organisational measures, such as pseudonymisation, which are designed to implement
+  data-protection principles, such as data minimisation, in an effective manner and to
+  integrate the necessary safeguards into the processing in order to meet the
+  requirements of this Regulation and protect the rights of data subjects.
+ 
+Article 25(2) - Data Protection by Default:
+  The controller shall implement appropriate technical and organisational measures for
+  ensuring that, by default, only personal data which are necessary for each specific
+  purpose of the processing are processed. That obligation applies to the amount of
+  personal data collected, the extent of their processing, the period of their storage
+  and their accessibility. In particular, such measures shall ensure that by default
+  personal data are not made accessible without the individual's intervention to an
+  indefinite number of natural persons.
+ 
+Cloud Implication:
+  - By default, cloud storage must NOT be publicly accessible.
+  - New resources should default to the most restrictive access configuration.
+  - IAM policies must not use wildcard (*) principals unless explicitly justified.
+  - Network-level access must be restricted by default (private endpoints, VPC-only).
+ 
+--------------------------------------------------------------------------------
+ARTICLE 32 - SECURITY OF PROCESSING
+--------------------------------------------------------------------------------
+ 
+Article 32(1):
+  Taking into account the state of the art, the costs of implementation and the nature,
+  scope, context and purposes of processing as well as the risk of varying likelihood
+  and severity for the rights and freedoms of natural persons, the controller and the
+  processor shall implement appropriate technical and organisational measures to ensure
+  a level of security appropriate to the risk, including as appropriate:
+ 
+  (a) the pseudonymisation and encryption of personal data;
+  (b) the ability to ensure the ongoing confidentiality, integrity, availability and
+      resilience of processing systems and services;
+  (c) the ability to restore the availability and access to personal data in a timely
+      manner in the event of a physical or technical incident;
+  (d) a process for regularly testing, assessing and evaluating the effectiveness of
+      technical and organisational measures for ensuring the security of the processing.
+ 
+Article 32(2):
+  In assessing the appropriate level of security, account shall be taken in particular
+  of the risks that are presented by processing, in particular from accidental or
+  unlawful destruction, loss, alteration, unauthorised disclosure of, or access to,
+  personal data transmitted, stored or otherwise processed.
+ 
+Article 32(4):
+  The controller and processor shall take steps to ensure that any natural person acting
+  under the authority of the controller or the processor who has access to personal data
+  does not process them except on instructions from the controller, unless he or she is
+  required to do so by Union or Member State law.
+ 
+Cloud Implication:
+  - All access to personal data must be role-based and follow least privilege.
+  - Service accounts must not have overly broad permissions.
+  - Human access to production data must be audited and minimised.
+  - Cross-account or cross-service access must be explicitly authorized.
+ 
+--------------------------------------------------------------------------------
+ARTICLE 28 - PROCESSOR OBLIGATIONS (ACCESS BY THIRD PARTIES)
+--------------------------------------------------------------------------------
+ 
+Article 28(1):
+  Where processing is to be carried out on behalf of a controller, the controller shall
+  use only processors providing sufficient guarantees to implement appropriate technical
+  and organisational measures in such a manner that processing will meet the requirements
+  of this Regulation and ensure the protection of the rights of the data subject.
+ 
+Article 28(3)(b):
+  The processor shall process personal data only on documented instructions from the
+  controller, including with regard to transfers of personal data to a third country.
+ 
+Article 28(3)(f):
+  The processor shall assist the controller in ensuring compliance with the obligations
+  pursuant to Articles 32 to 36 (security, breach notification, DPIA, prior consultation).
+ 
+Cloud Implication:
+  - Cloud providers (AWS, Azure, GCP) must be engaged under a Data Processing Agreement.
+  - Access by cloud provider support staff to customer personal data must be restricted
+    and must require documented customer authorization.
+  - Sub-processors used by cloud providers must provide equivalent access controls.
+ 
+--------------------------------------------------------------------------------
+ARTICLE 29 - PROCESSING UNDER THE AUTHORITY OF THE CONTROLLER OR PROCESSOR
+--------------------------------------------------------------------------------
+ 
+Article 29:
+  The processor and any person acting under the authority of the controller or of the
+  processor who has access to personal data shall not process those data except on
+  instructions from the controller, unless required to do so by Union or Member State law.
+ 
+Cloud Implication:
+  - Internal users (developers, analysts) with IAM access to personal data must operate
+    under documented, controller-defined access policies.
+  - Break-glass / emergency access to personal data must be logged and justified.
+ 
+--------------------------------------------------------------------------------
+RECITAL 39 - TRANSPARENCY AND CONFIDENTIALITY
+--------------------------------------------------------------------------------
+ 
+Recital 39:
+  Personal data should be processed in a manner that ensures appropriate security and
+  confidentiality of the personal data, including for preventing unauthorised access to
+  or use of personal data and the equipment used for the processing.
+ 
+Cloud Implication:
+  - Network controls (security groups, NACLs, firewall rules) must prevent unauthorized
+    network-level access to systems that process personal data.
+  - Compute instances processing personal data must not have unrestricted inbound rules.
+ 
+--------------------------------------------------------------------------------
+RECITAL 78 - DATA PROTECTION BY DESIGN
+--------------------------------------------------------------------------------
+ 
+Recital 78:
+  In order to be able to demonstrate compliance with this Regulation, the controller
+  should adopt internal policies and implement measures which meet in particular the
+  principles of data protection by design and data protection by default. Such measures
+  could consist, inter alia, of minimising the processing of personal data,
+  pseudonymising personal data as soon as possible, transparency with regard to the
+  functions and processing of personal data, enabling the data subject to monitor the
+  data processing, enabling the controller to create and improve security features.
+ 
+Cloud Implication:
+  - New services should be deployed with access restrictions as the default configuration.
+  - Developers should not be able to bypass access controls in production environments.
+  - Infrastructure-as-code (Terraform) must encode access policies, not leave them open.
+ 
+--------------------------------------------------------------------------------
+PRACTICAL CLOUD CONTROLS DERIVED FROM GDPR ACCESS REQUIREMENTS
+--------------------------------------------------------------------------------
+ 
+1. Storage (S3 / Blob Storage / GCS):
+   - Block all public access at the account and bucket level.
+   - Use bucket policies or access control lists only to grant minimum required access.
+   - Enable server-side encryption with access to keys restricted to authorized roles.
+   - Disable ACLs where uniform access management is supported.
+ 
+2. Compute (EC2 / Virtual Machines / Compute Engine):
+   - Use IAM instance profiles instead of embedding access keys.
+   - Disable instance metadata service v1 (IMDSv1) on AWS; require IMDSv2.
+   - Do not assign public IP addresses to instances handling personal data unless required.
+   - Use VPC/VNet to isolate personal data processing workloads.
+ 
+3. Database (RDS / PostgreSQL / Cloud SQL):
+   - Disable public accessibility.
+   - Use IAM authentication where supported.
+   - Restrict network access to application-tier CIDR ranges only.
+   - Rotate database credentials regularly.
+ 
+4. Identity (IAM / Azure AD / Cloud IAM):
+   - Enforce MFA for all accounts accessing personal data.
+   - Apply least-privilege role assignments.
+   - Review and revoke unused permissions on a defined schedule.
+   - Use service accounts with scoped permissions; avoid user-level credentials in services.
+ 
+5. Serverless / Functions:
+   - Restrict inbound triggers to authenticated sources.
+   - Assign execution roles with only the permissions required for the function's purpose.
+   - Do not expose functions publicly if they process personal data without authentication.
+ 
+--------------------------------------------------------------------------------
+PENALTIES FOR NON-COMPLIANCE WITH ACCESS CONTROLS
+--------------------------------------------------------------------------------
+ 
+Article 83(4):
+  Infringements of obligations related to Article 25 (data protection by design and
+  by default) and Article 32 (security of processing) shall be subject to administrative
+  fines of up to EUR 10,000,000, or in the case of an undertaking, up to 2% of the
+  total worldwide annual turnover of the preceding financial year, whichever is higher.
+ 
+Article 83(5):
+  Infringements of the basic principles for processing, including conditions for consent,
+  (Articles 5, 6, 7, and 9) shall be subject to administrative fines of up to
+  EUR 20,000,000, or in the case of an undertaking, up to 4% of the total worldwide
+  annual turnover of the preceding financial year, whichever is higher.

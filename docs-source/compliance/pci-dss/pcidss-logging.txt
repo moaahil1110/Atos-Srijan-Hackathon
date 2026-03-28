@@ -1,0 +1,22 @@
+Document Name: PCI DSS Logging and Monitoring
+Compliance Family: PCI-DSS
+Topic: logging
+Source: PCI DSS v4.0 - Requirement 10 (https://www.pcisecuritystandards.org/document_library)
+Date Collected: 27/03/2026
+Type: Official Documentation
+
+Requirement 10: Log and Monitor All Access to System Components and Cardholder Data.
+
+10.2 Audit logs are implemented to support the detection of anomalies and suspicious activities, and the forensic analysis of events.
+10.2.1 Audit logs capture all individual user accesses to cardholder data.
+10.2.2 Audit logs record all actions taken by any individual with administrative access, including any interactive use of application or system accounts.
+10.2.3 Audit logs record all access to audit logs.
+10.2.4 Audit logs record all invalid logical access attempts.
+
+10.3 Audit logs are protected from destruction and unauthorized modifications.
+10.3.1 Read access to audit logs is limited to those with a job-related need.
+10.3.2 Audit log files are protected to prevent modifications to existing data.
+10.3.3 Audit log files are promptly backed up to a secure, central, internal log server or other media that is difficult to modify.
+
+10.5 Audit log history is retained and available for analysis.
+10.5.1 Retain audit log history for at least 12 months, with at least the most recent three months immediately available for analysis.

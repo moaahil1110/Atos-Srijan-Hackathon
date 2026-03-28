@@ -1,0 +1,275 @@
+Document Name: GDPR Logging and Monitoring
+Compliance Family: GDPR
+Topic: logging
+Source: GDPR Article 30 - Records of Processing Activities (https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX%3A32016R0679)
+Date Collected: 27/03/2026
+Type: Official Documentation
+
+
+================================================================================
+GDPR LOGGING AND MONITORING REQUIREMENTS
+================================================================================
+ 
+OVERVIEW
+--------
+The GDPR establishes logging and monitoring obligations through several mechanisms:
+the accountability principle (Article 5(2)), the obligation to maintain records of
+processing activities (Article 30), breach detection and notification requirements
+(Articles 33 and 34), and the general security of processing obligation (Article 32).
+The regulation does not specify minimum log retention periods for most purposes, but
+imposes obligations that are practically impossible to fulfill without robust logging.
+ 
+--------------------------------------------------------------------------------
+ARTICLE 5(2) - ACCOUNTABILITY PRINCIPLE
+--------------------------------------------------------------------------------
+ 
+Article 5(2):
+  The controller shall be responsible for, and be able to demonstrate compliance with,
+  paragraph 1 ('accountability').
+ 
+Paragraph 1 includes the principles of lawfulness, fairness, transparency, purpose
+limitation, data minimisation, accuracy, storage limitation, and integrity and
+confidentiality.
+ 
+Practical Implication:
+  Demonstrating compliance with each principle requires evidence. Logs of who accessed
+  personal data, when, from where, and what was done are the primary evidence base
+  for demonstrating compliance. Without logs, the controller cannot demonstrate that
+  personal data was only accessed by authorized persons for stated purposes.
+ 
+Cloud Implication:
+  - Enable CloudTrail (AWS), Azure Monitor / Activity Log (Azure), and Cloud Audit Logs
+    (GCP) across all accounts and projects that handle personal data.
+  - These logs are the accountability evidence required by Article 5(2).
+ 
+--------------------------------------------------------------------------------
+ARTICLE 30 - RECORDS OF PROCESSING ACTIVITIES
+--------------------------------------------------------------------------------
+ 
+Article 30(1):
+  Each controller and, where applicable, the controller's representative, shall maintain
+  a record of processing activities under its responsibility. That record shall contain
+  all of the following information:
+  (a) the name and contact details of the controller;
+  (b) the purposes of the processing;
+  (c) a description of the categories of data subjects and of the categories of
+      personal data;
+  (d) the categories of recipients to whom the personal data have been or will be
+      disclosed;
+  (e) where applicable, transfers of personal data to a third country or an
+      international organisation;
+  (f) where possible, the envisaged time limits for erasure of the different categories
+      of data;
+  (g) where possible, a general description of the technical and organisational security
+      measures referred to in Article 32(1).
+ 
+Article 30(2):
+  Each processor and, where applicable, the processor's representative, shall maintain
+  a record of all categories of processing activities carried out on behalf of a
+  controller, containing:
+  (a) the name and contact details of the processor(s) and of each controller on whose
+      behalf the processor is acting;
+  (b) the categories of processing carried out on behalf of each controller;
+  (c) where applicable, transfers of personal data to a third country or an
+      international organisation;
+  (d) where possible, a general description of the technical and organisational security
+      measures referred to in Article 32(1).
+ 
+Article 30(4):
+  The controller or the processor and, where applicable, the controller's or the
+  processor's representative, shall make the record available to the supervisory
+  authority on request.
+ 
+Cloud Implication:
+  - The records of processing activities (RoPA) must reference the cloud services used
+    for each processing activity.
+  - Cloud resource configuration (enabled logging, encryption, access controls) must be
+    documented in the general description of security measures under Article 30(1)(g).
+  - Service configuration logs (CloudTrail, Activity Logs) provide evidence that security
+    measures are actually implemented as described in the RoPA.
+ 
+--------------------------------------------------------------------------------
+ARTICLE 32 - SECURITY OF PROCESSING (MONITORING COMPONENT)
+--------------------------------------------------------------------------------
+ 
+Article 32(1)(d):
+  The controller and the processor shall implement appropriate technical and
+  organisational measures to ensure a level of security appropriate to the risk,
+  including as appropriate:
+  (d) a process for regularly testing, assessing and evaluating the effectiveness of
+      technical and organisational measures for ensuring the security of the processing.
+ 
+Cloud Implication:
+  - Logging must be actively monitored, not just collected. Logs that are never reviewed
+    do not satisfy Article 32(1)(d).
+  - Anomaly detection (AWS GuardDuty, Azure Defender, GCP Security Command Center) should
+    be enabled to provide automated monitoring over log data.
+  - Regular access reviews and log reviews must be scheduled and documented.
+  - CloudWatch Alarms, Azure Monitor Alerts, or GCP alerting policies should be
+    configured to detect unauthorized access attempts.
+ 
+Article 32(2):
+  In assessing the appropriate level of security, account shall be taken in particular
+  of the risks that are presented by processing, in particular from accidental or
+  unlawful destruction, loss, alteration, unauthorised disclosure of, or access to,
+  personal data transmitted, stored or otherwise processed.
+ 
+Cloud Implication:
+  - Log coverage must extend to all data access paths including API access, console
+    access, programmatic access, and inter-service access.
+  - Logs must capture both successful and failed access attempts.
+ 
+--------------------------------------------------------------------------------
+ARTICLE 33 - NOTIFICATION OF BREACH TO SUPERVISORY AUTHORITY
+--------------------------------------------------------------------------------
+ 
+Article 33(1):
+  In the case of a personal data breach, the controller shall without undue delay and,
+  where feasible, not later than 72 hours after having become aware of it, notify the
+  personal data breach to the competent supervisory authority, unless the personal data
+  breach is unlikely to result in a risk to the rights and freedoms of natural persons.
+ 
+Article 33(2):
+  The processor shall notify the controller without undue delay after becoming aware of
+  a personal data breach.
+ 
+Article 33(3):
+  The notification to the supervisory authority shall at least:
+  (a) describe the nature of the personal data breach including where possible, the
+      categories and approximate number of data subjects concerned and the categories
+      and approximate number of personal data records concerned;
+  (b) communicate the name and contact details of the data protection officer;
+  (c) describe the likely consequences of the personal data breach;
+  (d) describe the measures taken or proposed to be taken by the controller to address
+      the personal data breach, including, where appropriate, measures to mitigate its
+      possible adverse effects.
+ 
+Article 33(5):
+  The controller shall document any personal data breaches, comprising the facts
+  relating to the personal data breach, its effects and the remedial action taken. That
+  documentation shall enable the supervisory authority to verify compliance with this
+  Article.
+ 
+Recital 85:
+  A personal data breach may, if not addressed in an appropriate and timely manner,
+  result in physical, material or non-material damage to natural persons such as loss
+  of control over their personal data or limitation of their rights, discrimination,
+  identity theft or fraud, financial loss, unauthorised reversal of pseudonymisation,
+  damage to reputation, loss of confidentiality of personal data protected by
+  professional secrecy or any other significant economic or social disadvantage.
+  Therefore, as soon as the controller becomes aware that a personal data breach has
+  occurred, the controller should notify the personal data breach to the supervisory
+  authority without undue delay and, where feasible, not later than 72 hours after
+  having become aware of it.
+ 
+Recital 87:
+  It should be ascertained whether all appropriate technological protection and
+  organisational measures have been implemented to establish immediately whether a
+  personal data breach has taken place and to inform promptly the supervisory authority
+  and the data subject.
+ 
+Practical Implication:
+  The 72-hour notification window begins from the moment the controller "becomes aware."
+  This means logging and alerting systems must be in place to detect breaches quickly.
+  A controller with no logging cannot become aware of a breach promptly and therefore
+  cannot meet the 72-hour requirement.
+ 
+Cloud Implication:
+  - Enable real-time alerting on unauthorized access patterns, unusual data egress, and
+    permission changes affecting personal data storage.
+  - AWS: CloudTrail + CloudWatch Alarms + GuardDuty + Security Hub.
+  - Azure: Activity Log + Azure Monitor + Microsoft Defender for Cloud.
+  - GCP: Cloud Audit Logs + Cloud Monitoring + Security Command Center.
+  - Log exports must be retained for long enough to support post-incident investigation
+    and documentation required by Article 33(5).
+ 
+--------------------------------------------------------------------------------
+ARTICLE 58 - SUPERVISORY AUTHORITY INVESTIGATIVE POWERS
+--------------------------------------------------------------------------------
+ 
+Article 58(1):
+  Each supervisory authority shall have all of the following investigative powers:
+  (a) to order the controller and the processor, and, where applicable, the
+      controller's or the processor's representative to provide any information it
+      requires for the performance of its tasks;
+  (b) to carry out investigations in the form of data protection audits;
+  (c) to carry out a review on certifications issued pursuant to Article 42(7);
+  (d) to notify the controller or the processor of an alleged infringement of this
+      Regulation;
+  (e) to obtain, from the controller and the processor, access to all personal data
+      and to all information necessary for the performance of its tasks;
+  (f) to obtain access to any premises of the controller and the processor, including
+      to any data processing equipment and means, in accordance with Union or Member
+      State procedural law.
+ 
+Practical Implication:
+  Supervisory authorities have the right to audit logs during investigations. Absent or
+  incomplete logs constitute both a failure to demonstrate accountability and potentially
+  evidence of concealment, which can significantly increase the severity of any fine.
+ 
+Cloud Implication:
+  - Logs must be stored in tamper-resistant, centralized locations.
+  - Log storage should have Object Lock / immutability features enabled (S3 Object Lock,
+    Azure immutable blob storage, GCS retention policies).
+  - Log access should be restricted: only security/compliance roles should be able to
+    delete or modify log archives.
+  - Logs must cover a time window sufficient to support regulatory investigation
+    (typically 12 months minimum is considered reasonable; some DPAs expect longer).
+ 
+--------------------------------------------------------------------------------
+PRACTICAL CLOUD LOGGING CONTROLS DERIVED FROM GDPR
+--------------------------------------------------------------------------------
+ 
+1. Management / Control Plane Logging:
+   - AWS: Enable CloudTrail in all regions; enable multi-region trail; enable log file
+     validation; store in a dedicated, write-protected S3 bucket.
+   - Azure: Enable Activity Log export; send to Log Analytics workspace or storage
+     account with immutability policies.
+   - GCP: Ensure Admin Activity audit logs are always on; enable Data Access audit logs
+     for services handling personal data.
+ 
+2. Data Plane Logging (Access to Personal Data):
+   - AWS S3: Enable S3 Server Access Logging and/or S3 Event Notifications to record
+     object-level access to buckets containing personal data.
+   - AWS RDS: Enable database activity streams or enhanced monitoring and audit logging.
+   - Azure: Enable Diagnostic Settings on Storage Accounts and Databases; send to
+     Log Analytics.
+   - GCP: Enable Data Access audit logs at the project and resource level.
+ 
+3. Network Logging:
+   - AWS: Enable VPC Flow Logs for VPCs hosting personal data workloads.
+   - Azure: Enable NSG Flow Logs and Azure Network Watcher.
+   - GCP: Enable VPC Flow Logs for subnets hosting personal data workloads.
+ 
+4. Log Retention:
+   - Retain logs for a minimum of 12 months to support breach investigation and
+     supervisory authority audits. Many DPAs consider this a reasonable minimum.
+   - Use tiered storage (hot + cold) to manage cost while maintaining accessibility.
+   - Enable log immutability to prevent tampering.
+ 
+5. Log Monitoring and Alerting:
+   - Configure alerts for: unusual data volumes accessed, cross-region access, access
+     from unexpected IPs, privilege escalation events, changes to security group or
+     firewall rules, and disabling of logging itself.
+   - Review alerts on a documented schedule and maintain evidence of reviews.
+ 
+6. Documentation for Article 33(5):
+   - Maintain an incident register documenting all personal data breaches, even those
+     not reportable, with facts, effects, and remedial actions.
+   - This register must be producible to the supervisory authority on request.
+ 
+--------------------------------------------------------------------------------
+PENALTIES FOR NON-COMPLIANCE WITH LOGGING OBLIGATIONS
+--------------------------------------------------------------------------------
+ 
+Article 83(4):
+  Failure to implement appropriate security measures including monitoring and incident
+  detection (Article 32) is subject to fines up to EUR 10,000,000 or 2% of global
+  annual turnover.
+ 
+Article 83(5):
+  Failure to demonstrate accountability (Article 5(2)) is subject to fines up to
+  EUR 20,000,000 or 4% of global annual turnover.
+ 
+Failure to document breaches as required by Article 33(5) is an infringement of
+Article 33 and subject to fines up to EUR 10,000,000 or 2% of global annual turnover.

@@ -1,0 +1,38 @@
+Document Name: HIPAA Person and Entity Authentication
+Compliance Family: HIPAA
+Topic: identity-authentication
+Source: HHS Security Rule Educational Paper Series - Technical Safeguards (Vol 2, Paper 4)
+Date Collected: 26/03/2026
+Type: Official Documentation
+
+
+STANDARD
+§ 164.312(d)
+Person or Entity Authentication
+The Person or Entity Authentication standard has no implementation specifications. This
+standard requires a covered entity to:
+“Implement procedures to verify that a person or entity seeking access to
+electronic protected health information is the one claimed.”
+In general, authentication ensures that a person is in fact who
+he or she claims to be before being allowed access to EPHI.
+This is accomplished by providing proof of identity. There
+are a few basic ways to provide proof of identity for
+authentication. A covered entity may:
+Require something known only to that individual, such as a password or PIN.
+Require something that individuals possess, such as a smart card, a token, or a
+key.
+Require something unique to the individual such as a biometric. Examples of
+biometrics include fingerprints, voice patterns, facial patterns or iris patterns.
+Most covered entities use one of the first two methods of authentication. Many small provider
+offices rely on a password or PIN to authenticate the user. If the authentication credentials
+entered into an information system match those stored in that system, the user is authenticated.
+Once properly authenticated, the user is granted the authorized access privileges to perform
+functions and access EPHI. Although the password is the most common way to obtain
+authentication to an information system and the easiest to establish, covered entities may want to
+explore other authentication methods.
+Sample questions for covered entities to consider:
+What types of authentication mechanisms are currently used?
+What level or type of authentication is reasonable and appropriate for each
+information system with EPHI?
+Are other authentication methods available that may be reasonable and
+appropriate?

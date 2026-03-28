@@ -1,0 +1,21 @@
+Document Name: PCI DSS Audit Evidence
+Compliance Family: PCI-DSS
+Topic: audit-evidence
+Source: PCI DSS v4.0 - Requirement 10.7 (https://www.pcisecuritystandards.org/document_library)
+Date Collected: 27/03/2026
+Type: Official Documentation
+
+
+Requirement 11: Test Security of Systems and Networks Regularly.
+
+11.2 Wireless access points are identified and monitored.
+11.2.1 Interactions with wireless access points are monitored to detect and identify all authorized and unauthorized wireless access points on a quarterly basis.
+
+11.3 External and internal vulnerabilities are regularly identified, prioritized, and addressed.
+11.3.1 Internal vulnerability scans are performed at least once every three months.
+11.3.2 External vulnerability scans are performed at least once every three months by a PCI SSC Approved Scanning Vendor (ASV).
+
+Requirement 12: Support Information Security with Organizational Policies and Programs.
+
+12.5 PCI DSS scope is documented and validated.
+12.5.2 PCI DSS scope is documented and validated by the entity at least once every 12 months and upon significant change to the in-scope environment.

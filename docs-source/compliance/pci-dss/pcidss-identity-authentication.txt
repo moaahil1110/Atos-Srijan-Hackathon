@@ -1,0 +1,26 @@
+Document Name: PCI DSS Identity and Authentication
+Compliance Family: PCI-DSS
+Topic: identity-authentication
+Source: PCI DSS v4.0 - Requirement 8 (https://www.pcisecuritystandards.org/document_library)
+Date Collected: 27/03/2026
+Type: Official Documentation
+
+
+Requirement 8: Identify users and authenticate access to system components.
+
+8.2 User identification and authentication are managed throughout the identity lifecycle.
+8.2.1 All users are assigned a unique ID before access to system components or cardholder data is allowed.
+8.2.2 Addition, deletion, and modification of user IDs, credentials, and other identifier objects are managed.
+
+8.3 Strong authentication for users and administrators is established and managed.
+8.3.1 All user access to system components is authenticated via at least one of the following:
+- Something you know, such as a password or passphrase.
+- Something you have, such as a token device or smart card.
+- Something you are, such as a biometric.
+8.3.6 Passwords/passphrases must meet the following minimum level of complexity:
+- A minimum length of 12 characters (or 8 characters if the system does not support 12).
+- Contain both numeric and alphabetic characters.
+
+8.4 Multi-factor authentication (MFA) is implemented to secure access into the CDE.
+8.4.2 MFA is implemented for all non-console access into the CDE for personnel with administrative access.
+8.4.3 MFA is implemented for all remote access originating from outside the entity's network that could access or impact the CDE.

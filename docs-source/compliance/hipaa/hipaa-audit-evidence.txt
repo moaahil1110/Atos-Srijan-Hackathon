@@ -1,0 +1,166 @@
+Document Name: HIPAA Security Management Process
+Compliance Family: HIPAA
+Topic: audit-evidence
+Source: HHS Security Rule Educational Paper Series - Administrative Safeguards (Vol 2, Paper 2)
+Date Collected: 26/03/2026
+Type: Official Documentation
+
+STANDARD
+§ 164.308(a)(1)
+Security Management Process
+The first standard under Administrative Safeguards section is the Security Management Process.
+This standard requires covered entities to:
+“Implement policies and procedures to prevent, detect, contain and
+correct security violations.”
+The purpose of this standard is to establish the administrative processes and procedures that a
+covered entity will use to implement the security program in its environment. There are four
+implementation specifications in the Security Management Process standard.
+1. Risk Analysis (Required)
+2. Risk Management (Required)
+3. Sanction Policy (Required)
+4. Information System Activity Review
+(Required)
+The Importance of Risk Analysis and Risk Management
+Risk analysis and risk management are critical to a covered entity’s Security Rule compliance
+efforts. Both are standard information security processes that have already been adopted by some
+organizations within the health care industry.
+As stated in the responses to public comment in the preamble to the Security Rule, the Security
+Management Process standard and associated implementation specifications “form the
+foundation upon which an entity’s necessary security activities are built.” The results from the
+risk analysis and risk management processes will become the baseline for security processes
+within covered entities.
+This paper provides a general understanding of risk analysis
+and risk management concepts and processes. CMS will
+include a more detailed discussion of risk analysis and risk
+management in paper 6 in the HIPAA Security Series titled,
+“Basics of Risk Analysis and Risk Management.”
+NOTE: Risk analysis and risk
+management serve as tools to
+assist in the development of a
+covered entity’s strategy to
+protect the confidentiality,
+integrity, and availability of
+EPHI.
+2 Security Standards: Administrative Safeguards
+Volume 2 / Paper 2 4 5/2005: rev. 3/2007
+1. RISK ANALYSIS (R) - § 164.308(a)(1)(ii)(A)
+The Risk Analysis implementation specification requires covered entities to:
+“Conduct an accurate and thorough assessment of the potential risks and
+vulnerabilities to the confidentiality, integrity, and availability of
+electronic protected health information held by the covered entity.”
+In general, a risk analysis can be viewed as:
+ The process of identifying potential security risks, and
+ Determining the probability of occurrence and magnitude of risks.
+Sample questions for covered entities to consider:
+ How does EPHI flow throughout the organization? This includes EPHI that
+is created, received, maintained or transmitted by the covered entity.
+ What are the less obvious sources of EPHI? Has the organization considered
+portable devices like PDAs?
+ What are the external sources of EPHI? For example, do vendors or
+consultants create, receive, maintain or transmit EPHI?
+ What are the human, natural, and environmental threats to information
+systems that contain EPHI?
+2. RISK MANAGEMENT (R) - § 164.308(a)(1)(ii)(B)
+Risk Management is a required implementation specification. It requires an organization
+to make decisions about how to address security risks and vulnerabilities. The Risk
+Management implementation specification states that covered entities must:
+“Implement security measures sufficient to reduce risks and
+vulnerabilities to a reasonable and appropriate level to comply with
+§164.306(a).”
+Risk management is the process used to identify and implement security measures to
+reduce risk to a reasonable and appropriate level within the covered entity based on the
+covered entity’s circumstances. The measures implemented to comply with this required
+implementation specification must also allow the covered entity to comply with §
+2 Security Standards: Administrative Safeguards
+Volume 2 / Paper 2 5 5/2005: rev. 3/2007
+164.306(a) of the Security Standards: General Rules. Covered entities will want to
+answer some basic questions when planning their risk management process.
+Sample questions for covered entities to consider:
+ What security measures are already in place to protect EPHI (i.e.,
+safeguards)?
+ Is executive leadership and/or management involved in risk management
+and mitigation decisions?
+ Are security processes being communicated throughout the organization?
+ Does the covered entity need to engage other resources to assist in risk
+management?
+In general, a covered entity will want to make sure its
+risk management strategy takes into account the
+characteristics of its environment including the
+factors at § 164.306(b)(2), which are listed on page 2
+of this paper. These factors will help the covered
+entity to determine what potential security measures
+are reasonable and appropriate for its environment.
+3. SANCTION POLICY (R) - § 164.308(a)(1)(ii)(C)
+Another implementation specification in the Security Management Process is the
+Sanction Policy. It requires covered entities to:
+“Apply appropriate sanctions against workforce members who fail to
+comply with the security policies and procedures of the covered entity.”
+Appropriate sanctions must be in place so that workforce members understand the
+consequences of failing to comply with security policies and procedures, to deter
+noncompliance.
+Sample questions for covered entities to consider:
+Does the covered entity have existing sanction policies and procedures to
+meet the requirements of this implementation specification? If not, can
+NOTE: Covered entities must
+ensure that the risk analysis
+and risk management
+processes are on-going and
+dynamic processes that can
+change as the environment or
+operations change.
+2 Security Standards: Administrative Safeguards
+Volume 2 / Paper 2 6 5/2005: rev. 3/2007
+existing sanction policies be modified to include language relating to
+violations of these policies and procedures?
+Does the organization require employees to sign a statement of adherence to
+security policy and procedures (e.g., as part of the employee handbook or
+confidentiality statement) as a prerequisite to employment?
+Does the statement of adherence to
+security policies and procedures state
+that the workforce member
+acknowledges that violations of security
+policies and procedures may lead to
+disciplinary action, for example, up to
+and including termination?
+Does the sanction policy provide examples of potential violations of policy
+and procedures?
+Does the sanction policy adjust the disciplinary action based on the severity
+of the violation?
+4. INFORMATION SYSTEM ACTIVITY REVIEW (R) - § 164.308(a)(1)(ii)(D)
+The Security Management Process standard also includes the Information System
+Activity Review implementation specification. This required implementation
+specification states that covered entities must:
+“Implement procedures to regularly review records of information system
+activity, such as audit logs, access reports, and security incident tracking
+reports.”
+The information system activity review enables covered entities to determine if any EPHI
+is used or disclosed in an inappropriate manner.
+Information system activity review procedures may be different for each covered entity.
+The procedure should be customized to meet the covered entity’s risk management
+strategy and take into account the capabilities of all information systems with EPHI.
+NOTE: A covered entity’s
+sanction policy should reinforce
+its security policies and
+procedures.
+2 Security Standards: Administrative Safeguards
+Volume 2 / Paper 2 7 5/2005: rev. 3/2007
+STANDARD
+§ 164.308(a)(2)
+NOTE: The Information
+System Activity Review
+implementation specification
+should also promote continual
+awareness of any information
+system activity that could
+suggest a security incident.
+Sample questions for covered entities to consider:
+What are the audit and activity review functions of the current information
+systems?
+Are the information systems functions
+adequately used and monitored to
+promote continual awareness of
+information system activity?
+What logs or reports are generated by
+the information systems?
+Is there a policy that establishes what reviews will be conducted?
+Is there a procedure that describes specifics of the reviews?
