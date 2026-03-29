@@ -154,6 +154,3 @@ python scripts/build_index.py
 - Decision evidence is stored in DynamoDB and reused during follow-up explanation flows.
 - Generated embeddings are not committed; reviewers should rebuild them locally.
 
-## License
-
-MIT
