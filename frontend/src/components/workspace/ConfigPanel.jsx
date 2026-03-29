@@ -1,3 +1,4 @@
+import { ScanSearch } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
 
 const API_BASE_URL = 'http://127.0.0.1:5000';
@@ -14,9 +15,8 @@ export default function ConfigPanel({
   schemas,
   loadingServices,
   serviceCatalog,
-  onConfigUpdate,
+  onAskFollowUp,
   embedded = false,
-  preferredTab = 'recommended',
 }) {
   const availableServices = useMemo(() => {
     const loadingNames = (loadingServices || []).map((item) => (item.includes(':') ? item.split(':').slice(1).join(':') : item));
@@ -31,17 +31,13 @@ export default function ConfigPanel({
   }, [configs, loadingServices, schemas, serviceCatalog]);
 
   const [activeService, setActiveService] = useState(availableServices[0] || '');
-  const [activeTab, setActiveTab] = useState(preferredTab);
+  const [optimizePanelOpen, setOptimizePanelOpen] = useState({});
   const [existingConfigInputs, setExistingConfigInputs] = useState({});
   const [optimizeGaps, setOptimizeGaps] = useState({});
   const [optimizeChecked, setOptimizeChecked] = useState({});
   const [notice, setNotice] = useState('');
   const [noticeTone, setNoticeTone] = useState('neutral');
   const [isOptimizing, setIsOptimizing] = useState(false);
-  const [explainField, setExplainField] = useState(null);
-  const [explainMessages, setExplainMessages] = useState([]);
-  const [explainInput, setExplainInput] = useState('');
-  const [isExplaining, setIsExplaining] = useState(false);
   const [isTerraformLoading, setIsTerraformLoading] = useState(false);
 
   useEffect(() => {
@@ -53,18 +49,11 @@ export default function ConfigPanel({
     }
   }, [activeService, availableServices]);
 
-  useEffect(() => {
-    if (preferredTab) {
-      setActiveTab(preferredTab);
-    }
-  }, [preferredTab]);
-
   const activeConfig = configs?.[activeService] || {};
   const activeSchema = schemas?.[activeService] || {};
   const activeSchemaFields = activeSchema?.fields || [];
   const activeProvider = serviceCatalog?.[activeService]?.provider || activeSchema?.provider || 'aws';
   const providerLabel = PROVIDER_LABELS[activeProvider] || activeProvider.toUpperCase();
-  const configuredServiceCount = Object.keys(configs || {}).length;
   const fieldMap = useMemo(
     () => Object.fromEntries(activeSchemaFields.map((field) => [field.fieldId, field])),
     [activeSchemaFields],
@@ -103,22 +92,48 @@ export default function ConfigPanel({
     window.setTimeout(() => setNotice(''), 3000);
   };
 
-  const openExplainPanel = (fieldId, value, reason) => {
+  const openFollowUp = ({ fieldId, label, value, reason, currentValue, recommendedValue, severity }) => {
     const metadata = fieldMap[fieldId] || {};
-    setExplainField({
+    onAskFollowUp?.({
       service: activeService,
       provider: activeProvider,
       fieldId,
-      label: metadata.label || fieldId,
+      label: label || metadata.label || fieldId,
       value,
       reason,
+      currentValue,
+      recommendedValue,
+      severity,
+      referenceLabel: `${providerLabel} ${activeService} / ${label || metadata.label || fieldId}`,
     });
-    setExplainMessages([
-      {
-        role: 'assistant',
-        content: `Ask about ${metadata.label || fieldId}. Nimbus will explain why it recommended this value for your stated requirements.`,
-      },
-    ]);
+  };
+
+  const handleOptimizeToggle = (serviceName) => {
+    setOptimizePanelOpen((current) => ({
+      ...current,
+      [serviceName]: !current[serviceName],
+    }));
+  };
+
+  const handleConfigUpload = async (event) => {
+    const file = event.target.files?.[0];
+    if (!file || !activeService) {
+      return;
+    }
+
+    try {
+      const text = await file.text();
+      JSON.parse(text);
+      setExistingConfigInputs((current) => ({
+        ...current,
+        [activeService]: text,
+      }));
+      setBanner(`${file.name} loaded for ${activeService}.`, 'success');
+    } catch (error) {
+      setBanner('That file is not valid JSON.', 'error');
+    } finally {
+      event.target.value = '';
+    }
   };
 
   const handleOptimize = async () => {
@@ -155,61 +170,6 @@ export default function ConfigPanel({
       }
     } finally {
       setIsOptimizing(false);
-    }
-  };
-
-  const handleExplain = async () => {
-    if (!explainField || !explainInput.trim()) {
-      return;
-    }
-
-    const outgoing = explainInput;
-    setExplainInput('');
-    setExplainMessages((current) => [...current, { role: 'user', content: outgoing }]);
-    setIsExplaining(true);
-
-    try {
-      const response = await fetch(`${API_BASE_URL}/explain`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          sessionId: session.sessionId,
-          fieldId: explainField.fieldId,
-          fieldLabel: explainField.label,
-          currentValue: explainField.value,
-          inlineReason: explainField.reason,
-          message: outgoing,
-        }),
-      });
-      const data = await response.json();
-      if (!response.ok) {
-        throw new Error(data.detail || 'Explain failed.');
-      }
-
-      if (data.configUpdate && explainField.service) {
-        onConfigUpdate?.(
-          explainField.service,
-          data.configUpdate.fieldId,
-          data.configUpdate.newValue,
-          data.configUpdate.newReason,
-        );
-        setExplainField((current) =>
-          current
-            ? {
-                ...current,
-                value: data.configUpdate.newValue,
-                reason: data.configUpdate.newReason,
-              }
-            : current,
-        );
-        setBanner(`Updated ${data.configUpdate.fieldId} for ${explainField.service}.`, 'success');
-      }
-
-      setExplainMessages((current) => [...current, { role: 'assistant', content: data.response }]);
-    } catch (error) {
-      setExplainMessages((current) => [...current, { role: 'assistant', content: error.message }]);
-    } finally {
-      setIsExplaining(false);
     }
   };
 
@@ -303,36 +263,14 @@ export default function ConfigPanel({
         </div>
       </div>
 
-      <div className="border-b border-[#d6e8f3] px-4 py-3">
-        <div className="flex gap-2">
-          {[ 
-            ['recommended', 'Recommended'],
-            ['optimize', 'Optimise'],
-          ].map(([key, label]) => (
-            <button
-              key={key}
-              type="button"
-              onClick={() => setActiveTab(key)}
-              className={`rounded-2xl border px-4 py-2 text-xs font-semibold uppercase tracking-[0.18em] ${
-                activeTab === key
-                  ? 'border-[#a9d8f4] bg-[#eef8ff] text-[#2792df]'
-                  : 'border-[#d7e9f4] text-[#4e6c82] hover:bg-white'
-              }`}
-            >
-              {label}
-            </button>
-          ))}
-        </div>
-      </div>
-
-      <div className="min-h-0 flex-1 space-y-5 overflow-y-auto p-4">
+      <div className="space-y-5 p-4">
         {!session ? (
           <div className="rounded-2xl border border-dashed border-[#d7e9f4] p-6 text-sm text-[#5f7f97]">
             Start the advisory conversation first. Nimbus will gather your requirements before it prepares any cloud configuration.
           </div>
         ) : null}
 
-        {session && activeTab === 'recommended' ? (
+        {session ? (
           <div className="space-y-3">
             {availableServices.length === 0 ? (
               <div className="rounded-2xl border border-dashed border-[#d7e9f4] p-6 text-sm text-[#5f7f97]">
@@ -362,7 +300,7 @@ export default function ConfigPanel({
                     <div className="text-sm leading-7 text-[#4e6c82]">{reason}</div>
                     <button
                       type="button"
-                      onClick={() => openExplainPanel(fieldId, value, reason)}
+                      onClick={() => openFollowUp({ fieldId, value, reason })}
                       className="w-fit rounded-2xl border border-[#d7e9f4] px-4 py-2 text-xs font-semibold uppercase tracking-[0.18em] text-[#21506b] transition-colors hover:bg-white"
                     >
                       Ask Follow-up
@@ -372,139 +310,123 @@ export default function ConfigPanel({
               );
             })}
             {availableServices.length > 0 && Object.keys(activeConfig).length > 0 ? (
-              <div className="rounded-2xl border border-[#d7e9f4] bg-white/84 p-5">
-                <div className="text-sm leading-7 text-[#4e6c82]">
-                  Download Terraform after reviewing the final configuration shown above.
+              <div className="space-y-4">
+                <div className="rounded-[28px] border border-[#9fd8ff] bg-[linear-gradient(180deg,#eef8ff_0%,#fafdff_100%)] p-5 shadow-[0_14px_30px_rgba(88,183,255,0.12)]">
+                  <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
+                    <div>
+                      <div className="flex items-center gap-2 text-[10px] font-semibold uppercase tracking-[0.18em] text-[#2792df]">
+                        <ScanSearch className="h-4 w-4" />
+                        Important next step
+                      </div>
+                      <div className="mt-2 text-base font-semibold text-[#14324a]">Optimize against your current JSON config</div>
+                      <div className="mt-1 text-sm leading-7 text-[#4e6c82]">
+                        Upload your existing {activeService} JSON here to compare it directly against Nimbus recommendations for this service.
+                      </div>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => handleOptimizeToggle(activeService)}
+                      className="rounded-2xl bg-[#58b7ff] px-4 py-3 text-xs font-semibold uppercase tracking-[0.18em] text-[#08304d] transition-colors hover:bg-[#7dcaff]"
+                    >
+                      {optimizePanelOpen[activeService] ? 'Hide optimization' : 'Open optimization review'}
+                    </button>
+                  </div>
+
+                  {optimizePanelOpen[activeService] ? (
+                    <div className="mt-4 space-y-4 border-t border-[#e2eef6] pt-4">
+                      <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+                        <label className="w-fit cursor-pointer rounded-2xl border border-[#d7e9f4] px-4 py-2 text-xs font-semibold uppercase tracking-[0.18em] text-[#21506b] transition-colors hover:bg-white">
+                          Upload JSON
+                          <input type="file" accept=".json,application/json" className="hidden" onChange={handleConfigUpload} />
+                        </label>
+                        <div className="text-xs text-[#5f7f97]">
+                          Upload a file or paste JSON below, then run the comparison.
+                        </div>
+                      </div>
+
+                      <textarea
+                        value={existingConfigInputs[activeService] || ''}
+                        onChange={(event) =>
+                          setExistingConfigInputs((current) => ({
+                            ...current,
+                            [activeService]: event.target.value,
+                          }))
+                        }
+                        className="h-56 w-full rounded-2xl border border-[#c9e0ef] bg-white/84 p-4 font-mono text-xs text-[#14324a] placeholder:text-[#6f8ea3] focus:border-[#58b7ff] focus:outline-none"
+                        placeholder='{"ServerSideEncryptionConfiguration":"None","BlockPublicAcls":false}'
+                      />
+
+                      <button
+                        type="button"
+                        onClick={handleOptimize}
+                        disabled={isOptimizing || !activeService}
+                        className="rounded-2xl bg-[#58b7ff] px-4 py-3 text-sm font-semibold text-[#08304d] transition-colors hover:bg-[#7dcaff] disabled:cursor-not-allowed disabled:opacity-50"
+                      >
+                        {isOptimizing ? 'Analyzing...' : 'Analyze Existing Config'}
+                      </button>
+
+                      {optimizeChecked[activeService] && (optimizeGaps[activeService] || []).length === 0 ? (
+                        <div className="rounded-2xl border border-emerald-300 bg-emerald-50 p-5 text-sm leading-7 text-emerald-700">
+                          Your existing configuration matches all recommended controls for this service.
+                        </div>
+                      ) : null}
+
+                      {(optimizeGaps[activeService] || []).map((gap, index) => (
+                        <div key={`${gap.fieldId}-${index}`} className="rounded-2xl border border-[#d7e9f4] bg-[#fafdff] p-5">
+                          <div className="flex items-center justify-between gap-4">
+                            <div className="mono text-sm font-semibold text-[#14324a]">{gap.fieldId}</div>
+                            <div className="rounded-full border border-red-300 bg-red-50 px-3 py-1 text-[10px] uppercase tracking-[0.18em] text-red-700">
+                              {gap.severity}
+                            </div>
+                          </div>
+                          <div className="mt-4 grid gap-3 md:grid-cols-2">
+                            <div className="rounded-2xl bg-[#fff7f7] p-4">
+                              <div className="text-[10px] uppercase tracking-[0.18em] text-[#6b8ba2]">Current</div>
+                              <div className="mt-2 text-sm text-red-600">{String(gap.currentValue)}</div>
+                            </div>
+                            <div className="rounded-2xl bg-[#f5fffa] p-4">
+                              <div className="text-[10px] uppercase tracking-[0.18em] text-[#6b8ba2]">Recommended</div>
+                              <div className="mt-2 text-sm text-emerald-700">{String(gap.recommendedValue)}</div>
+                            </div>
+                          </div>
+                          <div className="mt-4 text-sm leading-7 text-[#4e6c82]">{gap.reason}</div>
+                          <button
+                            type="button"
+                            onClick={() =>
+                              openFollowUp({
+                                fieldId: gap.fieldId,
+                                value: gap.currentValue,
+                                reason: gap.reason,
+                                currentValue: gap.currentValue,
+                                recommendedValue: gap.recommendedValue,
+                                severity: gap.severity,
+                              })
+                            }
+                            className="mt-4 rounded-2xl border border-[#d7e9f4] px-4 py-2 text-xs font-semibold uppercase tracking-[0.18em] text-[#21506b] transition-colors hover:bg-white"
+                          >
+                            Ask Follow-up
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  ) : null}
                 </div>
-                <button
-                  type="button"
-                  onClick={downloadTerraform}
-                  disabled={isTerraformLoading || !activeService}
-                  className="mt-4 rounded-2xl bg-[#58b7ff] px-4 py-3 text-sm font-semibold text-[#08304d] transition-colors hover:bg-[#7dcaff] disabled:cursor-not-allowed disabled:opacity-50"
-                >
-                  {isTerraformLoading ? 'Preparing Terraform...' : 'Download Terraform'}
-                </button>
-              </div>
-            ) : null}
-          </div>
-        ) : null}
 
-        {session && activeTab === 'optimize' ? (
-          <div className="space-y-4">
-            <textarea
-              value={existingConfigInputs[activeService] || ''}
-              onChange={(event) =>
-                setExistingConfigInputs((current) => ({
-                  ...current,
-                  [activeService]: event.target.value,
-                }))
-              }
-              className="h-56 w-full rounded-2xl border border-[#c9e0ef] bg-white/84 p-4 font-mono text-xs text-[#14324a] placeholder:text-[#6f8ea3] focus:border-[#58b7ff] focus:outline-none"
-              placeholder='{"ServerSideEncryptionConfiguration":"None","BlockPublicAcls":false}'
-            />
-            <button
-              type="button"
-              onClick={handleOptimize}
-              disabled={isOptimizing || !activeService}
-              className="rounded-2xl bg-[#58b7ff] px-4 py-3 text-sm font-semibold text-[#08304d] transition-colors hover:bg-[#7dcaff] disabled:cursor-not-allowed disabled:opacity-50"
-            >
-              {isOptimizing ? 'Analyzing...' : 'Analyze Existing Config'}
-            </button>
-
-            {optimizeChecked[activeService] && (optimizeGaps[activeService] || []).length === 0 ? (
-              <div className="rounded-2xl border border-emerald-300 bg-emerald-50 p-5 text-sm leading-7 text-emerald-700">
-                Your existing configuration matches all recommended controls for this service.
-              </div>
-            ) : null}
-
-            {(optimizeGaps[activeService] || []).map((gap, index) => (
-              <div key={`${gap.fieldId}-${index}`} className="rounded-2xl border border-[#d7e9f4] bg-[#fafdff] p-5">
-                <div className="flex items-center justify-between gap-4">
-                  <div className="mono text-sm font-semibold text-[#14324a]">{gap.fieldId}</div>
-                  <div className="rounded-full border border-red-300 bg-red-50 px-3 py-1 text-[10px] uppercase tracking-[0.18em] text-red-700">
-                    {gap.severity}
+                <div className="rounded-2xl border border-[#d7e9f4] bg-white/84 p-5">
+                  <div className="text-sm leading-7 text-[#4e6c82]">
+                    Download Terraform after reviewing the final configuration shown above.
                   </div>
-                </div>
-                <div className="mt-4 grid gap-3 md:grid-cols-2">
-                  <div className="rounded-2xl bg-[#fff7f7] p-4">
-                    <div className="text-[10px] uppercase tracking-[0.18em] text-[#6b8ba2]">Current</div>
-                    <div className="mt-2 text-sm text-red-600">{String(gap.currentValue)}</div>
-                  </div>
-                  <div className="rounded-2xl bg-[#f5fffa] p-4">
-                    <div className="text-[10px] uppercase tracking-[0.18em] text-[#6b8ba2]">Recommended</div>
-                    <div className="mt-2 text-sm text-emerald-700">{String(gap.recommendedValue)}</div>
-                  </div>
-                </div>
-                <div className="mt-4 text-sm leading-7 text-[#4e6c82]">{gap.reason}</div>
-                <button
-                  type="button"
-                  onClick={() => openExplainPanel(gap.fieldId, gap.currentValue, gap.reason)}
-                  className="mt-4 rounded-2xl border border-[#d7e9f4] px-4 py-2 text-xs font-semibold uppercase tracking-[0.18em] text-[#21506b] transition-colors hover:bg-white"
-                >
-                  Ask Follow-up
-                </button>
-              </div>
-            ))}
-          </div>
-        ) : null}
-
-        {explainField ? (
-          <div className="rounded-3xl border border-[#d7e9f4] bg-[#fafdff] p-6">
-            <div className="flex items-center justify-between gap-4">
-              <div>
-                <p className="text-[11px] font-semibold uppercase tracking-[0.28em] text-[#2792df]">Explain</p>
-                <h3 className="mt-2 text-xl font-semibold text-[#14324a]">{explainField.label}</h3>
-              </div>
-              <button
-                type="button"
-                onClick={() => {
-                  setExplainField(null);
-                  setExplainMessages([]);
-                  setExplainInput('');
-                }}
-                className="rounded-2xl border border-[#d7e9f4] px-4 py-2 text-xs font-semibold uppercase tracking-[0.18em] text-[#21506b] transition-colors hover:bg-white"
-              >
-                Close
-              </button>
-            </div>
-
-            <div className="mt-5 space-y-3">
-              {explainMessages.map((message, index) => (
-                <div key={`${message.role}-${index}`} className={message.role === 'user' ? 'ml-auto max-w-[84%]' : 'max-w-[90%]'}>
-                  <div className="mb-2 text-[10px] uppercase tracking-[0.18em] text-[#6b8ba2]">
-                    {message.role === 'user' ? 'You' : 'Nimbus'}
-                  </div>
-                  <div
-                    className={
-                      message.role === 'user'
-                        ? 'message-bubble-user rounded-[22px] p-4 text-sm leading-7'
-                        : 'message-bubble-assistant rounded-[22px] p-4 text-sm leading-7'
-                    }
+                  <button
+                    type="button"
+                    onClick={downloadTerraform}
+                    disabled={isTerraformLoading || !activeService}
+                    className="mt-4 rounded-2xl bg-[#58b7ff] px-4 py-3 text-sm font-semibold text-[#08304d] transition-colors hover:bg-[#7dcaff] disabled:cursor-not-allowed disabled:opacity-50"
                   >
-                    {message.content}
-                  </div>
+                    {isTerraformLoading ? 'Preparing Terraform...' : 'Download Terraform'}
+                  </button>
                 </div>
-              ))}
-            </div>
-
-            <div className="mt-4 flex flex-col gap-3">
-              <textarea
-                value={explainInput}
-                onChange={(event) => setExplainInput(event.target.value)}
-                placeholder="Ask Nimbus why this value matches your requirements, or challenge it with a trade-off."
-                className="h-28 w-full rounded-2xl border border-[#c9e0ef] bg-white/84 p-4 text-sm leading-7 text-[#14324a] placeholder:text-[#6f8ea3] focus:border-[#58b7ff] focus:outline-none"
-              />
-              <div className="flex justify-end">
-                <button
-                  type="button"
-                  onClick={handleExplain}
-                  disabled={isExplaining || !explainInput.trim()}
-                  className="rounded-2xl bg-[#58b7ff] px-5 py-3 text-sm font-semibold text-[#08304d] transition-colors hover:bg-[#7dcaff] disabled:cursor-not-allowed disabled:opacity-50"
-                >
-                  {isExplaining ? 'Thinking...' : 'Send'}
-                </button>
               </div>
-            </div>
+            ) : null}
           </div>
         ) : null}
       </div>

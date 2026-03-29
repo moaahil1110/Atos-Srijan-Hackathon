@@ -1,9 +1,9 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { sendEmailVerification } from 'firebase/auth';
 import { PanelRightOpen, User2, X } from 'lucide-react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../auth/AuthProvider';
-import AdvisorChatPanel from '../components/workspace/AdvisorChatPanel';
+import AdvisorChatPanel, { AdvisorChatComposer, AdvisorChatTranscript } from '../components/workspace/AdvisorChatPanel';
 import ConfigPanel from '../components/workspace/ConfigPanel';
 import RequirementRail from '../components/workspace/RequirementRail';
 import { signOutUser } from '../firebase/authService';
@@ -17,10 +17,6 @@ import {
 } from '../utils/workspacePersistence';
 
 const API_BASE_URL = 'http://127.0.0.1:5000';
-const OBJECTIVE_TAB_MAP = {
-  recommendation: 'recommended',
-  optimize: 'optimize',
-};
 const SUPPORTED_OBJECTIVES = ['recommendation', 'optimize'];
 const DEFAULT_CONTEXT_COVERAGE = {
   business: false,
@@ -49,6 +45,34 @@ const createInitialChat = (objective = 'optimize') => [
     content: OBJECTIVE_INTRO[normalizeObjectiveSelection(objective)] || OBJECTIVE_INTRO.optimize,
   },
 ];
+
+const buildFollowUpApiMessage = (context, message) => {
+  if (!context) {
+    return message;
+  }
+
+  return [
+    `Follow-up context: ${context.referenceLabel}`,
+    `Service: ${context.service}`,
+    `Provider: ${context.provider}`,
+    context.fieldId ? `Field: ${context.fieldId}` : null,
+    context.value !== undefined ? `Current value: ${String(context.value)}` : null,
+    context.recommendedValue !== undefined ? `Recommended value: ${String(context.recommendedValue)}` : null,
+    context.severity ? `Severity: ${context.severity}` : null,
+    context.reason ? `Reasoning: ${context.reason}` : null,
+    `User follow-up: ${message}`,
+  ]
+    .filter(Boolean)
+    .join('\n');
+};
+
+const buildFollowUpDisplayMessage = (context, message) => {
+  if (!context) {
+    return message;
+  }
+
+  return `Follow-up on ${context.referenceLabel}\n${message}`;
+};
 
 const truncateText = (value, maxLength = 96) => {
   const normalized = (value || '').trim();
@@ -109,6 +133,8 @@ export default function DemoWorkspace() {
   const [statusMessage, setStatusMessage] = useState('');
   const [isChatting, setIsChatting] = useState(false);
   const [isConfiguring, setIsConfiguring] = useState(false);
+  const [activeFollowUpContext, setActiveFollowUpContext] = useState(null);
+  const [chatFocusSignal, setChatFocusSignal] = useState(0);
   const [verifiedNoticeVisible, setVerifiedNoticeVisible] = useState(false);
   const [resendingEmail, setResendingEmail] = useState(false);
   const [emailBannerMessage, setEmailBannerMessage] = useState('');
@@ -119,6 +145,7 @@ export default function DemoWorkspace() {
   const [activeSavedSessionId, setActiveSavedSessionId] = useState(null);
   const [storageReady, setStorageReady] = useState(false);
   const [loadedStorageKey, setLoadedStorageKey] = useState(null);
+  const chatPanelRef = useRef(null);
   const storageKey = useMemo(() => createWorkspaceStorageKey(user?.uid), [user?.uid]);
 
   const session = useMemo(
@@ -148,6 +175,7 @@ export default function DemoWorkspace() {
     setServiceCatalog({});
     setLoadingServices([]);
     setStatusMessage('');
+    setActiveFollowUpContext(null);
   };
 
   const applyWorkspaceSnapshot = (snapshot) => {
@@ -174,19 +202,7 @@ export default function DemoWorkspace() {
     setServiceCatalog(snapshot?.serviceCatalog || {});
     setLoadingServices([]);
     setStatusMessage('');
-  };
-
-  const handleConfigUpdate = (service, fieldId, newValue, newReason) => {
-    setAllConfigs((current) => ({
-      ...current,
-      [service]: {
-        ...(current[service] || {}),
-        [fieldId]: {
-          value: newValue,
-          reason: newReason,
-        },
-      },
-    }));
+    setActiveFollowUpContext(null);
   };
 
   useEffect(() => {
@@ -320,11 +336,15 @@ export default function DemoWorkspace() {
     if (!nextMessage) {
       return;
     }
+    const followUpContext = activeFollowUpContext;
+    const displayMessage = buildFollowUpDisplayMessage(followUpContext, nextMessage);
+    const apiMessage = buildFollowUpApiMessage(followUpContext, nextMessage);
 
     setStatusMessage('');
     setIsChatting(true);
     setChatInput('');
-    setChatMessages((current) => [...current, { role: 'user', content: nextMessage }]);
+    setChatMessages((current) => [...current, { role: 'user', content: displayMessage }]);
+    setActiveFollowUpContext(null);
 
     try {
       const response = await fetch(`${API_BASE_URL}/chat`, {
@@ -332,7 +352,7 @@ export default function DemoWorkspace() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           sessionId,
-          message: nextMessage,
+          message: apiMessage,
           objective: selectedObjective,
           userId: user?.uid || '',
         }),
@@ -473,18 +493,12 @@ export default function DemoWorkspace() {
     await configurePlan(planItems, option.title);
   };
 
-  const handleObjectiveChange = (nextObjective) => {
-    if (nextObjective === selectedObjective) {
-      return;
-    }
-    setSelectedObjective(nextObjective);
-    if (chatMessages.some((message) => message.role === 'user')) {
-      const labels = {
-        recommendation: 'recommendation-ready output',
-        optimize: 'optimization-ready output',
-      };
-      setStatusMessage(`Nimbus will now steer this session toward ${labels[nextObjective] || 'the selected output'}.`);
-    }
+  const handleAskFollowUp = (followUpContext) => {
+    setActiveFollowUpContext(followUpContext);
+    setChatFocusSignal((current) => current + 1);
+    window.setTimeout(() => {
+      chatPanelRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 0);
   };
 
   const handleStartNewSession = () => {
@@ -627,13 +641,9 @@ export default function DemoWorkspace() {
             </div>
           ) : null}
 
-          <main
-            className={`min-h-0 flex-1 ${
-              hasConfigLabContent ? 'grid xl:grid-cols-[minmax(0,1fr)_390px] xl:items-stretch' : ''
-            }`}
-          >
+          <main className="min-h-0 flex-1 overflow-y-auto">
             <div className="min-w-0 px-5 py-2 sm:px-6">
-              <div className="flex h-full min-h-0 flex-col gap-3">
+              <div className="flex min-h-full flex-col gap-3 pb-4">
                 {hasStartedConversation ? (
                   <RequirementRail
                     advisoryContext={advisoryContext}
@@ -644,41 +654,72 @@ export default function DemoWorkspace() {
                   />
                 ) : null}
 
-                <div className="min-h-0 flex-1">
-                  <AdvisorChatPanel
-                    messages={chatMessages}
-                    chatInput={chatInput}
-                    onInputChange={setChatInput}
-                    onSendMessage={sendChatMessage}
-                    isChatting={isChatting}
-                    architectureOptions={architectureOptions}
-                    preparedSummary={preparedSummary}
-                    reasoningMode={reasoningMode}
-                    onConfigureProviderPlan={handleConfigureProviderPlan}
-                    onConfigureFullOption={handleConfigureFullOption}
-                    isConfiguring={isConfiguring}
-                    embedded
-                    selectedObjective={selectedObjective}
-                    onObjectiveChange={handleObjectiveChange}
-                  />
-                </div>
+                {hasConfigLabContent ? (
+                  <>
+                    <div className="min-h-0 flex-1">
+                      <AdvisorChatTranscript
+                        messages={chatMessages}
+                        onSendMessage={sendChatMessage}
+                        isChatting={isChatting}
+                        architectureOptions={architectureOptions}
+                        reasoningMode={reasoningMode}
+                        onConfigureProviderPlan={handleConfigureProviderPlan}
+                        onConfigureFullOption={handleConfigureFullOption}
+                        isConfiguring={isConfiguring}
+                        embedded
+                        selectedObjective={selectedObjective}
+                      />
+                    </div>
+
+                    <div className="border-t border-[#d6e8f3] bg-[#fbfdff]">
+                      <ConfigPanel
+                        session={session}
+                        configs={allConfigs}
+                        schemas={schemas}
+                        loadingServices={loadingServices}
+                        serviceCatalog={serviceCatalog}
+                        onAskFollowUp={handleAskFollowUp}
+                        embedded
+                      />
+                    </div>
+
+                    <div ref={chatPanelRef} className="border-t border-[#d6e8f3] pt-3">
+                      <AdvisorChatComposer
+                        chatInput={chatInput}
+                        onInputChange={setChatInput}
+                        onSendMessage={sendChatMessage}
+                        selectedObjective={selectedObjective}
+                        pendingFollowUpContext={activeFollowUpContext}
+                        onClearFollowUpContext={() => setActiveFollowUpContext(null)}
+                        composerFocusSignal={chatFocusSignal}
+                        embedded
+                      />
+                    </div>
+                  </>
+                ) : (
+                  <div ref={chatPanelRef} className="min-h-0 flex-1">
+                    <AdvisorChatPanel
+                      messages={chatMessages}
+                      chatInput={chatInput}
+                      onInputChange={setChatInput}
+                      onSendMessage={sendChatMessage}
+                      isChatting={isChatting}
+                      architectureOptions={architectureOptions}
+                      preparedSummary={preparedSummary}
+                      reasoningMode={reasoningMode}
+                      onConfigureProviderPlan={handleConfigureProviderPlan}
+                      onConfigureFullOption={handleConfigureFullOption}
+                      isConfiguring={isConfiguring}
+                      embedded
+                      selectedObjective={selectedObjective}
+                      pendingFollowUpContext={activeFollowUpContext}
+                      onClearFollowUpContext={() => setActiveFollowUpContext(null)}
+                      composerFocusSignal={chatFocusSignal}
+                    />
+                  </div>
+                )}
               </div>
             </div>
-
-            {hasConfigLabContent ? (
-              <aside className="min-h-0 border-t border-[#d6e8f3] bg-[#fbfdff] xl:border-l xl:border-t-0">
-                <ConfigPanel
-                  session={session}
-                  configs={allConfigs}
-                  schemas={schemas}
-                  loadingServices={loadingServices}
-                  serviceCatalog={serviceCatalog}
-                  onConfigUpdate={handleConfigUpdate}
-                  embedded
-                  preferredTab={OBJECTIVE_TAB_MAP[selectedObjective] || 'recommended'}
-                />
-              </aside>
-            ) : null}
           </main>
         </section>
       </div>
