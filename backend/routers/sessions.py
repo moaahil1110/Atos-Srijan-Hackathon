@@ -63,4 +63,8 @@ async def load_session(session_id: str):
         "allConfigs": session.get("generatedConfig", {}),
         "serviceCatalog": service_catalog,
         "suggestedServices": session.get("suggestedServices", []),
+        "currentConfig": session.get("currentConfig", {}),
+        "decisionEvidence": session.get("decisionEvidence", {"compliance": [], "provider": []}),
+        "createdAt": session.get("createdAt"),
+        "updatedAt": session.get("updatedAt"),
     }

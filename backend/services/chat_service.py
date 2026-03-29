@@ -5,8 +5,8 @@ from datetime import datetime, timezone
 
 from services.weights_engine import compute_weights
 from utils.bedrock_client import invoke_bedrock, invoke_bedrock_json
-from utils.dynamo_client import get_session, save_session, update_session
-from utils.kb_client import get_compliance_context
+from utils.dynamo_client import get_session, save_session, update_session, update_session_fields
+from utils.grounding import DEFAULT_RETRIEVAL_TOP_K, NIMBUS_SYSTEM_PROMPT, retrieve_compliance_text
 from utils.service_mapper import get_provider_label, get_provider_service_name, get_provider_services
 
 logger = logging.getLogger(__name__)
@@ -55,13 +55,21 @@ def _initial_session(session_id: str, objective: str = "recommendation", user_id
         "userId": user_id,
         "sessionTitle": "",
         "companyProfile": {},
+        "weights": {},
         "computedWeights": {},
+        "selectedProvider": "multi",
+        "selectedService": "",
+        "currentConfig": {},
         "generatedConfig": {},
+        "decisionEvidence": {"compliance": [], "provider": []},
+        "decisionEvidenceByService": {},
         "configuredServices": [],
         "suggestedServices": [],
         "provider": "multi",
         "serviceProviders": {},
-        "conversationHistory": {},
+        "conversationHistory": [],
+        "fieldConversationHistory": {},
+        "terraformOutput": "",
         "advisoryConversation": [],
         "advisoryContext": {},
         "advisorRecommendations": [],
@@ -304,7 +312,7 @@ Return ONLY this JSON object — no markdown, no explanation, no extra text:
 }}
 <|eot_id|><|start_header_id|>assistant<|end_header_id|>
 """.strip()
-    result = invoke_bedrock_json(prompt)
+    result = invoke_bedrock_json(prompt, system=NIMBUS_SYSTEM_PROMPT)
     context = _clean_context(result, existing_context)
     coverage = result.get("context_coverage") or _coverage(context)
     normalized_coverage = {
@@ -322,11 +330,9 @@ Return ONLY this JSON object — no markdown, no explanation, no extra text:
 def _model_build_options(context: dict, objective: str) -> list[dict]:
     objective_key = _normalize_objective(objective)
     objective_meta = OBJECTIVE_META[objective_key]
-    frameworks = _parse_frameworks(context.get("compliance"))
-    compliance_text = get_compliance_context(
+    compliance_text = retrieve_compliance_text(
         f"Best cloud architecture for {context.get('industry', 'regulated')} {context.get('workload_type', 'application')} with {context.get('compliance', 'security controls')}",
-        frameworks,
-        num_results=5,
+        top_k=DEFAULT_RETRIEVAL_TOP_K,
     )
     citations = _extract_citations(compliance_text)
     evidence = _extract_evidence(compliance_text)
@@ -395,7 +401,7 @@ Return ONLY this JSON array:
 ]
 <|eot_id|><|start_header_id|>assistant<|end_header_id|>
 """.strip()
-    raw_options = invoke_bedrock_json(prompt)
+    raw_options = invoke_bedrock_json(prompt, system=NIMBUS_SYSTEM_PROMPT)
     if isinstance(raw_options, dict):
         raw_options = raw_options.get("options", [])
     normalized = _normalize_options(raw_options, context, citations, evidence)
@@ -423,7 +429,7 @@ The discovery interview is complete. Write a 3–4 sentence reply that:
 Do NOT use bullet points or headers. Write as flowing sentences. Maximum 4 sentences.
 <|eot_id|><|start_header_id|>assistant<|end_header_id|>
 """.strip()
-    return invoke_bedrock(prompt, temperature=0.3, max_tokens=300).strip()
+    return invoke_bedrock(prompt, system=NIMBUS_SYSTEM_PROMPT, temperature=0.3, max_tokens=300).strip()
 
 
 async def process_chat(session_id: str | None, user_message: str, objective: str = "recommendation", user_id: str = "") -> dict:
@@ -470,11 +476,18 @@ async def process_chat(session_id: str | None, user_message: str, objective: str
 
         best_option = architecture_options[0]
         best_provider = best_option["providers"][0]["provider"] if len(best_option["providers"]) == 1 else "multi"
-        update_session(session_id, "companyProfile", profile)
-        update_session(session_id, "computedWeights", weights)
-        update_session(session_id, "suggestedServices", suggested_services)
-        update_session(session_id, "provider", best_provider)
-        update_session(session_id, "advisorRecommendations", architecture_options)
+        update_session_fields(
+            session_id,
+            {
+                "companyProfile": profile,
+                "weights": weights,
+                "computedWeights": weights,
+                "suggestedServices": suggested_services,
+                "provider": best_provider,
+                "selectedProvider": best_provider,
+                "advisorRecommendations": architecture_options,
+            },
+        )
     else:
         if not follow_up_question:
             # The model omitted the follow-up — derive one from the missing coverage area
@@ -500,10 +513,25 @@ async def process_chat(session_id: str | None, user_message: str, objective: str
             title += "..."
         update_session(session_id, "sessionTitle", title)
 
-    update_session(session_id, "advisoryConversation", advisory_conversation)
-    update_session(session_id, "advisoryContext", updated_context)
-    update_session(session_id, "advisorReasoningMode", reasoning_mode)
-    update_session(session_id, "advisoryObjective", current_objective)
+    conversation_history = session_item.get("conversationHistory", [])
+    if not isinstance(conversation_history, list):
+        conversation_history = []
+    conversation_history.extend(
+        [
+            {"role": "user", "content": user_message},
+            {"role": "assistant", "content": reply},
+        ]
+    )
+    update_session_fields(
+        session_id,
+        {
+            "advisoryConversation": advisory_conversation,
+            "advisoryContext": updated_context,
+            "advisorReasoningMode": reasoning_mode,
+            "advisoryObjective": current_objective,
+            "conversationHistory": conversation_history,
+        },
+    )
 
     return {
         "sessionId": session_id,

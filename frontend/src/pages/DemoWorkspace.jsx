@@ -20,8 +20,8 @@ const API_BASE_URL = 'http://127.0.0.1:5000';
 const OBJECTIVE_TAB_MAP = {
   recommendation: 'recommended',
   optimize: 'optimize',
-  terraform: 'terraform',
 };
+const SUPPORTED_OBJECTIVES = ['recommendation', 'optimize'];
 const DEFAULT_CONTEXT_COVERAGE = {
   business: false,
   scale: false,
@@ -31,22 +31,22 @@ const DEFAULT_CONTEXT_COVERAGE = {
 const OBJECTIVE_LABELS = {
   recommendation: 'Recommendation',
   optimize: 'Optimise',
-  terraform: 'Terraform',
 };
 
 const OBJECTIVE_INTRO = {
   recommendation:
     'Describe the company and workload in your own words. I will keep asking follow-up questions until I have enough context to recommend the best provider and service mix, then I will explain exactly why it matches your requirements.',
   optimize:
-    'Describe the company, workload, and any current-cloud concerns. I will gather enough context to prepare the strongest target architecture first, then you can compare it against your current setup in the optimization flow.',
-  terraform:
-    'Describe the company and workload in your own words. I will gather the context needed to shape a Terraform-ready cloud plan, then I will explain why that architecture best fits your requirements.',
+    'Please provide the current configurations of your cloud service so I can optimize them based on your company context and compliance requirements.',
 };
 
-const createInitialChat = (objective = 'recommendation') => [
+const normalizeObjectiveSelection = (objective) =>
+  SUPPORTED_OBJECTIVES.includes(objective) ? objective : 'optimize';
+
+const createInitialChat = (objective = 'optimize') => [
   {
     role: 'assistant',
-    content: OBJECTIVE_INTRO[objective] || OBJECTIVE_INTRO.recommendation,
+    content: OBJECTIVE_INTRO[normalizeObjectiveSelection(objective)] || OBJECTIVE_INTRO.optimize,
   },
 ];
 
@@ -93,9 +93,9 @@ export default function DemoWorkspace() {
   const navigate = useNavigate();
   const { user } = useAuth();
   const [searchParams, setSearchParams] = useSearchParams();
-  const [selectedObjective, setSelectedObjective] = useState('recommendation');
+  const [selectedObjective, setSelectedObjective] = useState('optimize');
   const [sessionId, setSessionId] = useState(null);
-  const [chatMessages, setChatMessages] = useState(createInitialChat('recommendation'));
+  const [chatMessages, setChatMessages] = useState(createInitialChat('optimize'));
   const [chatInput, setChatInput] = useState('');
   const [advisoryContext, setAdvisoryContext] = useState({});
   const [contextCoverage, setContextCoverage] = useState(DEFAULT_CONTEXT_COVERAGE);
@@ -132,10 +132,11 @@ export default function DemoWorkspace() {
     [serviceCatalog, sessionId],
   );
 
-  const resetWorkspace = (nextObjective = 'recommendation') => {
-    setSelectedObjective(nextObjective);
+  const resetWorkspace = (nextObjective = 'optimize') => {
+    const normalizedObjective = normalizeObjectiveSelection(nextObjective);
+    setSelectedObjective(normalizedObjective);
     setSessionId(null);
-    setChatMessages(createInitialChat(nextObjective));
+    setChatMessages(createInitialChat(normalizedObjective));
     setChatInput('');
     setAdvisoryContext({});
     setContextCoverage(DEFAULT_CONTEXT_COVERAGE);
@@ -150,7 +151,7 @@ export default function DemoWorkspace() {
   };
 
   const applyWorkspaceSnapshot = (snapshot) => {
-    const nextObjective = snapshot?.objective || 'recommendation';
+    const nextObjective = normalizeObjectiveSelection(snapshot?.objective);
 
     setSelectedObjective(nextObjective);
     setSessionId(snapshot?.sessionId || null);
@@ -205,7 +206,7 @@ export default function DemoWorkspace() {
       setActiveSavedSessionId(null);
       setStorageReady(false);
       setLoadedStorageKey(null);
-      resetWorkspace('recommendation');
+      resetWorkspace('optimize');
       return;
     }
 
@@ -220,7 +221,7 @@ export default function DemoWorkspace() {
     if (activeSnapshot) {
       applyWorkspaceSnapshot(activeSnapshot);
     } else {
-      resetWorkspace('recommendation');
+      resetWorkspace('optimize');
     }
 
     setLoadedStorageKey(storageKey);
@@ -354,7 +355,7 @@ export default function DemoWorkspace() {
       setArchitectureOptions(data.architecture_options || []);
       setPreparedSummary(data.prepared_summary || '');
       setReasoningMode(data.reasoningMode || 'bedrock-model');
-      setSelectedObjective(data.objective || selectedObjective);
+      setSelectedObjective(normalizeObjectiveSelection(data.objective || selectedObjective));
       setChatMessages((current) => [...current, { role: 'assistant', content: data.reply }]);
       // Refresh sidebar session list
       if (user?.uid) {
@@ -481,7 +482,6 @@ export default function DemoWorkspace() {
       const labels = {
         recommendation: 'recommendation-ready output',
         optimize: 'optimization-ready output',
-        terraform: 'Terraform-ready output',
       };
       setStatusMessage(`Nimbus will now steer this session toward ${labels[nextObjective] || 'the selected output'}.`);
     }
@@ -744,7 +744,7 @@ export default function DemoWorkspace() {
                   </div>
                   <div className="mt-1 text-xs text-[#5f7f97]">
                     {currentSavedSession
-                      ? `${OBJECTIVE_LABELS[currentSavedSession.objective] || 'Recommendation'} | ${formatSessionTimestamp(currentSavedSession.updatedAt)}`
+                      ? `${OBJECTIVE_LABELS[normalizeObjectiveSelection(currentSavedSession.objective)] || 'Optimise'} | ${formatSessionTimestamp(currentSavedSession.updatedAt)}`
                       : 'Start a new advisory thread and Nimbus will keep this workspace saved locally.'}
                   </div>
                 </div>
@@ -809,7 +809,7 @@ export default function DemoWorkspace() {
                       </div>
                       <div className="mt-1 flex items-center gap-2">
                         <span className="rounded-full border border-[#d7e9f4] px-2 py-0.5 text-[10px] uppercase tracking-[0.14em] text-[#6b8ba2]">
-                          {s.advisoryObjective || 'recommendation'}
+                          {normalizeObjectiveSelection(s.advisoryObjective)}
                         </span>
                         <span className="text-[10px] text-[#8ba5b8]">
                           {s.createdAt ? new Date(s.createdAt).toLocaleDateString() : ''}

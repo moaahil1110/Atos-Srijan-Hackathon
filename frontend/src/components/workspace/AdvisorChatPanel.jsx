@@ -1,4 +1,4 @@
-import { FileCode2, ScanSearch, Sparkles } from 'lucide-react';
+import { ScanSearch, Sparkles } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 
 const STARTER_PROMPTS = [
@@ -50,26 +50,6 @@ const OBJECTIVE_META = {
     actionLabel: 'Prepare optimization target',
     providerActionPrefix: 'Prepare',
   },
-  terraform: {
-    icon: FileCode2,
-    label: 'Terraform',
-    short: 'Shape the architecture toward deployable Terraform output.',
-    headingStart: 'Prepare a Terraform-ready plan',
-    headingActive: 'Terraform conversation',
-    helper:
-      'Nimbus will shape the recommendation toward services and patterns that translate cleanly into deployable Terraform output.',
-    placeholder:
-      'Describe the workload, constraints, and security requirements for the Terraform-ready cloud architecture you want to build.',
-    starterPrompts: [
-      'We need a Terraform-ready healthcare platform for patient data with strong security and compliance controls.',
-      'We want Nimbus to recommend the right cloud setup for a secure SaaS backend and keep the result ready for Terraform export.',
-      'We are building an AI data platform and need the architecture recommendation to translate cleanly into deployable Terraform.',
-    ],
-    optionsEyebrow: 'Prepared Terraform plan',
-    optionsHeading: 'Terraform-ready cloud options',
-    actionLabel: 'Prepare Terraform output',
-    providerActionPrefix: 'Prepare',
-  },
 };
 
 export default function AdvisorChatPanel({
@@ -85,13 +65,13 @@ export default function AdvisorChatPanel({
   onConfigureFullOption,
   isConfiguring,
   embedded = false,
-  selectedObjective = 'recommendation',
+  selectedObjective = 'optimize',
   onObjectiveChange,
 }) {
   const scrollRef = useRef(null);
   const [expandedOptionId, setExpandedOptionId] = useState(null);
   const hasStartedConversation = messages.some((message) => message.role === 'user');
-  const objective = OBJECTIVE_META[selectedObjective] || OBJECTIVE_META.recommendation;
+  const objective = OBJECTIVE_META[selectedObjective] || OBJECTIVE_META.optimize;
 
   const handleComposerKeyDown = (event) => {
     if (event.key !== 'Enter' || event.shiftKey || event.nativeEvent?.isComposing) {
@@ -134,7 +114,7 @@ export default function AdvisorChatPanel({
             <div className="min-w-0">
               <div>
                 <div className="text-[10px] font-semibold uppercase tracking-[0.24em] text-[#6f8ea3]">Choose output</div>
-                <div className="mt-3 grid gap-2 md:grid-cols-3">
+                <div className="mt-3 grid gap-2 md:grid-cols-2">
                   {Object.entries(OBJECTIVE_META).map(([key, item]) => {
                     const Icon = item.icon;
                     return (
@@ -178,7 +158,7 @@ export default function AdvisorChatPanel({
                 {reasoningLabel}
               </div>
             </div>
-            <div className="grid gap-2 md:grid-cols-3">
+            <div className="grid gap-2 md:grid-cols-2">
               {Object.entries(OBJECTIVE_META).map(([key, item]) => {
                 const Icon = item.icon;
                 return (

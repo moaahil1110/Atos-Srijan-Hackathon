@@ -5,6 +5,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from mangum import Mangum
 
 from routers import config, explain, intent, optimize, schema, sessions, terraform
+from utils.local_retrieval import warm_retriever
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(name)s: %(message)s")
 
@@ -31,25 +32,14 @@ app.include_router(terraform.router)
 app.include_router(sessions.router)
 
 
+@app.on_event("startup")
+async def load_local_indexes():
+    warm_retriever()
+
+
 @app.get("/health")
 async def health():
     return {"status": "ok"}
-
-
-@app.get("/test-kb")
-async def test_kb():
-    from utils.kb_client import get_compliance_context
-
-    result = get_compliance_context(
-        query="S3 encryption at rest requirements",
-        frameworks=["HIPAA"],
-        num_results=3,
-    )
-    return {
-        "length": len(result),
-        "preview": result[:500] if result else "EMPTY",
-        "using_kb": bool(result and "Source:" in result),
-    }
 
 
 handler = Mangum(app)

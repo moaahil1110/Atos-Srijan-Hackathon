@@ -3,6 +3,8 @@ Thumbs.db
 
 .env
 .env.local
+.env.*
+!.env.example
 .venv/
 venv/
 __pycache__/
@@ -13,9 +15,20 @@ node_modules/
 dist/
 
 backend/.env
+backend/.env.*
+!backend/.env.example
 backend/__pycache__/
+frontend/.env
 frontend/.env.local
+frontend/.env.*
+!frontend/.env.example
 frontend/node_modules/
 frontend/dist/
 
 nimbus-react/
+embeddings/
+tests/*.log
+tests/*.err
+tests/evaluation_data.json
+tests/evaluation_report.md
+tests/responses/

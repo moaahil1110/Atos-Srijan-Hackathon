@@ -6,49 +6,48 @@ from fastapi import HTTPException
 from services.schema_service import get_schema
 from utils.bedrock_client import invoke_bedrock_json
 from utils.dynamo_client import get_configured_services, get_session, save_service_config
-from utils.kb_client import get_compliance_context
-from utils.service_mapper import get_provider_label, get_provider_service_name, normalize_provider
+from utils.grounding import (
+    DEFAULT_RETRIEVAL_TOP_K,
+    NIMBUS_SYSTEM_PROMPT,
+    build_grounded_prompt,
+    format_company_context,
+    retrieve_decision_evidence,
+)
+from utils.service_mapper import get_provider_service_name, normalize_provider
 
-CONFIG_PROMPT = """<|begin_of_text|><|start_header_id|>system<|end_header_id|>
-You are a cloud security configuration expert for regulated industries. Your job is to choose the correct value for each configuration field and explain WHY using specific compliance clause numbers from the documentation provided. Return ONLY valid JSON - no markdown, no explanation, no text before or after the JSON.
-<|eot_id|><|start_header_id|>user<|end_header_id|>
-
-Configure {provider} {service} for this company:
-
-Company profile:
-- Industry: {industry}
-- Compliance frameworks: {frameworks} (maturity: {maturity})
-- Cost pressure: {costPressure}/5 (5 = very cost sensitive)
-- Risk tolerance: {riskTolerance}/5 (1 = very risk averse)
-
-Priority weights (non-negotiable, computed by backend):
-- Security weight: {security_weight}
-- Compliance weight: {compliance_weight}
-- Cost weight: {cost_weight}
-
-Compliance documentation (cite specific clause numbers - never invent them):
-{compliance_text}
-
-Fields to configure:
-{fields_json}
-
-Instruction tag rules - follow exactly:
-- LOCKED_SECURE: Always the most secure value. Never relax for any reason including cost.
-- PREFER_SECURE: Strongly prefer secure value. May briefly note cost trade-off.
-- OPTIMISE_COST: A cost-efficient option is acceptable here.
-- BALANCED: Use judgement based on the company profile.
-
-Citation rules:
-- GOOD reason: "HIPAA Section 164.312(e)(2)(ii) requires encryption of ePHI in transit - SSE-KMS satisfies this and provides the audit trail needed for your in-progress HIPAA programme."
-- BAD reason: "Encryption is important for security."
-- If no specific clause applies: "Security best practice - [brief one-line rationale]."
-
-Return ONLY this JSON object (one entry per fieldId, exactly two keys each):
+CONFIG_OUTPUT_INSTRUCTION = """
+Return ONLY valid JSON with one entry per fieldId from the schema.
+Use this exact shape:
 {
-  "fieldId_example": {"value": <the recommended value>, "reason": "<clause citation and explanation>"}
+  "fieldId": {
+    "value": <specific grounded value or null>,
+    "reason": "Short explanation with a citation like [source#chunk]."
+  }
 }
-<|eot_id|><|start_header_id|>assistant<|end_header_id|>
-"""
+Do not include markdown or extra commentary outside the JSON object.
+""".strip()
+
+
+def _weights(session: dict) -> dict:
+    return session.get("weights") or session.get("computedWeights") or {}
+
+
+def _sanitize_config(raw_config: dict, schema_fields: list[dict]) -> dict:
+    allowed_fields = [field["fieldId"] for field in schema_fields]
+    sanitized = {}
+    for field_id in allowed_fields:
+        entry = raw_config.get(field_id, {})
+        if isinstance(entry, dict):
+            sanitized[field_id] = {
+                "value": entry.get("value"),
+                "reason": entry.get("reason", "No grounded recommendation was produced for this field."),
+            }
+        else:
+            sanitized[field_id] = {
+                "value": entry,
+                "reason": "No grounded recommendation was produced for this field.",
+            }
+    return sanitized
 
 
 async def generate_config(session_id: str, service: str, provider: str = "aws") -> dict:
@@ -58,46 +57,58 @@ async def generate_config(session_id: str, service: str, provider: str = "aws") 
     except KeyError:
         raise HTTPException(status_code=404, detail="Session not found. Start a new session.")
 
-    intent = session.get("companyProfile", {})
-    weights = session.get("computedWeights", {})
+    company_profile = session.get("companyProfile", {})
+    weights = _weights(session)
     canonical_service = get_provider_service_name(service, provider)
     schema = await get_schema(service=canonical_service, provider=provider, session_id=session_id)
     schema_fields = schema.get("fields", [])
+    field_names = [field["fieldId"] for field in schema_fields]
 
-    security_fields = [
-        field["fieldId"] for field in schema_fields if field.get("securityRelevance") in ["critical", "high"]
-    ]
-    compliance_query = (
-        f"{get_provider_label(provider)} {canonical_service} security configuration "
-        f"requirements for {', '.join(security_fields[:5])}"
-    )
-    compliance_text = get_compliance_context(
-        query=compliance_query,
-        frameworks=intent.get("complianceFrameworks", []),
-        num_results=5,
+    evidence = retrieve_decision_evidence(
+        company_profile=company_profile,
+        provider=provider,
+        service=canonical_service,
+        field_names=field_names,
+        top_k=DEFAULT_RETRIEVAL_TOP_K,
     )
 
-    prompt = CONFIG_PROMPT
-    replacements = {
-        "{provider}": get_provider_label(provider),
-        "{service}": canonical_service,
-        "{industry}": intent.get("industry", "other"),
-        "{frameworks}": ", ".join(intent.get("complianceFrameworks", ["none"])),
-        "{maturity}": intent.get("complianceMaturity", "not-started"),
-        "{costPressure}": str(intent.get("costPressure", 3)),
-        "{riskTolerance}": str(intent.get("riskTolerance", 3)),
-        "{security_weight}": str(weights.get("security", 0)),
-        "{compliance_weight}": str(weights.get("compliance", 0)),
-        "{cost_weight}": str(weights.get("cost", 0)),
-        "{compliance_text}": compliance_text,
-        "{fields_json}": json.dumps(schema_fields, indent=2),
-    }
-    for key, value in replacements.items():
-        prompt = prompt.replace(key, value)
+    task_instruction = f"""
+Recommend a grounded configuration for {canonical_service}.
 
-    config = await asyncio.to_thread(invoke_bedrock_json, prompt)
+Schema fields:
+{json.dumps(schema_fields, indent=2, ensure_ascii=True)}
 
-    save_service_config(session_id, canonical_service, config, provider=provider)
+Rules:
+- Return every fieldId exactly once.
+- Use only the provider documentation and compliance chunks in this prompt.
+- Include a short source citation in every reason using the retrieved source name and chunk number.
+- If a field cannot be grounded from the retrieved evidence, set its value to null and say the documentation was insufficient.
+""".strip()
+
+    prompt = build_grounded_prompt(
+        provider_chunks=evidence["provider"],
+        company_context=format_company_context(provider, canonical_service, company_profile, weights),
+        compliance_chunks=evidence["compliance"],
+        task_instruction=task_instruction,
+        output_instruction=CONFIG_OUTPUT_INSTRUCTION,
+    )
+
+    raw_config = await asyncio.to_thread(
+        invoke_bedrock_json,
+        prompt,
+        system=NIMBUS_SYSTEM_PROMPT,
+    )
+    if not isinstance(raw_config, dict):
+        raise HTTPException(status_code=502, detail="Nimbus returned an invalid configuration payload.")
+
+    config = _sanitize_config(raw_config, schema_fields)
+    save_service_config(
+        session_id,
+        canonical_service,
+        config,
+        provider=provider,
+        decision_evidence=evidence,
+    )
     return {
         "config": config,
         "service": canonical_service,

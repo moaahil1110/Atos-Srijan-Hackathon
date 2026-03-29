@@ -7,11 +7,10 @@ from fastapi import HTTPException
 from config import settings
 from services.field_classifier import classify_field
 from utils.bedrock_client import invoke_bedrock_json
+from utils.grounding import DEFAULT_RETRIEVAL_TOP_K, NIMBUS_SYSTEM_PROMPT, format_chunk_block
 from utils.dynamo_client import get_session
-from utils.mcp_client import fetch_service_docs
-from utils.s3_client import get_json, put_json
+from utils.local_retrieval import get_retriever
 from utils.service_mapper import (
-    get_mcp_query,
     get_provider_service_name,
     normalize_provider,
     slugify_service_name,
@@ -77,12 +76,6 @@ def validate_schema(schema: dict) -> dict:
         if "label" not in field:
             field["label"] = field.get("fieldId", "Field")
     return schema
-
-
-def _schema_key(provider: str, service: str) -> str:
-    return f"schemas/{normalize_provider(provider)}/{slugify_service_name(service)}.json"
-
-
 def _load_local_schema(provider: str, service: str) -> dict | None:
     path = os.path.join(
         settings.SCHEMAS_DIR,
@@ -93,6 +86,17 @@ def _load_local_schema(provider: str, service: str) -> dict | None:
         return None
     with open(path, "r", encoding="utf-8") as handle:
         return json.load(handle)
+
+
+def _save_local_schema(provider: str, service: str, schema: dict) -> None:
+    path = os.path.join(
+        settings.SCHEMAS_DIR,
+        normalize_provider(provider),
+        f"{slugify_service_name(service)}.json",
+    )
+    os.makedirs(os.path.dirname(path), exist_ok=True)
+    with open(path, "w", encoding="utf-8") as handle:
+        json.dump(schema, handle, indent=2)
 
 
 def _classify_schema(schema: dict, session_id: str) -> dict:
@@ -115,7 +119,7 @@ def _classify_schema(schema: dict, session_id: str) -> dict:
 
 def _generate_schema_from_docs(provider: str, service: str, docs: str) -> dict:
     prompt = SCHEMA_PROMPT.format(provider=provider, service=service, documentation=docs[:18000])
-    schema = invoke_bedrock_json(prompt)
+    schema = invoke_bedrock_json(prompt, system=NIMBUS_SYSTEM_PROMPT)
     schema["provider"] = normalize_provider(provider)
     schema["service"] = service
     return validate_schema(schema)
@@ -127,7 +131,6 @@ async def get_schema(service: str, provider: str = "aws", session_id: str | None
         raise HTTPException(status_code=400, detail=f"Provider '{provider}' not supported.")
 
     canonical_service = get_provider_service_name(service, provider)
-    cache_key = _schema_key(provider, canonical_service)
     schema = None
 
     try:
@@ -137,21 +140,17 @@ async def get_schema(service: str, provider: str = "aws", session_id: str | None
 
     if not schema:
         try:
-            schema = get_json(settings.S3_BUCKET, cache_key)
-        except Exception as exc:
-            logger.warning("Failed loading cached schema from S3 for %s: %s", cache_key, exc)
-
-    if not schema:
-        try:
-            docs = await fetch_service_docs(get_mcp_query(canonical_service, provider), provider=provider)
-            if docs:
+            chunks = get_retriever().retrieve(
+                query=canonical_service,
+                source=provider,
+                top_k=DEFAULT_RETRIEVAL_TOP_K,
+            )
+            docs = format_chunk_block("Provider documentation", chunks)
+            if chunks:
                 schema = _generate_schema_from_docs(provider, canonical_service, docs)
-                try:
-                    put_json(settings.S3_BUCKET, cache_key, schema)
-                except Exception as exc:
-                    logger.warning("Failed to cache generated schema to S3 for %s: %s", cache_key, exc)
+                _save_local_schema(provider, canonical_service, schema)
         except Exception as exc:
-            logger.warning("Schema fetch via MCP failed for %s/%s: %s", provider, canonical_service, exc)
+            logger.warning("Schema generation from local docs failed for %s/%s: %s", provider, canonical_service, exc)
 
     if not schema:
         raise HTTPException(status_code=503, detail="Schema service temporarily unavailable.")

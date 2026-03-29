@@ -42,8 +42,6 @@ export default function ConfigPanel({
   const [explainMessages, setExplainMessages] = useState([]);
   const [explainInput, setExplainInput] = useState('');
   const [isExplaining, setIsExplaining] = useState(false);
-  const [terraformPreviewCache, setTerraformPreviewCache] = useState({});
-  const [terraformPreview, setTerraformPreview] = useState(null);
   const [isTerraformLoading, setIsTerraformLoading] = useState(false);
 
   useEffect(() => {
@@ -72,46 +70,6 @@ export default function ConfigPanel({
     [activeSchemaFields],
   );
 
-  useEffect(() => {
-    if (activeTab !== 'terraform' || !session?.sessionId) {
-      return;
-    }
-
-    if (activeService && configs?.[activeService]) {
-      const activePreviewKey = `${session.sessionId}:${activeProvider}:${activeService}`;
-      if (terraformPreviewCache[activePreviewKey]) {
-        if (terraformPreview?.key !== activePreviewKey) {
-          setTerraformPreview(terraformPreviewCache[activePreviewKey]);
-        }
-        return;
-      }
-
-      void fetchTerraformPreview(false);
-      return;
-    }
-
-    if (configuredServiceCount > 0) {
-      const allServicesPreviewKey = `${session.sessionId}:all-services`;
-      if (terraformPreviewCache[allServicesPreviewKey]) {
-        if (terraformPreview?.key !== allServicesPreviewKey) {
-          setTerraformPreview(terraformPreviewCache[allServicesPreviewKey]);
-        }
-        return;
-      }
-
-      void fetchTerraformPreview(true);
-    }
-  }, [
-    activeProvider,
-    activeService,
-    activeTab,
-    configuredServiceCount,
-    configs,
-    session?.sessionId,
-    terraformPreview,
-    terraformPreviewCache,
-  ]);
-
   const noticeStyles =
     noticeTone === 'error'
       ? 'border-red-300 bg-red-50 text-red-700'
@@ -122,11 +80,11 @@ export default function ConfigPanel({
   const isServiceLoading = (service) =>
     (loadingServices || []).some((item) => item === service || item.endsWith(`:${service}`));
 
-  const getTerraformDownloadName = (exportAll, serviceName) =>
-    exportAll ? 'nimbus-all-services-config.tf' : `nimbus-${(serviceName || 'service').toLowerCase().replaceAll(' ', '-')}-config.tf`;
+  const getTerraformDownloadName = (serviceName) =>
+    `nimbus-${(serviceName || 'service').toLowerCase().replaceAll(' ', '-')}-config.tf`;
 
-  const downloadTerraformFile = (terraformContent, exportAll, serviceName) => {
-    const downloadName = getTerraformDownloadName(exportAll, serviceName);
+  const downloadTerraformFile = (terraformContent, serviceName) => {
+    const downloadName = getTerraformDownloadName(serviceName);
     const blob = new Blob([terraformContent], { type: 'text/plain' });
     const url = URL.createObjectURL(blob);
     const anchor = document.createElement('a');
@@ -138,13 +96,6 @@ export default function ConfigPanel({
     URL.revokeObjectURL(url);
     setBanner(`${downloadName} downloaded`, 'success');
   };
-
-  const getTerraformRequestMeta = (exportAll) => ({
-    previewKey: exportAll ? `${session?.sessionId}:all-services` : `${session?.sessionId}:${activeProvider}:${activeService}`,
-    previewLabel: exportAll ? 'All configured services' : `${providerLabel} ${activeService}`,
-    serviceName: exportAll ? null : activeService,
-    provider: activeProvider,
-  });
 
   const setBanner = (message, tone = 'neutral') => {
     setNotice(message);
@@ -262,29 +213,13 @@ export default function ConfigPanel({
     }
   };
 
-  const fetchTerraformPreview = async (exportAll = false, options = {}) => {
-    const { download = false, force = false } = options;
-    const { previewKey, previewLabel, serviceName, provider } = getTerraformRequestMeta(exportAll);
-
+  const downloadTerraform = async () => {
     if (!session?.sessionId) {
-      return null;
+      return;
     }
 
-    if (!exportAll && (!serviceName || !configs?.[serviceName])) {
-      return null;
-    }
-
-    if (exportAll && configuredServiceCount === 0) {
-      return null;
-    }
-
-    if (!force && terraformPreviewCache[previewKey]) {
-      const cachedPreview = terraformPreviewCache[previewKey];
-      setTerraformPreview(cachedPreview);
-      if (download) {
-        downloadTerraformFile(cachedPreview.content, exportAll, serviceName);
-      }
-      return cachedPreview;
+    if (!activeService || !configs?.[activeService]) {
+      return;
     }
 
     setIsTerraformLoading(true);
@@ -294,44 +229,20 @@ export default function ConfigPanel({
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           sessionId: session.sessionId,
-          service: serviceName,
-          provider,
+          service: activeService,
+          provider: activeProvider,
         }),
       });
       const data = await response.json();
       if (!response.ok) {
         throw new Error(data.detail || 'Terraform export failed.');
       }
-
-      const nextPreview = {
-        key: previewKey,
-        label: previewLabel,
-        serviceName,
-        content: data.terraformContent,
-        updatedAt: new Date().toISOString(),
-      };
-
-      setTerraformPreviewCache((current) => ({
-        ...current,
-        [previewKey]: nextPreview,
-      }));
-      setTerraformPreview(nextPreview);
-
-      if (download) {
-        downloadTerraformFile(nextPreview.content, exportAll, serviceName);
-      }
-
-      return nextPreview;
+      downloadTerraformFile(data.terraformContent, activeService);
     } catch (error) {
       setBanner(error.message, 'error');
-      return null;
     } finally {
       setIsTerraformLoading(false);
     }
-  };
-
-  const downloadTerraform = async (exportAll = false) => {
-    await fetchTerraformPreview(exportAll, { download: true });
   };
 
   return (
@@ -394,10 +305,9 @@ export default function ConfigPanel({
 
       <div className="border-b border-[#d6e8f3] px-4 py-3">
         <div className="flex gap-2">
-          {[
+          {[ 
             ['recommended', 'Recommended'],
             ['optimize', 'Optimise'],
-            ['terraform', 'Terraform'],
           ].map(([key, label]) => (
             <button
               key={key}
@@ -461,6 +371,21 @@ export default function ConfigPanel({
                 </div>
               );
             })}
+            {availableServices.length > 0 && Object.keys(activeConfig).length > 0 ? (
+              <div className="rounded-2xl border border-[#d7e9f4] bg-white/84 p-5">
+                <div className="text-sm leading-7 text-[#4e6c82]">
+                  Download Terraform after reviewing the final configuration shown above.
+                </div>
+                <button
+                  type="button"
+                  onClick={downloadTerraform}
+                  disabled={isTerraformLoading || !activeService}
+                  className="mt-4 rounded-2xl bg-[#58b7ff] px-4 py-3 text-sm font-semibold text-[#08304d] transition-colors hover:bg-[#7dcaff] disabled:cursor-not-allowed disabled:opacity-50"
+                >
+                  {isTerraformLoading ? 'Preparing Terraform...' : 'Download Terraform'}
+                </button>
+              </div>
+            ) : null}
           </div>
         ) : null}
 
@@ -520,98 +445,6 @@ export default function ConfigPanel({
                 </button>
               </div>
             ))}
-          </div>
-        ) : null}
-
-        {session && activeTab === 'terraform' ? (
-          <div className="rounded-3xl border border-[#d7e9f4] bg-[#fafdff] p-6">
-            <p className="text-[11px] font-semibold uppercase tracking-[0.28em] text-[#2792df]">Terraform</p>
-            <h3 className="mt-3 text-2xl font-semibold text-[#14324a]">Preview Infrastructure Code</h3>
-            <p className="mt-2 text-sm leading-6 text-[#4e6c82]">
-              Review the generated HCL in the browser first, then download the active service or the full multi-service recommendation.
-            </p>
-
-            {configuredServiceCount === 0 ? (
-              <div className="mt-6 rounded-2xl border border-dashed border-[#d7e9f4] p-5 text-sm text-[#5f7f97]">
-                Generate a recommended config first, then export it as Terraform.
-              </div>
-            ) : (
-              <div className="mt-6 space-y-4">
-                <div className="grid gap-3 lg:grid-cols-2">
-                  <button
-                    type="button"
-                    onClick={() => fetchTerraformPreview(false, { force: true })}
-                    disabled={!activeService || !configs?.[activeService] || isTerraformLoading}
-                    className="rounded-2xl border border-[#d7e9f4] px-5 py-3 text-sm text-[#21506b] transition-colors hover:bg-white disabled:cursor-not-allowed disabled:opacity-50"
-                  >
-                    {isTerraformLoading && terraformPreview?.key === `${session?.sessionId}:${activeProvider}:${activeService}`
-                      ? 'Refreshing preview...'
-                      : `Preview ${providerLabel} ${activeService}`}
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => fetchTerraformPreview(true, { force: true })}
-                    disabled={configuredServiceCount === 0 || isTerraformLoading}
-                    className="rounded-2xl border border-[#d7e9f4] px-5 py-3 text-sm text-[#21506b] transition-colors hover:bg-white disabled:cursor-not-allowed disabled:opacity-50"
-                  >
-                    {isTerraformLoading && terraformPreview?.key === `${session?.sessionId}:all-services`
-                      ? 'Refreshing preview...'
-                      : 'Preview all services'}
-                  </button>
-                </div>
-
-                <div className="grid gap-3 lg:grid-cols-2">
-                  <button
-                    type="button"
-                    onClick={() => downloadTerraform(false)}
-                    disabled={!activeService || !configs?.[activeService] || isTerraformLoading}
-                    className="rounded-2xl border border-[#d7e9f4] px-5 py-3 text-sm text-[#21506b] transition-colors hover:bg-white disabled:cursor-not-allowed disabled:opacity-50"
-                  >
-                    Download as Terraform ({providerLabel})
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => downloadTerraform(true)}
-                    disabled={configuredServiceCount === 0 || isTerraformLoading}
-                    className="rounded-2xl bg-[#58b7ff] px-5 py-3 text-sm font-semibold text-[#08304d] transition-colors hover:bg-[#7dcaff] disabled:cursor-not-allowed disabled:opacity-50"
-                  >
-                    Export All as Terraform
-                  </button>
-                </div>
-
-                <div className="rounded-[28px] border border-[#d7e9f4] bg-[#f7fbfe] p-4">
-                  <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-                    <div>
-                      <div className="text-[10px] font-semibold uppercase tracking-[0.18em] text-[#6b8ba2]">HCL preview</div>
-                      <div className="mt-1 text-sm font-semibold text-[#14324a]">
-                        {terraformPreview?.label || `${providerLabel} ${activeService}`}
-                      </div>
-                    </div>
-                    <div className="text-xs text-[#6b8ba2]">
-                      {isTerraformLoading
-                        ? 'Generating preview...'
-                        : terraformPreview?.updatedAt
-                          ? `Updated ${new Date(terraformPreview.updatedAt).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' })}`
-                          : 'Preview will appear here'}
-                    </div>
-                  </div>
-
-                  <div className="mt-4 overflow-hidden rounded-3xl border border-[#d7e9f4] bg-[#102131]">
-                    {terraformPreview?.content ? (
-                      <pre className="max-h-[420px] overflow-auto p-4 text-xs leading-6 text-[#d9ebfa]">
-                        <code>{terraformPreview.content}</code>
-                      </pre>
-                    ) : (
-                      <div className="p-5 text-sm text-[#c2d8ea]">
-                        {isTerraformLoading
-                          ? 'Nimbus is generating Terraform for this target.'
-                          : 'Choose a preview target to inspect the generated HCL here.'}
-                      </div>
-                    )}
-                  </div>
-                </div>
-              </div>
-            )}
           </div>
         ) : null}
 

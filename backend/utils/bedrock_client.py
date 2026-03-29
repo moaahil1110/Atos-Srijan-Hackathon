@@ -5,7 +5,7 @@ import time
 
 import boto3
 from botocore.config import Config
-from botocore.exceptions import ClientError
+from botocore.exceptions import ClientError, ConnectTimeoutError, ReadTimeoutError
 
 from config import settings
 
@@ -22,14 +22,21 @@ def _get_client():
         if access_key and secret_key:
             kwargs["aws_access_key_id"] = access_key
             kwargs["aws_secret_access_key"] = secret_key
-        if settings.AWS_SESSION_TOKEN:
-            kwargs["aws_session_token"] = settings.AWS_SESSION_TOKEN
-        kwargs["config"] = Config(connect_timeout=5, read_timeout=30, retries={"max_attempts": 2})
+        session_token = settings.BEDROCK_AWS_SESSION_TOKEN or settings.AWS_SESSION_TOKEN
+        if session_token:
+            kwargs["aws_session_token"] = session_token
+        kwargs["config"] = Config(
+            connect_timeout=settings.BEDROCK_CONNECT_TIMEOUT,
+            read_timeout=settings.BEDROCK_READ_TIMEOUT,
+            retries={"max_attempts": 2},
+        )
         _client = boto3.client("bedrock-runtime", **kwargs)
     return _client
 
 
 def _is_retryable(exc: Exception) -> bool:
+    if isinstance(exc, (ReadTimeoutError, ConnectTimeoutError)):
+        return True
     if isinstance(exc, ClientError):
         code = exc.response.get("Error", {}).get("Code", "")
         return code in {

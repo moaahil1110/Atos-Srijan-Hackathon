@@ -1,35 +1,28 @@
 import json
+
 from fastapi import HTTPException
 
 from utils.bedrock_client import invoke_bedrock
-from utils.dynamo_client import get_service_provider, get_session, update_session
-from utils.kb_client import get_compliance_context
-from utils.service_mapper import get_provider_label
+from utils.dynamo_client import get_service_provider, get_session, update_session_fields
+from utils.grounding import (
+    DEFAULT_RETRIEVAL_TOP_K,
+    NIMBUS_SYSTEM_PROMPT,
+    build_grounded_prompt,
+    format_company_context,
+    retrieve_decision_evidence,
+)
 
-EXPLAIN_SYSTEM_PROMPT = """
-You are a cloud security advisor for a {industry} company.
+EXPLAIN_OUTPUT_INSTRUCTION = """
+Respond in plain text only.
+Keep the explanation concise and specific.
+If the field should change, end with:
+UPDATE_FIELD: {"fieldId":"...","newValue":"...","newReason":"..."}
+Otherwise do not include UPDATE_FIELD.
+""".strip()
 
-Company context:
-- Compliance: {frameworks} ({maturity})
-- Cost pressure: {costPressure}/5
-- Risk tolerance: {riskTolerance}/5
-- Security weight: {security_weight} (never compromise this)
 
-Relevant compliance documentation:
-{compliance_text}
-
-Rules for all responses:
-1. Do not repeat the inline reason - go deeper
-2. Tie every response to THIS company's specific context
-3. If field is LOCKED_SECURE and user wants to relax it:
-   Explain why it cannot change, suggest alternatives
-4. If user has valid reason and field is adjustable:
-   Suggest best alternative and end with:
-   UPDATE_FIELD: {"fieldId": "...", "newValue": "...", "newReason": "..."}
-5. Keep responses to 3-4 sentences maximum
-6. Never give generic advice - always company-specific
-7. When explaining, quote specific clauses from documentation above
-"""
+def _weights(session: dict) -> dict:
+    return session.get("weights") or session.get("computedWeights") or {}
 
 
 def _find_service_for_field(session: dict, field_id: str) -> str | None:
@@ -54,6 +47,7 @@ def _parse_update(response: str):
     except Exception:
         return response.strip(), None
 
+
 async def explain_field(
     session_id: str,
     field_id: str,
@@ -71,49 +65,88 @@ async def explain_field(
     if not service:
         raise HTTPException(status_code=400, detail=f"No config found for {field_id}. Generate config first.")
 
-    profile = session.get("companyProfile", {})
-    weights = session.get("computedWeights", {})
-    frameworks = profile.get("complianceFrameworks", [])
-    provider = get_service_provider(session_id, service) or session.get("provider", "aws")
-    query = (
-        f"{get_provider_label(provider)} {field_id} {field_label} compliance requirement "
-        f"explanation why {current_value} may be wrong"
+    provider = get_service_provider(session_id, service) or session.get("selectedProvider") or session.get("provider", "aws")
+    company_profile = session.get("companyProfile", {})
+    weights = _weights(session)
+
+    evidence = (session.get("decisionEvidenceByService", {}) or {}).get(service) or session.get("decisionEvidence")
+    if not evidence or not evidence.get("provider") or not evidence.get("compliance"):
+        evidence = retrieve_decision_evidence(
+            company_profile=company_profile,
+            provider=provider,
+            service=service,
+            field_names=[field_id, field_label],
+            current_config=session.get("currentConfig") or {field_id: current_value},
+            top_k=DEFAULT_RETRIEVAL_TOP_K,
+        )
+
+    field_history = session.get("fieldConversationHistory", {})
+    service_history = field_history.setdefault(service, {})
+    history = service_history.setdefault(field_id, [])
+    if not history:
+        history.append({"role": "assistant", "content": inline_reason})
+    history.append({"role": "user", "content": message})
+
+    task_instruction = f"""
+Explain the decision for field '{field_id}' ({field_label}).
+
+Current displayed value:
+{current_value}
+
+Existing inline reason:
+{inline_reason}
+
+Conversation history for this field:
+{json.dumps(history, indent=2, ensure_ascii=True)}
+
+Rules:
+- Use the retrieved provider documentation first, then company context, then compliance evidence.
+- Explain conflicts between provider defaults and compliance explicitly.
+- If the user asks for a change and the evidence supports it, include a valid UPDATE_FIELD payload.
+- If the evidence does not support a change, explain why and do not guess.
+""".strip()
+
+    prompt = build_grounded_prompt(
+        provider_chunks=evidence.get("provider", []),
+        company_context=format_company_context(provider, service, company_profile, weights),
+        compliance_chunks=evidence.get("compliance", []),
+        task_instruction=task_instruction,
+        output_instruction=EXPLAIN_OUTPUT_INSTRUCTION,
     )
-    compliance_text = get_compliance_context(query=query, frameworks=frameworks, num_results=3)
 
-    conversation_history = session.get("conversationHistory", {})
-    service_history = conversation_history.setdefault(service, {})
-    field_history = service_history.setdefault(field_id, [])
-    if not field_history:
-        field_history.append({"role": "assistant", "content": inline_reason})
-    field_history.append({"role": "user", "content": message})
-
-    system_prompt = EXPLAIN_SYSTEM_PROMPT
-    replacements = {
-        "{industry}": profile.get("industry", "other"),
-        "{frameworks}": ", ".join(frameworks or ["none"]),
-        "{maturity}": profile.get("complianceMaturity", "not-started"),
-        "{costPressure}": str(profile.get("costPressure", 3)),
-        "{riskTolerance}": str(profile.get("riskTolerance", 3)),
-        "{security_weight}": str(weights.get("security", 0)),
-        "{compliance_text}": compliance_text,
-    }
-    for key, value in replacements.items():
-        system_prompt = system_prompt.replace(key, value)
-    messages = [{"role": item["role"], "content": [{"text": item["content"]}]} for item in field_history]
-
-    raw_response = invoke_bedrock(prompt="", system=system_prompt, messages=messages)
-
+    raw_response = invoke_bedrock(prompt, system=NIMBUS_SYSTEM_PROMPT, max_tokens=500, temperature=0.2)
     response_text, config_update = _parse_update(raw_response)
-    field_history.append({"role": "assistant", "content": response_text})
+
+    history.append({"role": "assistant", "content": response_text})
+
+    updates = {
+        "fieldConversationHistory": field_history,
+        "selectedProvider": provider,
+        "selectedService": service,
+        "decisionEvidence": evidence,
+    }
+
+    evidence_by_service = session.get("decisionEvidenceByService", {})
+    evidence_by_service[service] = evidence
+    updates["decisionEvidenceByService"] = evidence_by_service
+
+    conversation_history = session.get("conversationHistory", [])
+    conversation_history.extend(
+        [
+            {"role": "user", "service": service, "fieldId": field_id, "content": message},
+            {"role": "assistant", "service": service, "fieldId": field_id, "content": response_text},
+        ]
+    )
+    updates["conversationHistory"] = conversation_history
 
     if config_update:
         generated = session.get("generatedConfig", {})
+        generated.setdefault(service, {})
         generated[service][field_id] = {
             "value": config_update["newValue"],
             "reason": config_update["newReason"],
         }
-        update_session(session_id, "generatedConfig", generated)
+        updates["generatedConfig"] = generated
 
-    update_session(session_id, "conversationHistory", conversation_history)
+    update_session_fields(session_id, updates)
     return {"response": response_text, "configUpdate": config_update}

@@ -1,7 +1,7 @@
 import json
 import logging
-import time
 import uuid
+from datetime import datetime, timezone
 
 from fastapi import HTTPException
 
@@ -9,6 +9,7 @@ from config import settings
 from services.weights_engine import compute_weights
 from utils.bedrock_client import invoke_bedrock, invoke_bedrock_json
 from utils.dynamo_client import save_session
+from utils.grounding import NIMBUS_SYSTEM_PROMPT
 from utils.service_mapper import get_provider_label, normalize_provider
 
 logger = logging.getLogger(__name__)
@@ -103,7 +104,7 @@ async def detect_services(description: str, intent: dict, provider: str = "aws")
     stricter_prompt = prompt
     for attempt in range(3):
         try:
-            raw_text = invoke_bedrock(stricter_prompt)
+            raw_text = invoke_bedrock(stricter_prompt, system=NIMBUS_SYSTEM_PROMPT)
             try:
                 parsed = json.loads(raw_text)
             except json.JSONDecodeError:
@@ -126,7 +127,7 @@ async def extract_intent(description: str, provider: str = "aws") -> dict:
     if provider not in settings.SUPPORTED_PROVIDERS:
         raise HTTPException(status_code=400, detail=f"Provider '{provider}' not supported.")
 
-    intent = invoke_bedrock_json(INTENT_PROMPT.replace("{description}", description))
+    intent = invoke_bedrock_json(INTENT_PROMPT.replace("{description}", description), system=NIMBUS_SYSTEM_PROMPT)
 
     intent.setdefault("complianceFrameworks", ["none"])
     if not intent["complianceFrameworks"]:
@@ -141,13 +142,21 @@ async def extract_intent(description: str, provider: str = "aws") -> dict:
     session_item = {
         "sessionId": session_id,
         "companyProfile": intent,
+        "weights": weights,
         "computedWeights": weights,
+        "selectedProvider": provider,
+        "selectedService": "",
+        "currentConfig": {},
         "generatedConfig": {},
+        "decisionEvidence": {"compliance": [], "provider": []},
+        "decisionEvidenceByService": {},
         "configuredServices": [],
         "suggestedServices": suggested_services,
         "provider": provider,
-        "conversationHistory": {},
-        "createdAt": int(time.time()),
+        "conversationHistory": [],
+        "fieldConversationHistory": {},
+        "terraformOutput": "",
+        "createdAt": datetime.now(timezone.utc).isoformat(),
     }
     save_session(session_item)
 

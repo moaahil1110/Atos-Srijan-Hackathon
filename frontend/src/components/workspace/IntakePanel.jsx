@@ -21,18 +21,10 @@ const SERVICE_DESCRIPTIONS = {
   'Cloud CDN': 'Content delivery',
 };
 
-const PROVIDER_LABELS = {
-  aws: 'AWS',
-  azure: 'Azure',
-  gcp: 'GCP',
-};
-
 export default function IntakePanel({
-  provider,
   session,
   selectedServices,
   setSelectedServices,
-  onProviderChange,
   onAnalyze,
   onConfigureSelected,
   isAnalyzing,
@@ -70,32 +62,6 @@ export default function IntakePanel({
     <div className="space-y-5">
       <section className="rounded-3xl border border-white/10 bg-white/[0.03] p-6">
         <p className="text-[11px] font-semibold uppercase tracking-[0.28em] text-[#2792df]">
-          Provider
-        </p>
-        <div className="mt-4 grid grid-cols-3 gap-3">
-          {[
-            ['aws', 'AWS'],
-            ['azure', 'Azure'],
-            ['gcp', 'GCP'],
-          ].map(([value, label]) => (
-            <button
-              key={value}
-              type="button"
-              onClick={() => onProviderChange(value)}
-              className={`rounded-2xl border px-4 py-3 text-sm transition-colors ${
-                provider === value
-                  ? 'border-[#a9d8f4] bg-[#eef8ff] text-[#2792df]'
-                  : 'border-[#d7e9f4] bg-transparent text-[#55748b] hover:bg-white'
-              }`}
-            >
-              {label}
-            </button>
-          ))}
-        </div>
-      </section>
-
-      <section className="rounded-3xl border border-white/10 bg-white/[0.03] p-6">
-        <p className="text-[11px] font-semibold uppercase tracking-[0.28em] text-[#2792df]">
           Describe The Company
         </p>
         <textarea
@@ -106,7 +72,7 @@ export default function IntakePanel({
         />
         <button
           type="button"
-          onClick={() => onAnalyze(description, provider)}
+          onClick={() => onAnalyze(description)}
           disabled={isAnalyzing || !description.trim()}
           className="mt-4 w-full rounded-2xl bg-[#58b7ff] px-4 py-3 text-sm font-semibold text-[#08304d] transition-colors hover:bg-[#7dcaff] disabled:cursor-not-allowed disabled:opacity-50"
         >
@@ -125,7 +91,7 @@ export default function IntakePanel({
                 Select only the services you want Nimbus to configure in this run.
               </p>
               <p className="mt-2 text-xs uppercase tracking-[0.18em] text-[#8E857A]">
-                Services identified for {PROVIDER_LABELS[provider] || provider.toUpperCase()}
+                Services identified for this session
               </p>
             </div>
             <div className="rounded-2xl border border-white/10 px-3 py-2 text-xs text-[#C9C1B8]">

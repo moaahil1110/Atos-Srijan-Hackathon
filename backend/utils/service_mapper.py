@@ -148,13 +148,3 @@ def get_terraform_resources(service: str, provider: str) -> list[str]:
     provider_map = TERRAFORM_RESOURCE_TYPES.get(normalize_provider(provider), {})
     canonical = get_provider_service_name(service, provider)
     return provider_map.get(canonical, [slugify_service_name(canonical)])
-
-
-def get_mcp_query(service: str, provider: str) -> str:
-    provider = normalize_provider(provider)
-    canonical = get_provider_service_name(service, provider)
-    if provider == "azure":
-        return f"Azure {canonical} security configuration parameters properties"
-    if provider == "gcp":
-        return f"GCP {canonical} security configuration settings terraform fields best practices"
-    return f"AWS {canonical} configuration parameters API reference security"
