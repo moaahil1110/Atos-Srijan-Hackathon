@@ -124,9 +124,9 @@ Documents are chunked, embedded locally with `sentence-transformers`, and indexe
 
 | Name | Contribution |
 |---|---|
-| **Muhammad Shehzaad Khan** | Backend architecture, FAISS retrieval integration, prompt engineering, frontend UI logic, end-to-end system integration |
-| **Musharraf** | AWS infrastructure, DynamoDB setup, Bedrock access, IAM and credentials management |
-| **Aahil** | AWS infrastructure, DynamoDB setup, Bedrock access, IAM and credentials management, Backend architecture, FAISS retrieval integration|
+| **Muhammad Shehzaad Khan** | Prompt engineering, frontend UI logic, end-to-end system integration |
+| **Musharraf** | AWS infrastructure, DynamoDB setup, Bedrock access, IAM and credentials management, end-to-end system integration |
+| **Aahil** | AWS infrastructure, DynamoDB setup, Bedrock access, IAM and credentials management, Backend architecture, FAISS retrieval integration, end-to-end system integration|
 | **Mir** | Document ingestion pipeline, chunking strategy, embedding generation, index structure, Compliance document collection and curation, provider doc sourcing |
 
 ---
